@@ -1,3 +1,3 @@
-Tunnel is live at bore.pub:25565
-2026-11-16T15:31:29.611520Z  INFO bore_cli::client: connected to server remote_port=25565
-2026-11-16T15:31:29.611580Z  INFO bore_cli::client: listening at bore.pub:25565
+Tunnel is live at bore.pub:25601
+2026-11-16T16:03:47.453468Z  INFO bore_cli::client: connected to server remote_port=25601
+2026-11-16T16:03:47.453529Z  INFO bore_cli::client: listening at bore.pub:25601

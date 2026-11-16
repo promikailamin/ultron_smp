@@ -1,0 +1,7 @@
+Relay candidate ap.free.pinggy.io: runner 182ms + player ~55ms = 237ms
+Relay candidate us.free.pinggy.io: runner 10ms + player ~200ms = 210ms
+Relay candidate eu.free.pinggy.io: runner 155ms + player ~150ms = 305ms
+Selected low-latency relay: us.free.pinggy.io (estimated 210ms)
+Low-latency tunnel is live at jabjk-52-190-221-91.run.pinggy-free.link:39123 (pid 7859)
+HTTP/1.0 200 OK
+Low-latency tunnel test passed: public TCP endpoint is reachable

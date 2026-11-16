@@ -1,0 +1,6 @@
+Downloading bore 0.5.3 for x86_64...
+Tunnel is live at bore.pub:25565
+2026-11-16T16:01:33.649353Z  INFO bore_cli::client: connected to server remote_port=25565
+2026-11-16T16:01:33.649416Z  INFO bore_cli::client: listening at bore.pub:25565
+HTTP/1.0 200 OK
+Tunnel end-to-end test passed: public TCP endpoint is reachable

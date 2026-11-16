@@ -1,0 +1,3 @@
+Low-latency tunnel is live at dxtuc-52-190-221-91.run.pinggy-free.link:33481 (pid 8024)
+HTTP/1.0 200 OK
+Low-latency tunnel test passed: public TCP endpoint is reachable
