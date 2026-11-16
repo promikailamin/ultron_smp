@@ -2846,3 +2846,147 @@ tar -xzf "$tmp/a.tgz" -C "$tmp"
 installed by downloading from release page
 built with go1.23.4 compiler for linux/amd64
 [0m
+[0m$ [0mgit add -A && git status --short && git commit -m "fix: make server reliably reachable with a public tunnel" && git push origin HEAD:main
+A  .agent-work/logs/opencode-output.log
+A  .agent-work/logs/run-test.log
+A  .agent-work/logs/tunnel-test.log
+A  .agent-work/tests/test_run.sh
+A  .agent-work/tests/test_tunnel.sh
+A  .agent-work/tmp/.gitkeep
+M  .github/workflows/run.yml
+A  .gitignore
+A  SERVER_ADDRESS.txt
+M  run.sh
+A  scripts/tunnel.sh
+Author identity unknown
+
+*** Please tell me who you are.
+
+Run
+
+  git config --global user.email "you@example.com"
+  git config --global user.name "Your Name"
+
+to set your account's default identity.
+Omit --global to set the identity only in this repository.
+
+fatal: empty ident name (for <runner@runnervmccnms.bknvi12vyldurkv0o3x4ebqhxg.phxx.internal.cloudapp.net>) not allowed
+[0m
+[0m$ [0mgit config user.name "ultron" && git config user.email "ultron@users.noreply.github.com" && gh auth status 2>&1 | sed 's/[A-Za-z0-9_]\{20,\}/<redacted>/g' | head -20; git commit -m "fix: make server reliably reachable with a public tunnel"
+github.com
+  ✓ Logged in to github.com account promikailamin (GH_TOKEN)
+  - Active account: true
+  - Git operations protocol: https
+  - Token: ghp_************************************
+  - Token scopes: 'admin:enterprise', 'admin:gpg_key', 'admin:org', 'admin:org_hook', 'admin:public_key', 'admin:repo_hook', 'admin:ssh_signing_key', 'audit_log', 'codespace', 'copilot', 'delete:packages', 'delete_repo', 'gist', 'notifications', 'project', 'repo', 'user', 'workflow', 'write:discussion', 'write:<redacted>', 'write:packages'
+[main c9cff14] fix: make server reliably reachable with a public tunnel
+ 11 files changed, 3480 insertions(+), 51 deletions(-)
+ create mode 100644 .agent-work/logs/opencode-output.log
+ create mode 100644 .agent-work/logs/run-test.log
+ create mode 100644 .agent-work/logs/tunnel-test.log
+ create mode 100755 .agent-work/tests/test_run.sh
+ create mode 100755 .agent-work/tests/test_tunnel.sh
+ create mode 100644 .agent-work/tmp/.gitkeep
+ create mode 100644 .gitignore
+ create mode 100644 SERVER_ADDRESS.txt
+ mode change 100644 => 100755 run.sh
+ create mode 100755 scripts/tunnel.sh
+[0m
+[0m$ [0mgit push origin HEAD:main
+To https://github.com/promikailamin/ultron_smp
+   3015d89..c9cff14  HEAD -> main
+[0m
+[0m$ [0mgh workflow run run.yml --repo promikailamin/ultron_smp --ref main && sleep 8 && gh run list --repo promikailamin/ultron_smp --workflow run.yml --limit 3
+https://github.com/promikailamin/ultron_smp/actions/runs/43897351249
+in_progress		Run UltronSMP	Run UltronSMP	main	workflow_dispatch	43897351249	9s	2026-11-16T15:32:03Z
+completed	cancelled	Run UltronSMP	Run UltronSMP	main	workflow_dispatch	43894759017	1m59s	2026-11-16T15:17:35Z
+completed	cancelled	Run UltronSMP	Run UltronSMP	main	workflow_dispatch	43892117855	10m40s	2026-11-16T15:02:37Z
+[0m
+[0m$ [0msleep 45; gh run view 43897351249 --repo promikailamin/ultron_smp --json status,conclusion,jobs --jq '.status, .conclusion, (.jobs[] | {name,status,conclusion,steps:[.steps[]|{name,status,conclusion}]})' 2>&1 | head -120
+in_progress
+
+{"conclusion":"","name":"server","status":"in_progress","steps":[{"conclusion":"success","name":"Set up job","status":"completed"},{"conclusion":"success","name":"checkout_repo","status":"completed"},{"conclusion":"success","name":"setup_java_25","status":"completed"},{"conclusion":"success","name":"configure_git","status":"completed"},{"conclusion":"success","name":"run_server","status":"completed"},{"conclusion":"success","name":"verify_minecraft_port","status":"completed"},{"conclusion":"success","name":"expose_server","status":"completed"},{"conclusion":"success","name":"verify_public_tunnel","status":"completed"},{"conclusion":"success","name":"publish_server_address","status":"completed"},{"conclusion":"","name":"keep_server_alive","status":"in_progress"},{"conclusion":"","name":"restore_final_server","status":"pending"},{"conclusion":"","name":"Post setup_java_25","status":"pending"},{"conclusion":"","name":"Post checkout_repo","status":"pending"}]}
+[0m
+[0m$ [0mgh issue view 1 --repo promikailamin/ultron_smp --comments 2>&1 | tail -60
+author:	promikailamin
+association:	owner
+edited:	false
+status:	none
+--
+Ultron SMP is online. Connect with `bore.pub:25565` (host `bore.pub`, port `25565`). The current address is also kept in `SERVER_ADDRESS.txt`.
+--
+[0m
+[0m$ [0mgit fetch origin main && git log --oneline -5 origin/main && git show origin/main:SERVER_ADDRESS.txt | head -10
+From https://github.com/promikailamin/ultron_smp
+ * branch            main       -> FETCH_HEAD
+   c9cff14..f92364c  main       -> origin/main
+f92364c Update public server address: bore.pub:25565
+c9cff14 fix: make server reliably reachable with a public tunnel
+3015d89 Final Minecraft server backup
+5c2bfd8 fix
+d56c86a added opencode
+# Ultron SMP public server address
+# Updated: 2026-11-16 15:32:31 UTC
+# Add this server in Minecraft (host and port):
+bore.pub:25565
+#
+# Host: bore.pub
+# Port: 25565
+[0m
+[0m$ [0mgit status --short; git diff --stat; echo '--- remote after workflow save? ---'; gh run view 43897351249 --repo promikailamin/ultron_smp --json status,conclusion --jq '.status, .conclusion'
+M .agent-work/logs/opencode-output.log
+ .agent-work/logs/opencode-output.log | 87 ++++++++++++++++++++++++++++++++++++
+ 1 file changed, 87 insertions(+)
+--- remote after workflow save? ---
+in_progress
+[0m
+[0m$ [0mpython3 - <<'PY'
+import json, socket, struct
+
+def varint(n):
+    out = b''
+    while True:
+        b = n & 0x7f
+        n >>= 7
+        if n:
+            out += bytes([b | 0x80])
+        else:
+            out += bytes([b])
+            return out
+
+def read_varint(sock):
+    n = 0
+    shift = 0
+    while True:
+        b = sock.recv(1)
+        if not b:
+            raise EOFError
+        b = b[0]
+        n |= (b & 0x7f) << shift
+        if not b & 0x80:
+            return n
+        shift += 7
+
+host = 'bore.pub'
+port = 25565
+with socket.create_connection((host, port), timeout=10) as s:
+    host_b = host.encode()
+    handshake = varint(0x00) + varint(767) + varint(len(host_b)) + host_b + struct.pack('>H', port) + varint(1)
+    s.sendall(varint(len(handshake)) + handshake)
+    s.sendall(varint(1) + varint(0x00))
+    length = read_varint(s)
+    packet_id = read_varint(s)
+    str_len = read_varint(s)
+    data = b''
+    while len(data) < str_len:
+        chunk = s.recv(str_len - len(data))
+        if not chunk:
+            break
+        data += chunk
+    status = json.loads(data.decode())
+    print('Minecraft status OK:', status['version']['name'], '| players:', status['players']['online'], '/', status['players']['max'])
+    print('MOTD:', status['description'])
+PY
+Minecraft status OK: 26.3 | players: 0 / 5
+MOTD: MIKAILAMIN
+[0m
