@@ -1,7 +1,7 @@
 # Ultron SMP public server address
-# Updated: 2026-11-16 16:19:50 UTC
+# Updated: 2026-11-16 16:47:14 UTC
 # Add this server in Minecraft (host and port):
-bore.pub:25565
+bore.pub:25566
 #
 # Host: bore.pub
-# Port: 25565
+# Port: 25566
