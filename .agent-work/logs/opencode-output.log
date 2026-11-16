@@ -5170,3 +5170,17 @@ EOF
 gh issue comment 3 --repo promikailamin/ultron_smp --body-file /tmp/opencode/issue3-comment.md
 https://github.com/promikailamin/ultron_smp/issues/3#issuecomment-6922695608
 [0m
+[0m$ [0mgit status --short && git add -A && git commit -m "chore: final workspace snapshot for issue 3" || true; git push origin HEAD:main; echo ---; git status --short; git log --oneline -3
+M .agent-work/logs/opencode-output.log
+[main b2a78d0] chore: final workspace snapshot for issue 3
+ 1 file changed, 106 insertions(+)
+To https://github.com/promikailamin/ultron_smp
+   540b063..b2a78d0  HEAD -> main
+---
+b2a78d0 chore: final workspace snapshot for issue 3
+540b063 docs: record issue 3 analysis and validation
+a80c177 test: verify world changes survive save and restart
+[0m
+Fixed the world-loss issue: added `scripts/server-control.sh` for graceful `save-all flush`/`stop`, autosave/push every 90s, cancellation traps, an `always()` final backup with push retries, and startup re-sync to avoid stale-world overwrites. Added a restart-persistence test; `shellcheck`, `actionlint`, and the test pass.
+
+The ~300ms ping is physical distance to the US GitHub runner, not a save bug; only a South Asia VPS would remove it. Committed and pushed to `main` through `b2a78d0`, and commented on issue #3.
