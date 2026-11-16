@@ -4780,3 +4780,281 @@ Server listening after 12s
 Minecraft server stopped.
 server-control test passed: console commands and graceful stop work.
 [0m
+[0m$ [0mgit add -A && git commit -m "fix: keep cancellation cleanup within runner kill window" && git push origin HEAD:main
+[main 22e38bd] fix: keep cancellation cleanup within runner kill window
+ 4 files changed, 177 insertions(+), 73 deletions(-)
+To https://github.com/promikailamin/ultron_smp
+   2312f94..22e38bd  HEAD -> main
+[0m
+[0m$ [0msed -n '270,470p' .github/workflows/run.yml
+fi
+                      body="${body} The current addresses are kept in \`SERVER_ADDRESS.txt\` and \`SERVER_ADDRESS_LOW_LATENCY.txt\`."
+                      gh issue comment "$SERVER_ISSUE_NUMBER" \
+                          --repo "${{ github.repository }}" \
+                          --body "$body" \
+                          || echo "Could not comment on the issue (continuing)."
+                  fi
+
+            - name: keep_server_alive
+              timeout-minutes: 350
+              env:
+                  GH_TOKEN: ${{ secrets.PAT_TOKEN }}
+                  AUTOSAVE_SECONDS: '90'
+              run: |
+                  set -euo pipefail
+
+                  CONTROL="scripts/server-control.sh"
+                  tunnel_pid_file="$RUNNER_TEMP/ultron-tunnel.pid"
+                  tunnel_pid="$(cat "$tunnel_pid_file" 2>/dev/null || true)"
+                  low_tunnel_pid_file="$RUNNER_TEMP/ultron-low-latency-tunnel.pid"
+                  low_tunnel_pid="$(cat "$low_tunnel_pid_file" 2>/dev/null || true)"
+                  low_address_file="SERVER_ADDRESS_LOW_LATENCY.txt"
+                  low_address=""
+                  if [ -f "$low_address_file" ]; then
+                      low_address="$(grep -v '^#' "$low_address_file" | grep -E ':[0-9]+$' | tail -n 1)"
+                  fi
+
+                  save_and_push() {
+                      local message="$1"
+                      local saved=0
+
+                      # Flush in-memory chunks to disk before Git snapshots them.
+                      if ! bash "$CONTROL" save >/dev/null 2>&1; then
+                          echo "WARNING: could not send save-all flush."
+                      fi
+                      sleep 1
+
+                      git add -A
+                      if git diff --cached --quiet; then
+                          echo "No changes to save."
+                          return 0
+                      fi
+
+                      git commit -m "$message"
+                      for _ in 1 2 3; do
+                          if ! git fetch origin "$GITHUB_REF_NAME"; then
+                              sleep 5
+                              continue
+                          fi
+
+                          if git rebase "origin/$GITHUB_REF_NAME"; then
+                              if git push origin "HEAD:$GITHUB_REF_NAME"; then
+                                  saved=1
+                                  echo "Saved and pushed: ${message}"
+                                  break
+                              fi
+                          else
+                              git rebase --abort || true
+                          fi
+                          sleep 5
+                      done
+
+                      if [ "$saved" -ne 1 ]; then
+                          echo "WARNING: could not push the save; will retry next cycle."
+                          return 1
+                      fi
+                  }
+
+                  stopping=0
+                  # shellcheck disable=SC2329
+                  shutdown_handler() {
+                      if [ "$stopping" -eq 1 ]; then
+                          exit 0
+                      fi
+                      stopping=1
+                      trap - TERM INT
+                      echo "Cancellation/termination requested; flushing the world before exit..."
+
+                      # The runner only gives a cancelled step about ten
+                      # seconds before killing it, so keep this fast: flush,
+                      # make a local commit, and ask the server to stop. The
+                      # always() final backup step pushes the commit.
+                      bash "$CONTROL" save >/dev/null 2>&1 || true
+                      sleep 1
+                      git add -A || true
+                      if ! git diff --cached --quiet; then
+                          git commit -m "Auto-save Minecraft server data (run stopping)" || true
+                      fi
+                      bash "$CONTROL" stop 20 || true
+                      exit 0
+                  }
+                  trap shutdown_handler TERM INT
+
+                  # Check the tunnels every 30 seconds, but only snapshot the
+                  # world every AUTOSAVE_SECONDS so the repository does not grow
+                  # too quickly. A cancelled run therefore loses at most one
+                  # autosave interval even if the final backup cannot run.
+                  autosave_seconds="${AUTOSAVE_SECONDS:-90}"
+                  cycles_between_saves=$((autosave_seconds / 30))
+                  if [ "$cycles_between_saves" -lt 1 ]; then
+                      cycles_between_saves=1
+                  fi
+                  cycle=0
+
+                  while bash "$CONTROL" status >/dev/null 2>&1; do
+                      sleep 30
+
+                      if ! bash "$CONTROL" status >/dev/null 2>&1; then
+                          break
+                      fi
+
+                      if [ -z "${tunnel_pid:-}" ] || ! kill -0 "$tunnel_pid" 2>/dev/null; then
+                          echo "Tunnel process stopped; restarting it..."
+                          if bash scripts/tunnel.sh | tee -a .agent-work/logs/tunnel-restarts.log; then
+                              tunnel_pid="$(cat "$tunnel_pid_file")"
+                              address="$(grep -v '^#' SERVER_ADDRESS.txt | grep -E ':[0-9]+$' | tail -n 1)"
+                              echo "Tunnel restarted at ${address}"
+                              if [ -n "${SERVER_ISSUE_NUMBER:-}" ] && [ -n "${address}" ]; then
+                                  gh issue comment "$SERVER_ISSUE_NUMBER" \
+                                      --repo "${{ github.repository }}" \
+                                      --body "Ultron SMP is online. Stable address: \`${address}\`. The tunnel was restarted and the address in \`SERVER_ADDRESS.txt\` is current." \
+                                      || true
+                              fi
+                          else
+                              echo "Tunnel restart failed; will retry shortly."
+                              sleep 15
+                          fi
+                      fi
+
+                      if [ "${LOW_LATENCY_TUNNEL:-false}" = "true" ]; then
+                          if [ -z "${low_tunnel_pid:-}" ] || ! kill -0 "$low_tunnel_pid" 2>/dev/null; then
+                              echo "Low-latency relay stopped; restarting it..."
+                              if bash scripts/low-latency-tunnel.sh | tee -a .agent-work/logs/low-latency-tunnel-restarts.log; then
+                                  low_tunnel_pid="$(cat "$low_tunnel_pid_file" 2>/dev/null || true)"
+                                  echo "Low-latency relay restarted (pid ${low_tunnel_pid})."
+                              else
+                                  echo "Low-latency relay restart failed; will retry shortly."
+                                  low_tunnel_pid=""
+                              fi
+                          fi
+
+                          if [ -f "$low_address_file" ]; then
+                              current_low_address="$(grep -v '^#' "$low_address_file" | grep -E ':[0-9]+$' | tail -n 1)"
+                              if [ -n "$current_low_address" ] && [ "$current_low_address" != "$low_address" ]; then
+                                  low_address="$current_low_address"
+                                  echo "Low-latency relay address updated to ${low_address}."
+                                  if [ -n "${SERVER_ISSUE_NUMBER:-}" ]; then
+                                      gh issue comment "$SERVER_ISSUE_NUMBER" \
+                                          --repo "${{ github.repository }}" \
+                                          --body "Low-latency relay updated: \`${low_address}\`. The stable address remains in \`SERVER_ADDRESS.txt\`." \
+                                          || true
+                                  fi
+                              fi
+                          fi
+                      fi
+
+                      cycle=$((cycle + 1))
+                      if [ "$cycle" -ge "$cycles_between_saves" ]; then
+                          cycle=0
+                          echo "Saving Minecraft server data..."
+                          save_and_push "Auto-save Minecraft server data" || true
+                      fi
+                  done
+
+                  echo "Minecraft server stopped; performing final save..."
+                  save_and_push "Final Minecraft server backup" || true
+                  exit 0
+
+            - name: restore_final_server
+              if: always()
+              env:
+                  GH_TOKEN: ${{ secrets.PAT_TOKEN }}
+              run: |
+                  set -euo pipefail
+                  echo "Stopping the server and flushing the world before the final backup..."
+                  bash scripts/server-control.sh save >/dev/null 2>&1 || true
+                  bash scripts/server-control.sh stop 45 || true
+
+                  # A previous step may have been killed in the middle of a
+                  # git operation. Clear any leftover state before retrying.
+                  git rebase --abort 2>/dev/null || true
+                  git merge --abort 2>/dev/null || true
+                  rm -f .git/index.lock
+
+                  echo "Performing final save..."
+
+                  git add -A
+
+                  if ! git diff --cached --quiet; then
+                      git commit -m "Final Minecraft server backup"
+                  else
+                      echo "No new changes."
+                  fi
+
+                  pushed=0
+                  for _ in 1 2 3 4 5; do
+                      if ! git fetch origin "$GITHUB_REF_NAME"; then
+                          sleep 5
+                          continue
+                      fi
+[0m
+[0m← [0mWrite .agent-work/tests/test_server_control.sh
+Wrote file successfully.
+[0m
+[0m$ [0mbash -n .agent-work/tests/test_server_control.sh && shellcheck .agent-work/tests/test_server_control.sh && set -o pipefail; bash .agent-work/tests/test_server_control.sh > /tmp/opencode/sct4.out 2>&1; ec=$?; echo "exit=$ec"; grep -aE 'Server listening|passed|failed|persist|still running|did not' /tmp/opencode/sct4.out | tail -20; echo ---; tail -5 /tmp/opencode/sct4.out
+exit=1
+Server listening after 12s
+Server listening after 12s
+World change did not persist across a restart.
+[32m[16:37:10] [Server thread/INFO]: Loading 0 persistent chunks...[m
+---
+[32m[16:37:10] [Server thread/INFO]: Loaded 133 auction lot(s) (133 managed by the engine).[m
+[32m[16:37:10] [Server thread/INFO]: Auction Management Engine initialized: 0 lot(s) managed in 1 ms.[m
+[32m[16:37:11] [Server thread/INFO]: System chat: There are 0 of a max of 5 players online: [m
+[32m[16:37:13] [Server thread/INFO]: System chat: Incorrect argument for command[m
+[32m[16:37:13] [Server thread/INFO]: System chat: gamerule doDaylightCycle<--[HERE][m
+[0m
+[0m$ [0mpython3 - <<'PY'
+from pathlib import Path
+p=Path('.agent-work/tests/test_server_control.sh')
+s=p.read_text()
+s=s.replace('''# First run: change a persisted gamerule and flush it to disk.
+bash "$CONTROL" start
+wait_for_console
+
+bash "$CONTROL" command "gamerule doDaylightCycle false"
+bash "$CONTROL" command "say server-control online"
+''','''# First run: store a unique scoreboard value and flush it to disk.
+bash "$CONTROL" start
+wait_for_console
+
+bash "$CONTROL" command "scoreboard objectives add ultrontest dummy"
+bash "$CONTROL" command "scoreboard players set ultrontest_marker ultrontest 12345"
+bash "$CONTROL" command "say server-control online"
+''')
+s=s.replace('''# Second run: the gamerule must still be false if the flush really persisted.
+mv "$LOG_FILE" "$STATE_DIR/first-run.log"
+bash "$CONTROL" start
+wait_for_console
+
+bash "$CONTROL" command "gamerule doDaylightCycle"
+sleep 3
+strip_ansi <"$LOG_FILE" >"$STATE_DIR/console.log"
+
+grep -q "doDaylightCycle is currently set to: false" "$STATE_DIR/console.log" \\
+    || fail "World change did not persist across a restart."
+''','''# Second run: the scoreboard value must survive if the flush really persisted.
+mv "$LOG_FILE" "$STATE_DIR/first-run.log"
+bash "$CONTROL" start
+wait_for_console
+
+bash "$CONTROL" command "scoreboard players get ultrontest_marker ultrontest"
+sleep 3
+strip_ansi <"$LOG_FILE" >"$STATE_DIR/console.log"
+
+grep -q "12345" "$STATE_DIR/console.log" \\
+    || fail "World change did not persist across a restart."
+''')
+p.write_text(s)
+PY
+bash -n .agent-work/tests/test_server_control.sh && shellcheck .agent-work/tests/test_server_control.sh && echo ok
+set -o pipefail; bash .agent-work/tests/test_server_control.sh > /tmp/opencode/sct5.out 2>&1; ec=$?; echo "exit=$ec"; grep -aE 'Server listening|passed|failed|persist|still running|did not' /tmp/opencode/sct5.out | tail -20; tail -3 /tmp/opencode/sct5.out
+ok
+exit=0
+Server listening after 11s
+Server listening after 12s
+server-control test passed: console commands, save flush and graceful stop work.
+Server listening after 12s
+Minecraft server stopped.
+server-control test passed: console commands, save flush and graceful stop work.
+[0m
