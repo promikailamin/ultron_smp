@@ -6754,3 +6754,278 @@ $
                           --repo "${{ github.repository }}" \$
                           --body "$body" \$
 [0m
+[0m$ [0mgit add -A && git status --short | head -40 && git commit -m "chore: record latency and tunnel validation logs" && git log --oneline -3 && git push origin HEAD:main
+A  .agent-work/logs/low-latency-tunnel-test-ap.log
+A  .agent-work/logs/low-latency-tunnel-test-run.log
+A  .agent-work/logs/low-latency-tunnel-test.log
+A  .agent-work/logs/network-tune-test.log
+M  .agent-work/logs/opencode-output.log
+A  .agent-work/logs/run-test-run2.log
+M  .agent-work/logs/run-test.log
+A  .agent-work/logs/tunnel-test-run2.log
+A  .agent-work/logs/tunnel-test-run3.log
+M  .agent-work/logs/tunnel-test.log
+[main f6ae061] chore: record latency and tunnel validation logs
+ 10 files changed, 6283 insertions(+), 2480 deletions(-)
+ create mode 100644 .agent-work/logs/low-latency-tunnel-test-ap.log
+ create mode 100644 .agent-work/logs/low-latency-tunnel-test-run.log
+ create mode 100644 .agent-work/logs/low-latency-tunnel-test.log
+ create mode 100644 .agent-work/logs/network-tune-test.log
+ create mode 100644 .agent-work/logs/run-test-run2.log
+ create mode 100644 .agent-work/logs/tunnel-test-run2.log
+ create mode 100644 .agent-work/logs/tunnel-test-run3.log
+f6ae061 chore: record latency and tunnel validation logs
+ca26579 fix: add low-latency tunnel and TCP tuning for high-ping players
+e5631a3 Final Minecraft server backup
+To https://github.com/promikailamin/ultron_smp
+   ca26579..f6ae061  HEAD -> main
+[0m
+[0m$ [0mgh workflow run run.yml --repo promikailamin/ultron_smp --ref main && sleep 5 && gh run list --repo promikailamin/ultron_smp --workflow run.yml --limit 3 --json databaseId,status,conclusion,createdAt,headSha,url --jq '.[] | [.databaseId,.status,.conclusion,.createdAt,.headSha,.url] | @tsv'
+https://github.com/promikailamin/ultron_smp/actions/runs/43903449587
+43903449587	in_progress		2026-11-16T16:04:41Z	f6ae0614c94e1e2ae3b03530b675747bdd771e02	https://github.com/promikailamin/ultron_smp/actions/runs/43903449587
+43897351249	completed	cancelled	2026-11-16T15:32:03Z	c9cff1485f650edde602052b893918779bdbfa7d	https://github.com/promikailamin/ultron_smp/actions/runs/43897351249
+43894759017	completed	cancelled	2026-11-16T15:17:35Z	5c2bfd86c8f1e3a3f16cd0e3ea65efa3574819cb	https://github.com/promikailamin/ultron_smp/actions/runs/43894759017
+[0m
+[0m$ [0mRUN=43903449587
+for i in $(seq 1 24); do
+  sleep 15
+  info=$(gh run view "$RUN" --repo promikailamin/ultron_smp --json status,conclusion,jobs --jq '.status + "\t" + (.conclusion//"") + "\t" + ([.jobs[].steps[]? | .name + ":" + .status + ":" + (.conclusion//"")] | join(", "))')
+  echo "[$i] $info" | cut -c1-400
+  case "$info" in
+    *"expose_low_latency_server:completed:success"*)
+      if echo "$info" | grep -q "publish_server_address:completed:success"; then echo "READY"; break; fi
+      ;;
+  esac
+  case "$info" in
+    completed*) break;;
+  esac
+done
+[1] in_progress		Set up job:completed:success, checkout_repo:completed:success, setup_java_25:completed:success, configure_git:in_progress:, tune_network:pending:, run_server:pending:, verify_minecraft_port:pending:, expose_server:pending:, expose_low_latency_server:pending:, verify_low_latency_tunnel:pending:, verify_public_tunnel:pending:, publish_server_address:pending:, keep_server_alive:pendi
+[2] in_progress		Set up job:completed:success, checkout_repo:completed:success, setup_java_25:completed:success, configure_git:completed:success, tune_network:completed:success, run_server:in_progress:, verify_minecraft_port:pending:, expose_server:pending:, expose_low_latency_server:pending:, verify_low_latency_tunnel:pending:, verify_public_tunnel:pending:, publish_server_address:pending:, keep_
+[3] in_progress		Set up job:completed:success, checkout_repo:completed:success, setup_java_25:completed:success, configure_git:completed:success, tune_network:completed:success, run_server:completed:success, verify_minecraft_port:completed:success, expose_server:completed:success, expose_low_latency_server:completed:success, verify_low_latency_tunnel:completed:success, verify_public_tunnel:complet
+READY
+[0m
+[0m$ [0mgh run view 43903449587 --repo promikailamin/ultron_smp --json status,conclusion,jobs --jq '.status, .jobs[0].steps[] | [.number,.name,.status,.conclusion] | @tsv' | head -30; echo ===; git fetch origin main && git show origin/main:SERVER_ADDRESS.txt | tail -5; echo ---; git show origin/main:SERVER_ADDRESS_LOW_LATENCY.txt | tail -8; echo ===; git log --oneline origin/main -5
+expected an object but got: string ("in_progress")
+===
+From https://github.com/promikailamin/ultron_smp
+ * branch            main       -> FETCH_HEAD
+   f6ae061..5427d50  main       -> origin/main
+# Add this server in Minecraft (host and port):
+bore.pub:25565
+#
+# Host: bore.pub
+# Port: 25565
+---
+# Ultron SMP low-latency public server address
+# Updated: 2026-11-16 16:05:28 UTC
+# Relay: Pinggy us.free.pinggy.io (free relay, reconnects about once an hour)
+# Stable fallback: see SERVER_ADDRESS.txt
+# Add this server in Minecraft (host and port):
+pxsui-3-42-157-16.run.pinggy-free.link:42469
+===
+5427d50 Update public server address: bore.pub:25565
+f6ae061 chore: record latency and tunnel validation logs
+ca26579 fix: add low-latency tunnel and TCP tuning for high-ping players
+e5631a3 Final Minecraft server backup
+3630d17 Auto-save Minecraft server data
+[0m
+[0m$ [0mgh run view 43903449587 --repo promikailamin/ultron_smp --json status,conclusion,jobs --jq '.status, (.jobs[] | .name), (.jobs[] | .steps[] | [.number,.name,.status,(.conclusion // "")] | @tsv)' | sed -n '1,30p'; echo ===; python3 - <<'PY'
+import socket, time
+host='pxsui-3-42-157-16.run.pinggy-free.link'; port=42469
+start=time.perf_counter()
+with socket.create_connection((host,port),timeout=15):
+    pass
+print(f"low-latency endpoint reachable, connect={ (time.perf_counter()-start)*1000:.0f} ms")
+PY
+in_progress
+server
+1	Set up job	completed	success
+2	checkout_repo	completed	success
+3	setup_java_25	completed	success
+4	configure_git	completed	success
+5	tune_network	completed	success
+6	run_server	completed	success
+7	verify_minecraft_port	completed	success
+8	expose_server	completed	success
+9	expose_low_latency_server	completed	success
+10	verify_low_latency_tunnel	completed	success
+11	verify_public_tunnel	completed	success
+12	publish_server_address	completed	success
+13	keep_server_alive	in_progress	
+14	restore_final_server	pending	
+27	Post setup_java_25	pending	
+28	Post checkout_repo	pending	
+===
+low-latency endpoint reachable, connect=133 ms
+[0m
+[0m$ [0mgetent ahostsv4 pxsui-3-42-157-16.run.pinggy-free.link | head -3; curl -s https://ipinfo.io/$(getent ahostsv4 pxsui-3-42-157-16.run.pinggy-free.link | awk 'NR==1{print $1}')/json | grep -E '"city"|"country"|"org"'
+172.235.48.89   STREAM lin.us.13.a.pinggy.click
+172.235.48.89   DGRAM  
+172.235.48.89   RAW    
+  "city": "Los Angeles",
+  "country": "US",
+  "org": "AS63949 Akamai Connected Cloud",
+[0m
+[0m$ [0mpython3 - <<'PY'
+import socket, time
+host='pxsui-3-42-157-16.run.pinggy-free.link'; port=42469
+for i in range(5):
+    start=time.perf_counter()
+    with socket.create_connection((host,port),timeout=15):
+        pass
+    print(f"connect={ (time.perf_counter()-start)*1000:.1f} ms")
+PY
+connect=14.1 ms
+connect=9.3 ms
+connect=10.5 ms
+connect=11.2 ms
+connect=8.7 ms
+[0m
+[0m$ [0mcat > .agent-work/tests/mc_status.py <<'PY'
+#!/usr/bin/env python3
+"""Query a Minecraft Java server's status through host:port."""
+import json
+import socket
+import struct
+import sys
+import time
+
+
+def write_varint(value):
+    out = b""
+    value &= 0xFFFFFFFF
+    while True:
+        byte = value & 0x7F
+        value >>= 7
+        if value:
+            out += bytes([byte | 0x80])
+        else:
+            out += bytes([byte])
+            return out
+
+
+def read_varint(sock):
+    value = 0
+    for shift in range(0, 35, 7):
+        data = sock.recv(1)
+        if not data:
+            raise EOFError("socket closed while reading varint")
+        byte = data[0]
+        value |= (byte & 0x7F) << shift
+        if not byte & 0x80:
+            return value
+    raise ValueError("varint too long")
+
+
+def read_packet(sock):
+    length = read_varint(sock)
+    data = b""
+    while len(data) < length:
+        chunk = sock.recv(length - len(data))
+        if not chunk:
+            raise EOFError("socket closed while reading packet")
+        data += chunk
+    return data
+
+
+def main():
+    host, port = sys.argv[1], int(sys.argv[2])
+    started = time.perf_counter()
+    with socket.create_connection((host, port), timeout=15) as sock:
+        connect_ms = (time.perf_counter() - started) * 1000
+        host_bytes = host.encode()
+        handshake = (
+            write_varint(0)
+            + write_varint(769)
+            + write_varint(len(host_bytes))
+            + host_bytes
+            + struct.pack(">H", port)
+            + write_varint(1)
+        )
+        sock.sendall(write_varint(len(handshake)) + handshake)
+        sock.sendall(write_varint(1) + write_varint(0))
+        packet = read_packet(sock)
+        packet_id = read_varint_bytes = packet[0]
+        if packet_id != 0:
+            raise SystemExit(f"unexpected packet id {packet_id}")
+        data = packet[1:]
+        length = 0
+        shift = 0
+        index = 0
+        while True:
+            byte = data[index]
+            index += 1
+            length |= (byte & 0x7F) << shift
+            shift += 7
+            if not byte & 0x80:
+                break
+        status = json.loads(data[index:index + length].decode())
+    print(f"connect={connect_ms:.0f}ms version={status['version']['name']} motd={status['description']} players={status['players']['online']}/{status['players']['max']}")
+
+
+if __name__ == "__main__":
+    main()
+PY
+python3 .agent-work/tests/mc_status.py bore.pub 25565 | tee .agent-work/logs/status-stable.log
+python3 .agent-work/tests/mc_status.py pxsui-3-42-157-16.run.pinggy-free.link 42469 | tee .agent-work/logs/status-low-latency.log
+connect=140ms version=26.3 motd=MIKAILAMIN players=0/5
+connect=84ms version=26.3 motd=MIKAILAMIN players=0/5
+[0m
+[0m$ [0mpython3 - <<'PYEDIT'
+from pathlib import Path
+p=Path('.agent-work/tests/mc_status.py')
+s=p.read_text().replace('packet_id = read_varint_bytes = packet[0]','packet_id = packet[0]')
+p.write_text(s)
+PYEDIT
+chmod +x .agent-work/tests/mc_status.py
+shellcheck .agent-work/tests/mc_status.py 2>/dev/null || true
+python3 .agent-work/tests/mc_status.py pxsui-3-42-157-16.run.pinggy-free.link 42469
+git status --short | head -30
+In .agent-work/tests/mc_status.py line 1:
+#!/usr/bin/env python3
+^-- SC1071 (error): ShellCheck only supports sh/bash/dash/ksh/'busybox sh' scripts. Sorry!
+
+For more information:
+  https://www.shellcheck.net/wiki/SC1071 -- ShellCheck only supports sh/bash/...
+connect=12ms version=26.3 motd=MIKAILAMIN players=0/5
+ M .agent-work/logs/opencode-output.log
+?? .agent-work/logs/status-low-latency.log
+?? .agent-work/logs/status-stable.log
+?? .agent-work/tests/mc_status.py
+[0m
+[0m$ [0mset -euo pipefail
+git add .agent-work/tests/mc_status.py .agent-work/logs/status-stable.log .agent-work/logs/status-low-latency.log
+git commit -m "test: add Minecraft status check and live latency results"
+for attempt in 1 2 3; do
+  if ! git fetch origin main; then sleep 3; continue; fi
+  if git rebase origin/main; then
+    if git push origin HEAD:main; then echo "pushed on attempt $attempt"; exit 0; fi
+  else
+    git rebase --abort || true
+  fi
+  sleep 3
+done
+echo "push failed"; exit 1
+[main 403ee7e] test: add Minecraft status check and live latency results
+ 3 files changed, 85 insertions(+)
+ create mode 100644 .agent-work/logs/status-low-latency.log
+ create mode 100644 .agent-work/logs/status-stable.log
+ create mode 100755 .agent-work/tests/mc_status.py
+From https://github.com/promikailamin/ultron_smp
+ * branch            main       -> FETCH_HEAD
+error: cannot rebase: You have unstaged changes.
+error: Please commit or stash them.
+fatal: no rebase in progress
+From https://github.com/promikailamin/ultron_smp
+ * branch            main       -> FETCH_HEAD
+error: cannot rebase: You have unstaged changes.
+error: Please commit or stash them.
+fatal: no rebase in progress
+From https://github.com/promikailamin/ultron_smp
+ * branch            main       -> FETCH_HEAD
+error: cannot rebase: You have unstaged changes.
+error: Please commit or stash them.
+fatal: no rebase in progress
+push failed
+[0m
