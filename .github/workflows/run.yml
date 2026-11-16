@@ -55,18 +55,24 @@ jobs:
                   # run checks out the repository. Re-sync a few times so the
                   # server never starts from a stale world and later overwrites
                   # the previous run's saved changes.
-                  for attempt in $(seq 1 15); do
+                  stable=0
+                  for _ in $(seq 1 15); do
                       git fetch origin "$GITHUB_REF_NAME"
                       git reset --hard "origin/$GITHUB_REF_NAME"
                       before="$(git rev-parse HEAD)"
-                      sleep 2
+                      sleep 3
                       git fetch origin "$GITHUB_REF_NAME"
                       after="$(git rev-parse "origin/$GITHUB_REF_NAME")"
                       if [ "$before" = "$after" ]; then
-                          echo "World is up to date at ${after}."
-                          break
+                          stable=$((stable + 1))
+                          if [ "$stable" -ge 2 ]; then
+                              echo "World is up to date at ${after}."
+                              break
+                          fi
+                      else
+                          stable=0
+                          echo "Previous run pushed newer data; syncing again..."
                       fi
-                      echo "Previous run pushed newer data; syncing again..."
                   done
 
             - name: run_server
@@ -330,6 +336,7 @@ jobs:
                   }
 
                   stopping=0
+                  # shellcheck disable=SC2329
                   shutdown_handler() {
                       if [ "$stopping" -eq 1 ]; then
                           exit 0
@@ -430,7 +437,7 @@ jobs:
                   set -euo pipefail
                   echo "Stopping the server and flushing the world before the final backup..."
                   bash scripts/server-control.sh save >/dev/null 2>&1 || true
-                  bash scripts/server-control.sh stop 120 || true
+                  bash scripts/server-control.sh stop 45 || true
 
                   echo "Performing final save..."
 

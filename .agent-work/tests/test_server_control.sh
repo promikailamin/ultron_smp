@@ -58,11 +58,31 @@ if [ "$ready" -ne 1 ]; then
     exit 1
 fi
 
+strip_ansi() { sed -E $'s/\x1B\\[[0-9;]*[mK]//g'; }
+
+# The TCP port opens slightly before the console command dispatcher is ready,
+# so retry a harmless command until the server actually answers it.
+console_ready=0
+for _ in $(seq 1 30); do
+    bash "$CONTROL" command "list" || true
+    sleep 2
+    strip_ansi <"$LOG_FILE" >"$STATE_DIR/console.log"
+    if grep -q "players online" "$STATE_DIR/console.log"; then
+        console_ready=1
+        break
+    fi
+done
+
+if [ "$console_ready" -ne 1 ]; then
+    echo "Console command was not received by the server."
+    tail -n 80 "$LOG_FILE" || true
+    exit 1
+fi
+
 bash "$CONTROL" command "say server-control online"
 bash "$CONTROL" save
 sleep 3
 
-strip_ansi() { sed -E $'s/\x1B\\[[0-9;]*[mK]//g'; }
 strip_ansi <"$LOG_FILE" >"$STATE_DIR/console.log"
 
 grep -q "server-control online" "$STATE_DIR/console.log" || {
