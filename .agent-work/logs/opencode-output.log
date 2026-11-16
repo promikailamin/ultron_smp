@@ -4688,3 +4688,95 @@ actionlint-ok
 73:                          stable=0
 440:                  bash scripts/server-control.sh stop 45 || true
 [0m
+[0m$ [0mgit add -A && git status --short && git commit -m "test: wait for console readiness; harden world re-sync" && git push origin HEAD:main
+M  .agent-work/logs/opencode-output.log
+M  .agent-work/logs/server-control-test.log
+M  .agent-work/tests/test_server_control.sh
+M  .github/workflows/run.yml
+[main 2312f94] test: wait for console readiness; harden world re-sync
+ 4 files changed, 514 insertions(+), 72 deletions(-)
+To https://github.com/promikailamin/ultron_smp
+   4aa3b6a..2312f94  HEAD -> main
+[0m
+[0m◈ [0mExa Web Search "GitHub Actions cancelled workflow does if always() step run cancellation cleanup"
+[0m
+[0m$ [0mpython3 - <<'PY'
+from pathlib import Path
+p=Path('scripts/server-control.sh')
+s=p.read_text().replace('timeout 10 bash -c','timeout 5 bash -c')
+p.write_text(s)
+
+p=Path('.github/workflows/run.yml')
+s=p.read_text()
+old='''                      stopping=1
+                      trap - TERM INT
+                      echo "Cancellation/termination requested; backing up the world before exit..."
+
+                      # Save and push first: the runner may be destroyed soon,
+                      # but GitHub keeps the pushed commit.
+                      bash "$CONTROL" save >/dev/null 2>&1 || true
+                      save_and_push "Auto-save Minecraft server data (run stopping)" || true
+                      bash "$CONTROL" stop 90 || true
+                      exit 0
+'''
+new='''                      stopping=1
+                      trap - TERM INT
+                      echo "Cancellation/termination requested; flushing the world before exit..."
+
+                      # The runner only gives a cancelled step about ten
+                      # seconds before killing it, so keep this fast: flush,
+                      # make a local commit, and ask the server to stop. The
+                      # always() final backup step pushes the commit.
+                      bash "$CONTROL" save >/dev/null 2>&1 || true
+                      sleep 1
+                      git add -A || true
+                      if ! git diff --cached --quiet; then
+                          git commit -m "Auto-save Minecraft server data (run stopping)" || true
+                      fi
+                      bash "$CONTROL" stop 20 || true
+                      exit 0
+'''
+assert old in s
+s=s.replace(old,new)
+p.write_text(s)
+PY
+shellcheck scripts/server-control.sh && /tmp/opencode/bin/actionlint .github/workflows/run.yml && echo ok
+grep -n 'timeout 5 bash -c' scripts/server-control.sh
+ok
+51:    timeout 5 bash -c 'printf "%s\n" "$1" > "$2"' _ "$line" "$CONSOLE_FIFO"
+[0m
+[0m$ [0mpython3 - <<'PY'
+from pathlib import Path
+p=Path('.github/workflows/run.yml')
+s=p.read_text()
+old='''                  echo "Performing final save..."
+
+                  git add -A
+'''
+new='''                  # A previous step may have been killed in the middle of a
+                  # git operation. Clear any leftover state before retrying.
+                  git rebase --abort 2>/dev/null || true
+                  git merge --abort 2>/dev/null || true
+                  rm -f .git/index.lock
+
+                  echo "Performing final save..."
+
+                  git add -A
+'''
+assert old in s
+s=s.replace(old,new)
+p.write_text(s)
+PY
+/tmp/opencode/bin/actionlint .github/workflows/run.yml && echo ok
+ok
+[0m
+[0m$ [0mset -o pipefail; bash .agent-work/tests/test_server_control.sh > /tmp/opencode/sct3.out 2>&1; ec=$?; echo "exit=$ec"; head -5 /tmp/opencode/sct3.out; tail -3 /tmp/opencode/sct3.out
+exit=0
+Started Minecraft server (pid 6050); console pipe /home/runner/work/ultron_smp/ultron_smp/.agent-work/tmp/server-control-state/ultron-console.fifo.
+Server listening after 12s
+Minecraft server stopped.
+server-control test passed: console commands and graceful stop work.
+Server listening after 12s
+Minecraft server stopped.
+server-control test passed: console commands and graceful stop work.
+[0m

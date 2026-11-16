@@ -48,7 +48,7 @@ write_console() {
     # A FIFO opened for writing blocks when nobody is reading. The timeout
     # keeps a dead server from hanging the workflow backup step forever.
     # shellcheck disable=SC2016
-    timeout 10 bash -c 'printf "%s\n" "$1" > "$2"' _ "$line" "$CONSOLE_FIFO"
+    timeout 5 bash -c 'printf "%s\n" "$1" > "$2"' _ "$line" "$CONSOLE_FIFO"
 }
 
 start_server() {

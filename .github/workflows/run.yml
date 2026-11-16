@@ -343,13 +343,19 @@ jobs:
                       fi
                       stopping=1
                       trap - TERM INT
-                      echo "Cancellation/termination requested; backing up the world before exit..."
+                      echo "Cancellation/termination requested; flushing the world before exit..."
 
-                      # Save and push first: the runner may be destroyed soon,
-                      # but GitHub keeps the pushed commit.
+                      # The runner only gives a cancelled step about ten
+                      # seconds before killing it, so keep this fast: flush,
+                      # make a local commit, and ask the server to stop. The
+                      # always() final backup step pushes the commit.
                       bash "$CONTROL" save >/dev/null 2>&1 || true
-                      save_and_push "Auto-save Minecraft server data (run stopping)" || true
-                      bash "$CONTROL" stop 90 || true
+                      sleep 1
+                      git add -A || true
+                      if ! git diff --cached --quiet; then
+                          git commit -m "Auto-save Minecraft server data (run stopping)" || true
+                      fi
+                      bash "$CONTROL" stop 20 || true
                       exit 0
                   }
                   trap shutdown_handler TERM INT
@@ -438,6 +444,12 @@ jobs:
                   echo "Stopping the server and flushing the world before the final backup..."
                   bash scripts/server-control.sh save >/dev/null 2>&1 || true
                   bash scripts/server-control.sh stop 45 || true
+
+                  # A previous step may have been killed in the middle of a
+                  # git operation. Clear any leftover state before retrying.
+                  git rebase --abort 2>/dev/null || true
+                  git merge --abort 2>/dev/null || true
+                  rm -f .git/index.lock
 
                   echo "Performing final save..."
 
