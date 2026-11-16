@@ -1,0 +1,6 @@
+# Ultron SMP public server address
+# Updated automatically when the "Run UltronSMP" workflow starts.
+# The server is offline while that workflow is not running.
+#
+# Start it from:
+#   https://github.com/promikailamin/ultron_smp/actions/workflows/run.yml

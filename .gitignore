@@ -1,0 +1,7 @@
+.agent-work/tools/bore-*
+.agent-work/tmp/*
+!.agent-work/tmp/.gitkeep
+.agent-work/logs/tunnel.log
+.agent-work/logs/tunnel-start.log
+.agent-work/logs/tunnel-restarts.log
+.agent-work/logs/test-http.log
