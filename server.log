@@ -152,3 +152,42 @@ WARNING: Creating MineSkinClient without API key - Please get an API key from ht
 [32m[17:02:51] [Server thread/INFO]: System chat: Saved the game[m
 [32m[17:04:23] [Server thread/INFO]: System chat: Saving the game (this may take a moment!)[m
 [32m[17:04:23] [Server thread/INFO]: System chat: Saved the game[m
+[32m[17:05:30] [Server thread/INFO]: MIKAILAMIN[/[0:0:0:0:0:0:0:1]:57424] logged in with entity id 880 at (-26.045662381988713, 70.0, 249.18335362646127)[m
+[32m[17:05:30] [Server thread/INFO]: System chat: MIKAILAMIN joined the game[m
+[32m[17:05:44] [Server thread/INFO]: Player MIKAILAMIN standing on air - force-sending blocks below[m
+[32m[17:05:56] [Server thread/INFO]: System chat: Saving the game (this may take a moment!)[m
+[32m[17:05:57] [Server thread/INFO]: System chat: Saved the game[m
+[32m[17:06:02] [Server thread/INFO]: Player MIKAILAMIN standing on air - force-sending blocks below[m
+[32m[17:06:04] [Server thread/INFO]: MIKAILAMIN lost connection: Disconnected[m
+[32m[17:06:04] [Server thread/INFO]: System chat: MIKAILAMIN left the game[m
+[33m[17:06:31] [SkinRestorer-Fetch-5/WARN]: Failed to fetch skin 'mojang:MIKAILAMIN'[m
+java.lang.IllegalStateException: too many requests
+	at knot//net.lionarius.skinrestorer.util.WebUtils.throwOnClientErrors(WebUtils.java:141)
+	at knot//net.lionarius.skinrestorer.skin.provider.base.YggdrasilSkinProvider.fetchProfileWithProperties(YggdrasilSkinProvider.java:32)
+	at knot//net.lionarius.skinrestorer.skin.provider.base.ProfileSkinProvider.loadSkin(ProfileSkinProvider.java:49)
+	at knot//net.lionarius.skinrestorer.skin.provider.base.ProfileSkinProvider.loadSkin(ProfileSkinProvider.java:17)
+	at knot//net.lionarius.skinrestorer.skin.provider.base.AbstractSkinProvider$1.load(AbstractSkinProvider.java:43)
+	at knot//net.lionarius.skinrestorer.skin.provider.base.AbstractSkinProvider$1.load(AbstractSkinProvider.java:40)
+	at knot//com.google.common.cache.LocalCache$LoadingValueReference.loadFuture(LocalCache.java:3556)
+	at knot//com.google.common.cache.LocalCache$Segment.loadSync(LocalCache.java:2307)
+	at knot//com.google.common.cache.LocalCache$Segment.lockedGetOrLoad(LocalCache.java:2180)
+	at knot//com.google.common.cache.LocalCache$Segment.get(LocalCache.java:2071)
+	at knot//com.google.common.cache.LocalCache.get(LocalCache.java:3985)
+	at knot//com.google.common.cache.LocalCache.getOrLoad(LocalCache.java:4006)
+	at knot//com.google.common.cache.LocalCache$LocalLoadingCache.get(LocalCache.java:4946)
+	at knot//net.lionarius.skinrestorer.skin.provider.base.AbstractSkinProvider.fetchSkin(AbstractSkinProvider.java:53)
+	at knot//net.minecraft.server.network.ServerLoginPacketListenerImpl.md5cc829$skinrestorer$lambda$skinrestorer$fetchSkin$0$1(ServerLoginPacketListenerImpl.java:2148)
+	at java.base/java.util.Optional.map(Optional.java:260)
+	at knot//net.minecraft.server.network.ServerLoginPacketListenerImpl.skinrestorer$fetchSkin(ServerLoginPacketListenerImpl.java:2148)
+	at knot//net.minecraft.server.network.ServerLoginPacketListenerImpl.md5cc829$skinrestorer$lambda$waitForSkin$0$4(ServerLoginPacketListenerImpl.java:2064)
+	at java.base/java.util.concurrent.CompletableFuture$AsyncSupply.run(CompletableFuture.java:1789)
+	at java.base/java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1090)
+	at java.base/java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:614)
+	at java.base/java.lang.Thread.run(Thread.java:1474)
+[32m[17:06:34] [Server thread/INFO]: MIKAILAMIN[/[0:0:0:0:0:0:0:1]:51666] logged in with entity id 1118 at (4.907441833824524, 67.9375, 225.27141310423167)[m
+[32m[17:06:34] [Server thread/INFO]: System chat: MIKAILAMIN joined the game[m
+[32m[17:06:51] [Server thread/INFO]: Villager Villager['Farmer'/1051, l='ServerLevel[world]', x=-18.23, y=69.00, z=222.81] died, message: 'Farmer was slain by MIKAILAMIN using [Undead Bane (Smite Sword)]'[m
+[32m[17:06:51] [Server thread/INFO]: Player MIKAILAMIN standing on air - force-sending blocks below[m
+[32m[17:07:21] [Server thread/INFO]: Player MIKAILAMIN standing on air - force-sending blocks below[m
+[32m[17:07:28] [Server thread/INFO]: System chat: Saving the game (this may take a moment!)[m
+[32m[17:07:29] [Server thread/INFO]: System chat: Saved the game[m
