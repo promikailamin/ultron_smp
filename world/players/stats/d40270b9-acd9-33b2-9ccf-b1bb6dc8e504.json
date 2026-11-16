@@ -1,0 +1,69 @@
+{
+  "stats": {
+    "minecraft:mined": {
+      "minecraft:short_grass": 7,
+      "minecraft:oak_log": 59
+    },
+    "minecraft:used": {
+      "minecraft:stone_axe": 9,
+      "minecraft:netherite_helmet": 1,
+      "minecraft:wooden_axe": 50,
+      "minecraft:crafting_table": 2,
+      "minecraft:netherite_boots": 1,
+      "minecraft:netherite_leggings": 1,
+      "minecraft:netherite_chestplate": 1,
+      "minecraft:netherite_sword": 9,
+      "minecraft:oak_planks": 2,
+      "minecraft:oak_sapling": 1,
+      "minecraft:netherite_axe": 1,
+      "minecraft:bread": 2
+    },
+    "minecraft:dropped": {
+      "minecraft:crafting_table": 1,
+      "minecraft:oak_planks": 4,
+      "minecraft:stone_axe": 2,
+      "minecraft:stick": 4
+    },
+    "minecraft:picked_up": {
+      "minecraft:oak_log": 58,
+      "minecraft:stick": 2,
+      "minecraft:stone_axe": 2,
+      "minecraft:powered_rail": 2,
+      "minecraft:oak_planks": 2,
+      "minecraft:crafting_table": 1,
+      "minecraft:torch": 4,
+      "minecraft:oak_sapling": 1
+    },
+    "minecraft:custom": {
+      "minecraft:interact_with_crafting_table": 8,
+      "minecraft:time_since_rest": 1952,
+      "minecraft:walk_one_cm": 21999,
+      "minecraft:leave_game": 1,
+      "minecraft:walk_under_water_one_cm": 1572,
+      "minecraft:damage_taken": 160,
+      "minecraft:play_time": 34725,
+      "minecraft:damage_dealt": 45,
+      "minecraft:jump": 187,
+      "minecraft:time_since_death": 34725,
+      "minecraft:drop": 7,
+      "minecraft:sprint_one_cm": 55998,
+      "minecraft:open_chest": 5,
+      "minecraft:sleep_in_bed": 3,
+      "minecraft:fall_one_cm": 2844,
+      "minecraft:total_world_time": 34725,
+      "minecraft:swim_one_cm": 9198,
+      "minecraft:fly_one_cm": 19114,
+      "minecraft:walk_on_water_one_cm": 4062,
+      "minecraft:sneak_time": 89
+    },
+    "minecraft:crafted": {
+      "minecraft:stick": 56,
+      "minecraft:wooden_axe": 1,
+      "minecraft:oak_planks": 232,
+      "minecraft:oak_slab": 378,
+      "minecraft:diamond_shovel": 25,
+      "minecraft:crafting_table": 2
+    }
+  },
+  "DataVersion": 5023
+}

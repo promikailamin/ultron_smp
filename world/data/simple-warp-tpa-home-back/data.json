@@ -1,0 +1,11 @@
+{
+  "maxHomes": 5,
+  "maxWarps": 5,
+  "teleportDelay": 0,
+  "teleportEffectsEnabled": false,
+  "backEnabled": false,
+  "homes": {},
+  "warps": {},
+  "tpaModes": {},
+  "tpaWhitelist": []
+}

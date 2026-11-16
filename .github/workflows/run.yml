@@ -1,0 +1,120 @@
+name: Run UltronSMP
+
+on:
+    workflow_dispatch:
+
+permissions:
+    contents: write
+
+concurrency:
+    group: minecraft-server
+    cancel-in-progress: false
+
+jobs:
+    server:
+        runs-on: ubuntu-latest
+        timeout-minutes: 360
+
+        steps:
+            - name: checkout_repo
+              uses: actions/checkout@v4
+              with:
+                  fetch-depth: 0
+                  ref: ${{ github.ref_name }}
+
+            - name: setup_java_25
+              uses: actions/setup-java@v4
+              with:
+                  distribution: temurin
+                  java-version: '25'
+
+            - name: configure_git
+              env:
+                  GH_TOKEN: ${{ secrets.PAT_TOKEN }}
+              run: |
+                  git config user.name "ultron"
+                  git config user.email "ultron@users.noreply.github.com"
+                  gh auth setup-git
+
+            - name: run_server
+              run: |
+                  nohup sh run.sh > server.log 2>&1 &
+                  echo $! > "$RUNNER_TEMP/minecraft-server.pid"
+
+                  echo "Waiting for Minecraft server..."
+
+                  for i in $(seq 1 120); do
+                      if (echo > /dev/tcp/127.0.0.1/25565) 2>/dev/null; then
+                          echo "Minecraft server is ready!"
+                          exit 0
+                      fi
+                      sleep 1
+                  done
+
+                  echo "Server did not start within 120 seconds."
+                  cat server.log
+                  exit 1
+
+            - name: expose_server
+              uses: codetalkio/expose-tunnel@v1.5.0
+              id: expose-tunnel
+              with:
+                  service: bore.pub
+                  port: 25565
+
+            - name: take_the_url
+              run: |
+                  echo "Tunnel has been started at '${{ steps.expose-tunnel.outputs.tunnel-url }}'"
+
+            - name: keep_server_alive
+              timeout-minutes: 350
+              env:
+                  GH_TOKEN: ${{ secrets.PAT_TOKEN }}
+              run: |
+                  server_pid=$(cat "$RUNNER_TEMP/minecraft-server.pid")
+
+                  while kill -0 "$server_pid" 2>/dev/null; do
+                      sleep 300
+
+                      if ! kill -0 "$server_pid" 2>/dev/null; then
+                          break
+                      fi
+
+                      echo "Saving Minecraft server data..."
+
+                      git add -A
+
+                      if ! git diff --cached --quiet; then
+                          git commit -m "Auto-save Minecraft server data"
+                          git fetch origin "$GITHUB_REF_NAME"
+                          git rebase "origin/$GITHUB_REF_NAME"
+                          git push origin "HEAD:$GITHUB_REF_NAME"
+                      else
+                          echo "No changes to save."
+                      fi
+                  done
+
+                  echo "Minecraft server stopped."
+                  exit 1
+
+            - name: restore_final_server
+              if: always()
+              env:
+                  GH_TOKEN: ${{ secrets.PAT_TOKEN }}
+              run: |
+                  echo "Performing final save..."
+
+                  git add -A
+
+                  if ! git diff --cached --quiet; then
+                      git commit -m "Final Minecraft server backup"
+                  else
+                      echo "No new changes."
+                  fi
+
+                  git fetch origin "$GITHUB_REF_NAME"
+                  git rebase "origin/$GITHUB_REF_NAME"
+                  git push origin "HEAD:$GITHUB_REF_NAME"
+
+                  echo "Backup completed."
+                  
