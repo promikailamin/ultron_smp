@@ -1,0 +1,130 @@
+Starting net.fabricmc.loader.impl.game.minecraft.BundlerClassPathCapture
+[32m[16:28:02] [main/INFO]: Loading Minecraft 26.3 with Fabric Loader 0.20.1[m
+[32m[16:28:02] [main/INFO]: Mappings not present![m
+[32m[16:28:02] [main/INFO]: Loading 63 mods:
+	- carryon 2.12.2
+	- cloth-config 26.3.159
+	   \-- cloth-basic-math 0.6.1
+	- collective 8.86
+	- economy 1.0.0
+	- fabric-api 0.166.2+26.3
+	   |-- fabric-advancement-api-v1 1.0.1+38c7a2d55d
+	   |-- fabric-api-base 2.0.6+fcdff87f5d
+	   |-- fabric-api-lookup-api-v1 2.0.24+3434d6d95d
+	   |-- fabric-biome-api-v1 20.2.0+423307765d
+	   |-- fabric-block-api-v1 3.1.0+0ae6f9115d
+	   |-- fabric-block-getter-api-v2 2.0.9+3434d6d95d
+	   |-- fabric-command-api-v2 3.1.2+fcdff87f5d
+	   |-- fabric-content-registries-v0 15.0.7+74ed1ea55d
+	   |-- fabric-convention-tags-v2 4.10.5+187b64905d
+	   |-- fabric-crash-report-info-v1 1.0.7+fcdff87f5d
+	   |-- fabric-creative-tab-api-v1 5.0.22+fcdff87f5d
+	   |-- fabric-data-attachment-api-v1 2.2.35+af2d4d095d
+	   |-- fabric-data-generation-api-v1 27.4.3+187b64905d
+	   |-- fabric-debug-api-v1 1.0.5+5af7744b5d
+	   |-- fabric-dimensions-v1 5.1.20+5af7744b5d
+	   |-- fabric-entity-events-v1 6.0.4+3434d6d95d
+	   |-- fabric-events-interaction-v0 5.3.10+b9b88df45d
+	   |-- fabric-game-rule-api-v1 4.0.10+3434d6d95d
+	   |-- fabric-item-api-v1 14.8.1+8f511c9f5d
+	   |-- fabric-lifecycle-events-v1 4.1.9+ffef5f675d
+	   |-- fabric-loot-api-v3 4.0.9+4068fd645d
+	   |-- fabric-menu-api-v1 2.0.31+ed66f0a35d
+	   |-- fabric-message-api-v1 7.1.0+3e5b46335d
+	   |-- fabric-networking-api-v1 6.4.1+c58129785d
+	   |-- fabric-object-builder-api-v1 24.1.13+e2f63d3e5d
+	   |-- fabric-particles-v1 5.0.28+3434d6d95d
+	   |-- fabric-permission-api-v1 1.0.8+fcdff87f5d
+	   |-- fabric-recipe-api-v1 10.0.12+b9b88df45d
+	   |-- fabric-registry-sync-v0 8.0.5+1ca9f6365d
+	   |-- fabric-rendering-fluids-v1 6.0.6+3434d6d95d
+	   |-- fabric-resource-conditions-api-v1 6.2.1+fd3b1d565d
+	   |-- fabric-resource-loader-v0 3.3.27+4fc5413f5d
+	   |-- fabric-resource-loader-v1 3.1.0+5af7744b5d
+	   |-- fabric-serialization-api-v1 2.0.8+bb0d41e65d
+	   |-- fabric-tag-api-v1 2.1.11+fcdff87f5d
+	   |-- fabric-transfer-api-v1 8.0.27+c8357e785d
+	   \-- fabric-transitive-access-wideners-v1 8.1.17+e2f63d3e5d
+	- fabricloader 0.20.1
+	   \-- mixinextras 0.5.5
+	- ferritecore 9.0.0
+	- java 25
+	- justmobheads 9.7
+	- krypton 0.3.2
+	   \-- com_velocitypowered_velocity-native 3.4.0-SNAPSHOT
+	- lithium 0.26.3+mc26.3
+	- minecraft 26.3
+	- modernfix 5.27.20-build.2
+	- servercore 1.5.20+26.3
+	   |-- org_yaml_snakeyaml 2.7
+	   |-- placeholder-api 3.2.0+26.3
+	   |-- space_arim_dazzleconf_dazzleconf-core 1.3.0-M2
+	   \-- space_arim_dazzleconf_dazzleconf-ext-snakeyaml 1.3.0-M2
+	- simple-warp-tpa-home-back 26.2.3-1.4
+	- skinrestorer 2.11.1+26.3-fabric
+	   \-- org_mineskin_java-client 3.4.0
+	- trade_cycling 1.0.23+26.3
+	- transcendingtrident 6.0[m
+[32m[16:28:02] [main/INFO]: SpongePowered MIXIN Subsystem Version=0.8.7 Source=file:/home/runner/work/ultron_smp/ultron_smp/.agent-work/tmp/server-control-test/libraries/net/fabricmc/sponge-mixin/0.17.5+mixin.0.8.7/sponge-mixin-0.17.5+mixin.0.8.7.jar Service=Knot/Fabric Env=SERVER[m
+[33m[16:28:02] [main/WARN]: Reference map 'carryon.refmap.json' for carryon.mixins.json could not be read. If this is a development environment you can ignore this message[m
+[32m[16:28:02] [main/INFO]: Loaded configuration file for Lithium: 170 options available, 0 override(s) found.[m
+[32m[16:28:02] [main/INFO]: Loaded configuration file for ModernFix 5.27.20-build.2: 67 options available, 0 override(s) found[m
+[32m[16:28:02] [main/INFO]: Applying Nashorn fix[m
+[33m[16:28:02] [main/WARN]: Reference map 'modernfix.refmap.json' for modernfix-fabric.mixins.json could not be read. If this is a development environment you can ignore this message[m
+[33m[16:28:02] [main/WARN]: Reference map 'modernfix.refmap.json' for modernfix-common.mixins.json could not be read. If this is a development environment you can ignore this message[m
+[33m[16:28:02] [main/WARN]: Reference map 'skinrestorer.refmap.json' for skinrestorer.mixins.json could not be read. If this is a development environment you can ignore this message[m
+[33m[16:28:02] [main/WARN]: Reference map 'skinrestorer.refmap.json' for skinrestorer.fabric.mixins.json could not be read. If this is a development environment you can ignore this message[m
+[32m[16:28:03] [main/INFO]: Initializing MixinExtras via com.llamalad7.mixinextras.service.MixinExtrasServiceImpl(version=0.5.5).[m
+[32m[16:28:04] [main/INFO]: ModernFix reached bootstrap stage (2.990 s after launch)[m
+[33m[16:28:05] [main/WARN]: Method overwrite conflict for getTemperature in modernfix-common.mixins.json:perf.remove_biome_temperature_cache.BiomeMixin from mod modernfix, previously written by net.caffeinemc.mods.lithium.mixin.world.temperature_cache.BiomeMixin. Skipping method.[m
+[32m[16:28:09] [main/INFO]: Vanilla bootstrap took 5229 milliseconds[m
+[32m[16:28:09] [main/INFO]: Loading Collective version 8.86.[m
+[32m[16:28:09] [main/INFO]: Loaded 1657 economy price entries (1545 buyable).[m
+[32m[16:28:09] [main/INFO]: Economy mod ready. Commands: /bal /pay /fine /shop /buy /sell /ah /eco | Seller Axe ready[m
+[32m[16:28:10] [main/INFO]: Compression will use libdeflate (Linux x86_64), encryption will use OpenSSL 3.x.x (Linux x86_64)[m
+[32m[16:28:10] [main/INFO]: [ServerCore] Loaded V1.5.20+26.3![m
+[32m[16:28:10] [main/INFO]: Simple Warp TPA Home Back 已初始化！[m
+Nov 16, 2026 4:28:10 PM org.mineskin.ClientBuilder build
+WARNING: Creating MineSkinClient without API key - Please get an API key from https://account.mineskin.org/keys
+[32m[16:28:10] [main/INFO]: Environment: Environment[discoveryUrl=https://discovery.minecraftservices.com/minecraft/client, name=PROD][m
+[32m[16:28:10] [main/INFO]: Krypton is now accelerating your Minecraft server's networking stack 🚀[m
+[33m[16:28:10] [Collective Update Checker/WARN]: [Update] Collective has an update available: 8.86 -> 8.87[m
+[32m[16:28:10] [main/INFO]: Environment: Environment[discoveryUrl=https://discovery.minecraftservices.com/minecraft/client, name=PROD][m
+[32m[16:28:12] [Worker-Main-1/INFO]: Loaded 1866 advancements[m
+[33m[16:28:12] [main/WARN]: Initial datapack load took 1.879 s[m
+[32m[16:28:12] [main/INFO]: Applied 0 biome modifications to 0 of 67 new biomes in 1.436 ms[m
+[32m[16:28:12] [Server thread/INFO]: Starting minecraft server version 26.3[m
+[32m[16:28:12] [Server thread/INFO]: Loading properties[m
+[32m[16:28:12] [Server thread/INFO]: Default game type: SURVIVAL[m
+[32m[16:28:12] [Server thread/INFO]: Generating keypair[m
+[32m[16:28:12] [Server thread/INFO]: Starting Minecraft server on *:25568[m
+[33m[16:28:12] [Server thread/WARN]: **** SERVER IS RUNNING IN OFFLINE/INSECURE MODE![m
+[33m[16:28:12] [Server thread/WARN]: The server will make no attempt to authenticate usernames. Beware.[m
+[33m[16:28:12] [Server thread/WARN]: While this makes the game possible to play without internet access, it also opens up the ability for hackers to connect with any username they choose.[m
+[33m[16:28:12] [Server thread/WARN]: To change this, set "online-mode" to "true" in the server.properties file.[m
+[32m[16:28:12] [Server thread/INFO]: Preparing level "world"[m
+[32m[16:28:13] [Server thread/INFO]: Loading 0 persistent chunks...[m
+[32m[16:28:13] [Server thread/INFO]: Time elapsed: 10 ms[m
+[32m[16:28:13] [Server thread/INFO]: Done (0.330s)! For help, type "help"[m
+[32m[16:28:13] [Server thread/INFO]: Saving chunks for level 'ServerLevel[world]'/minecraft:overworld[m
+[32m[16:28:13] [Server thread/INFO]: Saving chunks for level 'ServerLevel[world]'/minecraft:the_nether[m
+[32m[16:28:13] [Server thread/INFO]: Saving chunks for level 'ServerLevel[world]'/minecraft:the_end[m
+[33m[16:28:13] [Server thread/WARN]: Dedicated server took 11.877 seconds to load[m
+[32m[16:28:13] [Server thread/INFO]: 存档数据已加载: ./world/data/simple-warp-tpa-home-back/data.json[m
+[32m[16:28:13] [Server thread/INFO]: 存档数据已加载[m
+[32m[16:28:13] [Server thread/INFO]: Economy data bound to ./config/economy (singleplayer=false)[m
+[32m[16:28:13] [Server thread/INFO]: Loaded 133 auction lot(s) (133 managed by the engine).[m
+[32m[16:28:13] [Server thread/INFO]: Auction Management Engine initialized: 0 lot(s) managed in 1 ms.[m
+[32m[16:28:13] [Server thread/INFO]: [Not Secure] [Server] server-control online[m
+[32m[16:28:13] [Server thread/INFO]: System chat: Saving the game (this may take a moment!)[m
+[32m[16:28:13] [Server thread/INFO]: System chat: Saved the game[m
+[32m[16:28:16] [Server thread/INFO]: System chat: Saving the game (this may take a moment!)[m
+[32m[16:28:16] [Server thread/INFO]: System chat: Saved the game[m
+[32m[16:28:18] [Server thread/INFO]: System chat: Stopping the server[m
+[32m[16:28:18] [Server thread/INFO]: 存档数据已保存[m
+[32m[16:28:18] [Server thread/INFO]: Stopping server[m
+[32m[16:28:18] [Server thread/INFO]: Saving players[m
+[32m[16:28:18] [Server thread/INFO]: Saving worlds[m
+[32m[16:28:18] [Server thread/INFO]: Saving chunks for level 'ServerLevel[world]'/minecraft:overworld[m
+[32m[16:28:18] [Server thread/INFO]: Saving chunks for level 'ServerLevel[world]'/minecraft:the_nether[m
+[32m[16:28:18] [Server thread/INFO]: Saving chunks for level 'ServerLevel[world]'/minecraft:the_end[m
