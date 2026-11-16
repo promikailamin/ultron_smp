@@ -1,5 +1,6 @@
 # Ultron SMP low-latency public server address
-# Updated: never
-# Relay: Pinggy (auto-selected; free relay reconnects about once an hour)
+# Updated: 2026-11-16 16:05:28 UTC
+# Relay: Pinggy us.free.pinggy.io (free relay, reconnects about once an hour)
 # Stable fallback: see SERVER_ADDRESS.txt
-# This file is rewritten automatically when the next server run starts.
+# Add this server in Minecraft (host and port):
+pxsui-3-42-157-16.run.pinggy-free.link:42469
