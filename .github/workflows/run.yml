@@ -18,6 +18,8 @@ jobs:
         env:
             MINECRAFT_PORT: '25565'
             SERVER_ISSUE_NUMBER: '1'
+            LOW_LATENCY_TUNNEL: ${{ vars.LOW_LATENCY_TUNNEL || 'true' }}
+            PINGGY_SERVER: ${{ vars.PINGGY_SERVER || 'auto' }}
 
         steps:
             - name: checkout_repo
@@ -39,6 +41,12 @@ jobs:
                   git config user.name "ultron"
                   git config user.email "ultron@users.noreply.github.com"
                   gh auth setup-git
+
+            - name: tune_network
+              continue-on-error: true
+              run: |
+                  set -euo pipefail
+                  sudo bash scripts/network-tune.sh
 
             - name: run_server
               run: |
@@ -113,6 +121,62 @@ jobs:
                       echo "The address is also kept in \`SERVER_ADDRESS.txt\`."
                   } >> "$GITHUB_STEP_SUMMARY"
 
+            - name: expose_low_latency_server
+              if: env.LOW_LATENCY_TUNNEL == 'true'
+              run: |
+                  set -euo pipefail
+                  if bash scripts/low-latency-tunnel.sh | tee .agent-work/logs/low-latency-tunnel-start.log; then
+                      address="$(grep -v '^#' SERVER_ADDRESS_LOW_LATENCY.txt | grep -E ':[0-9]+$' | tail -n 1)"
+                      if [ -n "$address" ]; then
+                          echo "LOW_LATENCY_ADDRESS=${address}" >> "$GITHUB_ENV"
+                          echo "Low-latency tunnel has been started at ${address}"
+                          {
+                              echo ""
+                              echo "**Low-latency relay for South Asia:** \`${address}\`"
+                              echo ""
+                              echo "The relay address changes about once an hour; the stable address remains \`${SERVER_ADDRESS}\`."
+                          } >> "$GITHUB_STEP_SUMMARY"
+                      fi
+                  else
+                      echo "WARNING: could not start the low-latency relay; continuing with the stable bore address."
+                  fi
+
+            - name: verify_low_latency_tunnel
+              if: env.LOW_LATENCY_TUNNEL == 'true'
+              run: |
+                  set -euo pipefail
+                  if [ -z "${LOW_LATENCY_ADDRESS:-}" ]; then
+                      echo "No low-latency address was allocated; skipping verification."
+                      exit 0
+                  fi
+                  address="${LOW_LATENCY_ADDRESS}"
+                  host="${address%:*}"
+                  port="${address##*:}"
+
+                  echo "Checking low-latency endpoint ${host}:${port}..."
+
+                  for attempt in $(seq 1 10); do
+                      if python3 - "$host" "$port" <<'PY'
+                  import socket
+                  import sys
+
+                  host = sys.argv[1]
+                  port = int(sys.argv[2])
+                  with socket.create_connection((host, port), timeout=15):
+                      pass
+                  print(f"{host}:{port} is reachable")
+                  PY
+                      then
+                          echo "Low-latency relay is reachable."
+                          exit 0
+                      fi
+                      echo "Attempt ${attempt}/10 failed; retrying..."
+                      sleep 3
+                  done
+
+                  echo "WARNING: the low-latency relay is not reachable; the stable bore tunnel is still available."
+                  tail -100 .agent-work/logs/pinggy-tunnel.log || true
+
             - name: verify_public_tunnel
               run: |
                   set -euo pipefail
@@ -154,9 +218,17 @@ jobs:
                   host="${address%:*}"
                   port="${address##*:}"
 
+                  low_address="${LOW_LATENCY_ADDRESS:-}"
                   echo "Publishing ${address}..."
+                  if [ -n "$low_address" ]; then
+                      echo "Publishing low-latency relay ${low_address}..."
+                  fi
 
-                  git add SERVER_ADDRESS.txt
+                  address_files=(SERVER_ADDRESS.txt)
+                  if [ -f SERVER_ADDRESS_LOW_LATENCY.txt ]; then
+                      address_files+=(SERVER_ADDRESS_LOW_LATENCY.txt)
+                  fi
+                  git add "${address_files[@]}"
                   if ! git diff --cached --quiet; then
                       git commit -m "Update public server address: ${address}"
                       git fetch origin "$GITHUB_REF_NAME" || true
@@ -166,9 +238,14 @@ jobs:
                   fi
 
                   if [ -n "${SERVER_ISSUE_NUMBER:-}" ] && [ -n "${address}" ]; then
+                      body="Ultron SMP is online. Stable address: \`${address}\` (host \`${host}\`, port \`${port}\`)."
+                      if [ -n "$low_address" ]; then
+                          body="${body} Low-latency relay for South Asia: \`${low_address}\` (changes about once an hour)."
+                      fi
+                      body="${body} The current addresses are kept in \`SERVER_ADDRESS.txt\` and \`SERVER_ADDRESS_LOW_LATENCY.txt\`."
                       gh issue comment "$SERVER_ISSUE_NUMBER" \
                           --repo "${{ github.repository }}" \
-                          --body "Ultron SMP is online. Connect with \`${address}\` (host \`${host}\`, port \`${port}\`). The current address is also kept in \`SERVER_ADDRESS.txt\`." \
+                          --body "$body" \
                           || echo "Could not comment on the issue (continuing)."
                   fi
 
@@ -181,6 +258,13 @@ jobs:
                   server_pid="$(cat "$RUNNER_TEMP/minecraft-server.pid")"
                   tunnel_pid_file="$RUNNER_TEMP/ultron-tunnel.pid"
                   tunnel_pid="$(cat "$tunnel_pid_file" 2>/dev/null || true)"
+                  low_tunnel_pid_file="$RUNNER_TEMP/ultron-low-latency-tunnel.pid"
+                  low_tunnel_pid="$(cat "$low_tunnel_pid_file" 2>/dev/null || true)"
+                  low_address_file="SERVER_ADDRESS_LOW_LATENCY.txt"
+                  low_address=""
+                  if [ -f "$low_address_file" ]; then
+                      low_address="$(grep -v '^#' "$low_address_file" | grep -E ':[0-9]+$' | tail -n 1)"
+                  fi
 
                   while kill -0 "$server_pid" 2>/dev/null; do
                       server_stopped=0
@@ -202,12 +286,39 @@ jobs:
                                   if [ -n "${SERVER_ISSUE_NUMBER:-}" ] && [ -n "${address}" ]; then
                                       gh issue comment "$SERVER_ISSUE_NUMBER" \
                                           --repo "${{ github.repository }}" \
-                                          --body "Ultron SMP is online. Connect with \`${address}\`. The tunnel was restarted and the address in \`SERVER_ADDRESS.txt\` is current." \
+                                          --body "Ultron SMP is online. Stable address: \`${address}\`. The tunnel was restarted and the address in \`SERVER_ADDRESS.txt\` is current." \
                                           || true
                                   fi
                               else
                                   echo "Tunnel restart failed; will retry shortly."
                                   sleep 15
+                              fi
+                          fi
+
+                          if [ "${LOW_LATENCY_TUNNEL:-false}" = "true" ]; then
+                              if [ -z "${low_tunnel_pid:-}" ] || ! kill -0 "$low_tunnel_pid" 2>/dev/null; then
+                                  echo "Low-latency relay stopped; restarting it..."
+                                  if bash scripts/low-latency-tunnel.sh | tee -a .agent-work/logs/low-latency-tunnel-restarts.log; then
+                                      low_tunnel_pid="$(cat "$low_tunnel_pid_file" 2>/dev/null || true)"
+                                      echo "Low-latency relay restarted (pid ${low_tunnel_pid})."
+                                  else
+                                      echo "Low-latency relay restart failed; will retry shortly."
+                                      low_tunnel_pid=""
+                                  fi
+                              fi
+
+                              if [ -f "$low_address_file" ]; then
+                                  current_low_address="$(grep -v '^#' "$low_address_file" | grep -E ':[0-9]+$' | tail -n 1)"
+                                  if [ -n "$current_low_address" ] && [ "$current_low_address" != "$low_address" ]; then
+                                      low_address="$current_low_address"
+                                      echo "Low-latency relay address updated to ${low_address}."
+                                      if [ -n "${SERVER_ISSUE_NUMBER:-}" ]; then
+                                          gh issue comment "$SERVER_ISSUE_NUMBER" \
+                                              --repo "${{ github.repository }}" \
+                                              --body "Low-latency relay updated: \`${low_address}\`. The stable address remains in \`SERVER_ADDRESS.txt\`." \
+                                              || true
+                                      fi
+                                  fi
                               fi
                           fi
                       done

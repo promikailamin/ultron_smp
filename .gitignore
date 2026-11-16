@@ -5,3 +5,9 @@
 .agent-work/logs/tunnel-start.log
 .agent-work/logs/tunnel-restarts.log
 .agent-work/logs/test-http.log
+.agent-work/logs/pinggy-tunnel.log
+.agent-work/logs/pinggy-attempt.log
+.agent-work/logs/low-latency-tunnel-start.log
+.agent-work/logs/low-latency-tunnel-restarts.log
+.agent-work/logs/test-latency-http.log
+.agent-work/tmp/pinggy_known_hosts

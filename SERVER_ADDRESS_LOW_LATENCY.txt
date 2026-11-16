@@ -1,0 +1,5 @@
+# Ultron SMP low-latency public server address
+# Updated: never
+# Relay: Pinggy (auto-selected; free relay reconnects about once an hour)
+# Stable fallback: see SERVER_ADDRESS.txt
+# This file is rewritten automatically when the next server run starts.

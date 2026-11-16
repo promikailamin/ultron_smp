@@ -31,7 +31,10 @@ python3 -m http.server "$LOCAL_PORT" --bind 127.0.0.1 \
 http_pid=$!
 sleep 1
 
-MINECRAFT_PORT="$LOCAL_PORT" bash "$ROOT_DIR/scripts/tunnel.sh" \
+# Use test-only remote ports so the test never steals the production address.
+MINECRAFT_PORT="$LOCAL_PORT" \
+    TUNNEL_PORT_CANDIDATES="${TUNNEL_PORT_CANDIDATES:-25601 25602 25603}" \
+    bash "$ROOT_DIR/scripts/tunnel.sh" \
     2>&1 | tee "$LOG_DIR/tunnel-test.log"
 
 address="$(grep -v '^#' "$ADDRESS_FILE" | grep -E ':[0-9]+$' | tail -n 1)"
