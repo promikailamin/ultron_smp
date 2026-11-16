@@ -1,6 +1,7 @@
 # Ultron SMP public server address
-# Updated automatically when the "Run UltronSMP" workflow starts.
-# The server is offline while that workflow is not running.
+# Updated: 2026-11-16 15:32:31 UTC
+# Add this server in Minecraft (host and port):
+bore.pub:25565
 #
-# Start it from:
-#   https://github.com/promikailamin/ultron_smp/actions/workflows/run.yml
+# Host: bore.pub
+# Port: 25565
