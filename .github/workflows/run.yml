@@ -54,6 +54,25 @@ jobs:
                   echo "Server did not start within 120 seconds."
                   cat server.log
                   exit 1
+                  
+            
+            - name: Verify Minecraft TCP port
+              run: |
+                  echo "Checking Minecraft port..."
+
+                  ss -lntp | grep ':25565' || {
+                      echo "ERROR: Nothing is listening on port 25565"
+                      tail -100 server.log
+                      exit 1
+                  }
+
+                  python3 -c "
+                      import socket
+                      s = socket.create_connection(('127.0.0.1', 25565), timeout=5)
+                      print('Minecraft TCP port is reachable!')
+                      s.close()
+                  "
+      
 
             - name: expose_server
               uses: codetalkio/expose-tunnel@v1.5.0
