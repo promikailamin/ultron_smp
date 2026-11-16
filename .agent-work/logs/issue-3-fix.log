@@ -1,0 +1,43 @@
+Issue #3 - 300ms latency and world not saving after cancelled runs
+
+Root causes found:
+- The server was started with plain nohup and its stdin was not controllable,
+  so the workflow could not send "save-all flush" or "stop" before backing up.
+  Only files already written by Minecraft were committed; in-memory chunks were
+  lost when the runner was cancelled.
+- Autosave ran only once every five minutes.
+- A new run could check out the repository before the previous cancelled run
+  finished pushing its final backup, then later overwrite the older changes
+  with a stale world.
+- sync-chunk-writes=true caused avoidable disk-write stalls on the runner, and
+  pause-when-empty caused the server to resume lazily on the first join.
+
+Changes:
+- scripts/server-control.sh: FIFO-backed console control with start, command,
+  save, stop and status commands.
+- scripts/server-control.sh stop uses save-all flush followed by stop and
+  escalates to SIGTERM/SIGKILL only if the server does not exit.
+- .github/workflows/run.yml:
+  * starts the server through server-control.sh
+  * re-syncs from origin twice before starting to avoid stale-world overwrites
+  * flushes and pushes the world every 90 seconds
+  * traps SIGINT/SIGTERM during keep_server_alive to flush, commit and stop
+  * always() final backup stops the server, clears interrupted git state,
+    commits and retries the push
+- server.properties: sync-chunk-writes=false, pause-when-empty-seconds=0
+- README.md: documents the save/cancellation behavior.
+- .agent-work/tests/test_server_control.sh: starts a disposable copy, checks
+  console commands, save-all flush, graceful stop, and verifies a scoreboard
+  value survives a full restart.
+
+Validation run:
+- bash -n and shellcheck pass for scripts/server-control.sh and the new test.
+- actionlint passes for both workflows.
+- .agent-work/tests/test_server_control.sh passed twice; the latest run also
+  verified persistence across restart.
+
+Latency:
+- About 300ms RTT from Bangladesh to a US GitHub Actions runner is physical
+  distance, not a save bug. The existing low-latency tunnel and TCP tuning are
+  still the best available free path. A VPS in Singapore/India/Bangladesh is
+  the only way to remove the distance.
