@@ -5064,3 +5064,109 @@ server-control test passed: console commands, save flush and graceful stop work.
 To https://github.com/promikailamin/ultron_smp
    22e38bd..a80c177  HEAD -> main
 [0m
+[0m$ [0mcat > .agent-work/logs/issue-3-fix.log <<'EOF'
+Issue #3 - 300ms latency and world not saving after cancelled runs
+
+Root causes found:
+- The server was started with plain nohup and its stdin was not controllable,
+  so the workflow could not send "save-all flush" or "stop" before backing up.
+  Only files already written by Minecraft were committed; in-memory chunks were
+  lost when the runner was cancelled.
+- Autosave ran only once every five minutes.
+- A new run could check out the repository before the previous cancelled run
+  finished pushing its final backup, then later overwrite the older changes
+  with a stale world.
+- sync-chunk-writes=true caused avoidable disk-write stalls on the runner, and
+  pause-when-empty caused the server to resume lazily on the first join.
+
+Changes:
+- scripts/server-control.sh: FIFO-backed console control with start, command,
+  save, stop and status commands.
+- scripts/server-control.sh stop uses save-all flush followed by stop and
+  escalates to SIGTERM/SIGKILL only if the server does not exit.
+- .github/workflows/run.yml:
+  * starts the server through server-control.sh
+  * re-syncs from origin twice before starting to avoid stale-world overwrites
+  * flushes and pushes the world every 90 seconds
+  * traps SIGINT/SIGTERM during keep_server_alive to flush, commit and stop
+  * always() final backup stops the server, clears interrupted git state,
+    commits and retries the push
+- server.properties: sync-chunk-writes=false, pause-when-empty-seconds=0
+- README.md: documents the save/cancellation behavior.
+- .agent-work/tests/test_server_control.sh: starts a disposable copy, checks
+  console commands, save-all flush, graceful stop, and verifies a scoreboard
+  value survives a full restart.
+
+Validation run:
+- bash -n and shellcheck pass for scripts/server-control.sh and the new test.
+- actionlint passes for both workflows.
+- .agent-work/tests/test_server_control.sh passed twice; the latest run also
+  verified persistence across restart.
+
+Latency:
+- About 300ms RTT from Bangladesh to a US GitHub Actions runner is physical
+  distance, not a save bug. The existing low-latency tunnel and TCP tuning are
+  still the best available free path. A VPS in Singapore/India/Bangladesh is
+  the only way to remove the distance.
+EOF
+git add -A && git commit -m "docs: record issue 3 analysis and validation" && git push origin HEAD:main
+[main 540b063] docs: record issue 3 analysis and validation
+ 2 files changed, 49 insertions(+)
+ create mode 100644 .agent-work/logs/issue-3-fix.log
+To https://github.com/promikailamin/ultron_smp
+   a80c177..540b063  HEAD -> main
+[0m
+[0m$ [0mgit status --short; git log --oneline -8; echo ---; git fetch origin main >/dev/null 2>&1; git rev-parse HEAD; git rev-parse origin/main
+M .agent-work/logs/opencode-output.log
+540b063 docs: record issue 3 analysis and validation
+a80c177 test: verify world changes survive save and restart
+22e38bd fix: keep cancellation cleanup within runner kill window
+2312f94 test: wait for console readiness; harden world re-sync
+4aa3b6a fix: save world gracefully and sync before new runs
+b5ba9b2 Final Minecraft server backup
+48c4472 Update public server address: bore.pub:25565
+1fd9ffb Auto-save Minecraft server data
+---
+540b063d8ae122621ee19c2e883085e1b9042623
+540b063d8ae122621ee19c2e883085e1b9042623
+[0m
+[0m$ [0mcat > /tmp/opencode/issue3-comment.md <<'EOF'
+Thanks for the report. I found **two separate problems**, and the world loss was caused by both server shutdown and Git backup timing.
+
+### Why the world was not saving
+
+It was not only the commit/push step; the server was not being stopped properly either.
+
+- The server was started with plain `nohup`, so the workflow had **no way to send `save-all flush` or `stop`**. It committed only the files Minecraft had already written to disk, losing chunks still in memory when a run was cancelled.
+- Autosave ran only once every **5 minutes**.
+- A new run could check out `main` **before** the cancelled run finished pushing its final backup, then later push its stale world and overwrite the older changes.
+
+### What I changed
+
+- Added `scripts/server-control.sh`, which gives the workflow a FIFO console for `save-all flush`, `stop`, and `status`. Stop escalates to SIGTERM/SIGKILL only if Minecraft does not exit.
+- Updated `.github/workflows/run.yml`:
+  - starts the server through `server-control.sh`;
+  - re-syncs from `origin/main` before starting, so a new run cannot begin from a stale world;
+  - flushes and pushes the world every **90 seconds**;
+  - traps SIGINT/SIGTERM during the keep-alive step and performs a fast flush + local commit + graceful stop;
+  - the `always()` final backup stops the server, clears interrupted Git state, commits the final state, and retries the push up to 5 times.
+- `server.properties`: `sync-chunk-writes=false` (the workflow now flushes explicitly) and `pause-when-empty-seconds=0` so the first join does not wait for the server to resume.
+- Added `.agent-work/tests/test_server_control.sh`, which verifies console commands, `save-all flush`, graceful stop, and that a scoreboard value survives a full server restart.
+- Documented the behaviour in `README.md` and `.agent-work/logs/issue-3-fix.log`.
+
+### Validation
+
+- `shellcheck` and `bash -n` pass for the new script and test.
+- `actionlint` passes for both workflows.
+- `test_server_control.sh` passed, including the restart/persistence check.
+- Changes were pushed successfully to `main`.
+
+Commits: `4aa3b6a`, `2312f94`, `22e38bd`, `a80c177`, `540b063`.
+
+### About the 300ms ping
+
+That part is **not** caused by the save/commit code and cannot be fixed by it. The Minecraft server runs on a GitHub Actions runner in the US, so a player in Bangladesh has a physical round-trip of roughly 150–300 ms. The existing Pinggy relay and TCP tuning are still the best available free path; use the address in `SERVER_ADDRESS_LOW_LATENCY.txt` first. The only real way to remove that latency is to host on a VPS in Singapore, India, or Bangladesh.
+EOF
+gh issue comment 3 --repo promikailamin/ultron_smp --body-file /tmp/opencode/issue3-comment.md
+https://github.com/promikailamin/ultron_smp/issues/3#issuecomment-6922695608
+[0m
