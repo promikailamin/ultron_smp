@@ -1592,6 +1592,18 @@
     },
     "done": true
   },
+  "minecraft:nether/root": {
+    "criteria": {
+      "entered_nether": "2026-11-17 02:09:57 +0000"
+    },
+    "done": true
+  },
+  "minecraft:story/enter_the_nether": {
+    "criteria": {
+      "entered_nether": "2026-11-17 02:09:57 +0000"
+    },
+    "done": true
+  },
   "minecraft:nether/explore_nether": {
     "criteria": {
       "minecraft:crimson_forest": "2026-11-17 02:10:25 +0000",
@@ -1599,36 +1611,6 @@
       "minecraft:soul_sand_valley": "2026-11-17 02:10:48 +0000"
     },
     "done": false
-  },
-  "minecraft:nether/find_fortress": {
-    "criteria": {
-      "fortress": "2026-11-17 02:10:40 +0000"
-    },
-    "done": true
-  },
-  "minecraft:nether/obtain_blaze_rod": {
-    "criteria": {
-      "blaze_rod": "2026-11-17 02:11:09 +0000"
-    },
-    "done": true
-  },
-  "minecraft:nether/root": {
-    "criteria": {
-      "entered_nether": "2026-11-17 02:09:57 +0000"
-    },
-    "done": true
-  },
-  "minecraft:recipes/brewing/blaze_powder": {
-    "criteria": {
-      "has_blaze_rod": "2026-11-17 02:11:09 +0000"
-    },
-    "done": true
-  },
-  "minecraft:recipes/brewing/brewing_stand": {
-    "criteria": {
-      "has_blaze_rod": "2026-11-17 02:11:09 +0000"
-    },
-    "done": true
   },
   "minecraft:recipes/building_blocks/chiseled_nether_bricks_from_nether_bricks_stonecutting": {
     "criteria": {
@@ -1684,9 +1666,81 @@
     },
     "done": true
   },
-  "minecraft:story/enter_the_nether": {
+  "minecraft:nether/find_fortress": {
     "criteria": {
-      "entered_nether": "2026-11-17 02:09:57 +0000"
+      "fortress": "2026-11-17 02:10:40 +0000"
+    },
+    "done": true
+  },
+  "minecraft:nether/obtain_blaze_rod": {
+    "criteria": {
+      "blaze_rod": "2026-11-17 02:11:09 +0000"
+    },
+    "done": true
+  },
+  "minecraft:recipes/brewing/blaze_powder": {
+    "criteria": {
+      "has_blaze_rod": "2026-11-17 02:11:09 +0000"
+    },
+    "done": true
+  },
+  "minecraft:recipes/brewing/brewing_stand": {
+    "criteria": {
+      "has_blaze_rod": "2026-11-17 02:11:09 +0000"
+    },
+    "done": true
+  },
+  "minecraft:recipes/building_blocks/black_wool_slab": {
+    "criteria": {
+      "has_black_wool": "2026-11-17 02:15:58 +0000"
+    },
+    "done": true
+  },
+  "minecraft:recipes/building_blocks/black_wool_stairs": {
+    "criteria": {
+      "has_black_wool": "2026-11-17 02:15:58 +0000"
+    },
+    "done": true
+  },
+  "minecraft:recipes/decorations/black_banner": {
+    "criteria": {
+      "has_black_wool": "2026-11-17 02:15:58 +0000"
+    },
+    "done": true
+  },
+  "minecraft:recipes/decorations/black_bed": {
+    "criteria": {
+      "has_black_wool": "2026-11-17 02:15:58 +0000"
+    },
+    "done": true
+  },
+  "minecraft:recipes/decorations/black_carpet": {
+    "criteria": {
+      "has_black_wool": "2026-11-17 02:15:58 +0000"
+    },
+    "done": true
+  },
+  "minecraft:end/elytra": {
+    "criteria": {
+      "elytra": "2026-11-17 02:16:47 +0000"
+    },
+    "done": true
+  },
+  "minecraft:recipes/food/cooked_porkchop": {
+    "criteria": {
+      "has_porkchop": "2026-11-17 02:17:33 +0000"
+    },
+    "done": true
+  },
+  "minecraft:recipes/food/cooked_porkchop_from_campfire_cooking": {
+    "criteria": {
+      "has_porkchop": "2026-11-17 02:17:33 +0000"
+    },
+    "done": true
+  },
+  "minecraft:recipes/food/cooked_porkchop_from_smoking": {
+    "criteria": {
+      "has_porkchop": "2026-11-17 02:17:33 +0000"
     },
     "done": true
   },
