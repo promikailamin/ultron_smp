@@ -25,6 +25,9 @@
 #   LOCALXPOSE_DOWNLOAD_URL     Override the loclx download URL
 #   LOCALXPOSE_BORE_FALLBACK    Fall back to bore.pub on failure
 #                               (default: true)
+#   LOCALXPOSE_ALLOW_LOCAL_ADDRESS
+#                               Accept a 127.0.0.1/localhost endpoint from
+#                               loclx output (used by tests; default: false)
 #   LOCLX_BIN                   Use an existing loclx binary (used by tests)
 set -euo pipefail
 
@@ -156,7 +159,7 @@ extract_address() {
     address="$(strip_ansi <"$log_file" \
         | grep -oE '[A-Za-z0-9][A-Za-z0-9.-]*\.loclx\.io:[0-9]{1,5}' \
         | head -n 1 || true)"
-    if [ -z "$address" ]; then
+    if [ -z "$address" ] && [ "${LOCALXPOSE_ALLOW_LOCAL_ADDRESS:-false}" = "true" ]; then
         address="$(strip_ansi <"$log_file" \
             | grep -oE '(localhost|([0-9]{1,3}\.){3}[0-9]{1,3}):[0-9]{1,5}' \
             | head -n 1 || true)"

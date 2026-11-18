@@ -2932,3 +2932,116 @@ bore.pub:25568
 # Host: bore.pub
 # Port: 25568
 [0m
+[0m$ [0mcd /home/runner/work/ultron_smp/ultron_smp && git add -A && git status --short && git commit -m "Switch tunnel provider to LocalXpose with bore fallback" && git push origin HEAD:main
+A  .agent-work/logs/localxpose-free-account-test.log
+M  .agent-work/logs/opencode-output.log
+A  .agent-work/logs/tunnel-test-run.log
+M  .agent-work/logs/tunnel-test.log
+M  .agent-work/tests/test_tunnel.sh
+M  .github/workflows/run.yml
+M  .gitignore
+M  README.md
+D  SERVER_ADDRESS_LOW_LATENCY.txt
+A  scripts/bore-tunnel.sh
+M  scripts/tunnel.sh
+Author identity unknown
+
+*** Please tell me who you are.
+
+Run
+
+  git config --global user.email "you@example.com"
+  git config --global user.name "Your Name"
+
+to set your account's default identity.
+Omit --global to set the identity only in this repository.
+
+fatal: empty ident name (for <runner@runnervmccnms.0juc1r2pknfedblzsntgxp21xa.gx.internal.cloudapp.net>) not allowed
+[0m
+[0m$ [0mcd /home/runner/work/ultron_smp/ultron_smp && git config user.name "ultron" && git config user.email "ultron@users.noreply.github.com" && git commit -m "Switch tunnel provider to LocalXpose with bore fallback" && git push origin HEAD:main
+[main e0cc193] Switch tunnel provider to LocalXpose with bore fallback
+ 11 files changed, 2178 insertions(+), 4167 deletions(-)
+ create mode 100644 .agent-work/logs/localxpose-free-account-test.log
+ create mode 100644 .agent-work/logs/tunnel-test-run.log
+ delete mode 100644 SERVER_ADDRESS_LOW_LATENCY.txt
+ create mode 100755 scripts/bore-tunnel.sh
+To https://github.com/promikailamin/ultron_smp
+   cc69ac1..e0cc193  HEAD -> main
+[0m
+[0m← [0mEdit scripts/tunnel.sh
+Index: /home/runner/work/ultron_smp/ultron_smp/scripts/tunnel.sh
+===================================================================
+--- /home/runner/work/ultron_smp/ultron_smp/scripts/tunnel.sh
++++ /home/runner/work/ultron_smp/ultron_smp/scripts/tunnel.sh
+@@ -155,9 +155,9 @@
+ # Prefer the public *.loclx.io endpoint over the local forwarded address.
+ address="$(strip_ansi <"$log_file" \
+     | grep -oE '[A-Za-z0-9][A-Za-z0-9.-]*\.loclx\.io:[0-9]{1,5}' \
+     | head -n 1 || true)"
+-if [ -z "$address" ]; then
++if [ -z "$address" ] && [ "${LOCALXPOSE_ALLOW_LOCAL_ADDRESS:-false}" = "true" ]; then
+     address="$(strip_ansi <"$log_file" \
+         | grep -oE '(localhost|([0-9]{1,3}\.){3}[0-9]{1,3}):[0-9]{1,5}' \
+         | head -n 1 || true)"
+ fi
+
+[0m
+[0m← [0mEdit scripts/tunnel.sh
+Index: /home/runner/work/ultron_smp/ultron_smp/scripts/tunnel.sh
+===================================================================
+--- /home/runner/work/ultron_smp/ultron_smp/scripts/tunnel.sh
++++ /home/runner/work/ultron_smp/ultron_smp/scripts/tunnel.sh
+@@ -24,8 +24,11 @@
+ #                               asking LocalXpose for a random port
+ #   LOCALXPOSE_DOWNLOAD_URL     Override the loclx download URL
+ #   LOCALXPOSE_BORE_FALLBACK    Fall back to bore.pub on failure
+ #                               (default: true)
++#   LOCALXPOSE_ALLOW_LOCAL_ADDRESS
++#                               Accept a 127.0.0.1/localhost endpoint from
++#                               loclx output (used by tests; default: false)
+ #   LOCLX_BIN                   Use an existing loclx binary (used by tests)
+ set -euo pipefail
+ 
+ ROOT_DIR="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")/.." && pwd)"
+
+[0m
+[0m← [0mEdit .agent-work/tests/test_tunnel.sh
+Index: /home/runner/work/ultron_smp/ultron_smp/.agent-work/tests/test_tunnel.sh
+===================================================================
+--- /home/runner/work/ultron_smp/ultron_smp/.agent-work/tests/test_tunnel.sh
++++ /home/runner/work/ultron_smp/ultron_smp/.agent-work/tests/test_tunnel.sh
+@@ -128,8 +128,9 @@
+ 
+ MINECRAFT_PORT="$LOCAL_PORT" \
+     LOCALXPOSE_ACCESS_TOKEN="test-token" \
+     LOCALXPOSE_BORE_FALLBACK="false" \
++    LOCALXPOSE_ALLOW_LOCAL_ADDRESS="true" \
+     LOCALXPOSE_PORT_CANDIDATES="" \
+     LOCLX_BIN="$FAKE_LOCLX" \
+     TUNNEL_PID_FILE="$PID_FILE" \
+     bash "$ROOT_DIR/scripts/tunnel.sh" \
+
+[0m
+[0m$ [0mcd /home/runner/work/ultron_smp/ultron_smp && bash -n scripts/tunnel.sh .agent-work/tests/test_tunnel.sh && shellcheck -x scripts/tunnel.sh .agent-work/tests/test_tunnel.sh && bash .agent-work/tests/test_tunnel.sh 2>&1 | tee .agent-work/logs/tunnel-test-run.log
+Tunnel is live at 127.0.0.1:25565
+HTTP/1.0 200 OK
+Tunnel end-to-end test passed: public TCP endpoint is reachable
+[0m
+[0m← [0mEdit .agent-work/tests/test_tunnel.sh
+Index: /home/runner/work/ultron_smp/ultron_smp/.agent-work/tests/test_tunnel.sh
+===================================================================
+--- /home/runner/work/ultron_smp/ultron_smp/.agent-work/tests/test_tunnel.sh
++++ /home/runner/work/ultron_smp/ultron_smp/.agent-work/tests/test_tunnel.sh
+@@ -129,9 +129,9 @@
+ MINECRAFT_PORT="$LOCAL_PORT" \
+     LOCALXPOSE_ACCESS_TOKEN="test-token" \
+     LOCALXPOSE_BORE_FALLBACK="false" \
+     LOCALXPOSE_ALLOW_LOCAL_ADDRESS="true" \
+-    LOCALXPOSE_PORT_CANDIDATES="" \
++    LOCALXPOSE_PORT_CANDIDATES="${LOCALXPOSE_PORT_CANDIDATES:-25601 25602 25603}" \
+     LOCLX_BIN="$FAKE_LOCLX" \
+     TUNNEL_PID_FILE="$PID_FILE" \
+     bash "$ROOT_DIR/scripts/tunnel.sh" \
+     2>&1 | tee "$LOG_DIR/tunnel-test.log"
+
+[0m
