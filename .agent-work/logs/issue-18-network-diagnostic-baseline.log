@@ -1,0 +1,37 @@
+Probing 7 hosts...
+==============================================================================
+Network diagnostic: runner-baseline
+==============================================================================
+Time:            2026-11-18T15:37:07Z
+Public IP:       20.98.155.184
+Host / platform: runnervmccnms / Linux-7.0.0-1019-azure-x86_64-with-glibc2.43
+CPU / memory:    4 vCPU / 15.6 GiB
+Default route:   default via 10.1.0.1 dev eth0 proto dhcp src 10.1.1.42 metric 100
+TCP tuning:      congestion=bbr qdisc=fq
+Link speeds:     {'docker0': '-1', 'enP27013s1': '100000', 'eth0': '100000'}
+
+Download: avg 711.62 Mbps (min 503.74, max 889.45) over 3/3 rounds
+  round 1: 23.842 MiB in 0.397s = 503.74 Mbps
+  round 2: 23.842 MiB in 0.270s = 741.67 Mbps
+  round 3: 23.842 MiB in 0.225s = 889.45 Mbps
+Upload: avg 110.97 Mbps (min 83.87, max 153.29) over 3/3 rounds
+  round 1: 9.537 MiB in 0.835s = 95.76 Mbps
+  round 2: 9.537 MiB in 0.522s = 153.29 Mbps
+  round 3: 9.537 MiB in 0.954s = 83.87 Mbps
+
+TCP connect latency (20 probes each):
+  1.1.1.1:443  avg=6.72 ms  median=6.41 ms  p95=8.9 ms  jitter=0.96 ms  loss=0.0%
+  8.8.8.8:443  avg=17.13 ms  median=15.06 ms  p95=27.64 ms  jitter=4.62 ms  loss=0.0%
+  github.com:443  avg=27.43 ms  median=27.94 ms  p95=30.77 ms  jitter=2.48 ms  loss=0.0%
+  api.github.com:443  avg=27.4 ms  median=27.28 ms  p95=33.77 ms  jitter=4.25 ms  loss=0.0%
+  speed.cloudflare.com:443  avg=6.76 ms  median=6.34 ms  p95=7.08 ms  jitter=1.07 ms  loss=0.0%
+  twingate.com:443  avg=24.66 ms  median=27.57 ms  p95=33.67 ms  jitter=8.64 ms  loss=0.0%
+  mikailamin.twingate.com:443  avg=23.84 ms  median=24.93 ms  p95=31.64 ms  jitter=8.56 ms  loss=0.0%
+
+Soak (60s, 12 samples): success=100.0%  download avg=73.44 Mbps (min 63.41/max 83.89)  latency avg=7.12 ms (min 6.07/max 14.35)
+
+Twingate connector monitor: skipped (monitor duration is zero)
+
+Verdict: bandwidth=good  stability=good  twingate_connector=not monitored
+JSON report: .agent-work/outputs/network-diagnostic-runner-baseline.json
+==============================================================================

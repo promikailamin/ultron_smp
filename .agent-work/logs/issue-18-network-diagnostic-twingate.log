@@ -1,0 +1,37 @@
+Probing 7 hosts...
+==============================================================================
+Network diagnostic: twingate-connector-online
+==============================================================================
+Time:            2026-11-18T15:38:53Z
+Public IP:       20.98.155.184
+Host / platform: runnervmccnms / Linux-7.0.0-1019-azure-x86_64-with-glibc2.43
+CPU / memory:    4 vCPU / 15.6 GiB
+Default route:   default via 10.1.0.1 dev eth0 proto dhcp src 10.1.1.42 metric 100
+TCP tuning:      congestion=bbr qdisc=fq
+Link speeds:     {'docker0': '-1', 'enP27013s1': '100000', 'eth0': '100000'}
+
+Download: avg 635.39 Mbps (min 480.96, max 750.66) over 3/3 rounds
+  round 1: 23.842 MiB in 0.416s = 480.96 Mbps
+  round 2: 23.842 MiB in 0.296s = 674.54 Mbps
+  round 3: 23.842 MiB in 0.266s = 750.66 Mbps
+Upload: avg 256.12 Mbps (min 239.55, max 278.65) over 3/3 rounds
+  round 1: 9.537 MiB in 0.287s = 278.65 Mbps
+  round 2: 9.537 MiB in 0.320s = 250.15 Mbps
+  round 3: 9.537 MiB in 0.334s = 239.55 Mbps
+
+TCP connect latency (20 probes each):
+  1.1.1.1:443  avg=6.33 ms  median=6.32 ms  p95=6.77 ms  jitter=0.21 ms  loss=0.0%
+  8.8.8.8:443  avg=19.32 ms  median=15.1 ms  p95=31.95 ms  jitter=5.67 ms  loss=0.0%
+  github.com:443  avg=27.18 ms  median=26.78 ms  p95=33.85 ms  jitter=4.45 ms  loss=0.0%
+  api.github.com:443  avg=29.79 ms  median=29.7 ms  p95=35.36 ms  jitter=3.81 ms  loss=0.0%
+  speed.cloudflare.com:443  avg=6.57 ms  median=6.44 ms  p95=7.33 ms  jitter=0.58 ms  loss=0.0%
+  twingate.com:443  avg=25.04 ms  median=26.87 ms  p95=34.34 ms  jitter=7.94 ms  loss=0.0%
+  mikailamin.twingate.com:443  avg=24.25 ms  median=26.8 ms  p95=33.85 ms  jitter=8.36 ms  loss=0.0%
+
+Soak (60s, 12 samples): success=100.0%  download avg=63.83 Mbps (min 24.76/max 85.54)  latency avg=6.29 ms (min 5.97/max 7.45)
+
+Twingate connector monitor (60s, 6 samples): online=100.0%  docker_running=6/6  states=ALIVE  admin_errors=0
+
+Verdict: bandwidth=good  stability=good  twingate_connector=healthy
+JSON report: .agent-work/outputs/network-diagnostic-twingate-connector-online.json
+==============================================================================

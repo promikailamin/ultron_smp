@@ -1,0 +1,9 @@
+Twingate tenant: mikailamin
+Remote Networks (1):
+  - Ultron SMP | id=UmVtb3RlTmV0d29yazo0NjQ5 | type=REGULAR | location=OTHER | active=True
+Connectors (1):
+  - twingate-mccon | id=Q29ubmVjdG9yOjEwNDIz | hostname=runnervmccnms | state=ALIVE | network=Ultron SMP (UmVtb3RlTmV0d29yazo0NjQ5)
+Groups (1):
+  - Everyone | id=R3JvdXA6OTgzNw== | active=True
+Resources (1):
+  - minecraft | id=UmVzb3VyY2U6OTk1OA== | address=127.0.0.1 | alias=minecraft.ultronsmp.internal | network=Ultron SMP (UmVtb3RlTmV0d29yazo0NjQ5) | groups=Everyone
