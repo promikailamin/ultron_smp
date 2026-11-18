@@ -2217,3 +2217,82 @@ if not found:
 PY
 No JWT or GitHub-token-like values in changed files.
 [0m
+[0m$ [0mgit add -A && git status --short && git commit -m "Enable Twingate automatically from connector secrets" && git log --oneline -3
+M  .agent-work/logs/opencode-output.log
+A  .agent-work/logs/test-twingate-connector-derived.log
+A  .agent-work/logs/test-twingate-connector-required.log
+M  .agent-work/logs/test-twingate-connector-result.log
+A  .agent-work/logs/test-twingate-connector-skip.log
+A  .agent-work/outputs/issue-10-twingate.md
+M  .agent-work/tests/test_twingate_connector.sh
+M  .github/workflows/run.yml
+M  README.md
+M  scripts/twingate-connector.sh
+Author identity unknown
+
+*** Please tell me who you are.
+
+Run
+
+  git config --global user.email "you@example.com"
+  git config --global user.name "Your Name"
+
+to set your account's default identity.
+Omit --global to set the identity only in this repository.
+
+fatal: empty ident name (for <runner@runnervmccnms.hoabpu31hpaupmk2ycwfr0t0ee.phxx.internal.cloudapp.net>) not allowed
+[0m
+[0m$ [0mgit config user.name "ultron" && git config user.email "ultron@users.noreply.github.com" && git commit -m "Enable Twingate automatically from connector secrets" && git log --oneline -3
+[main 944205b] Enable Twingate automatically from connector secrets
+ 10 files changed, 2063 insertions(+), 3254 deletions(-)
+ create mode 100644 .agent-work/logs/test-twingate-connector-derived.log
+ create mode 100644 .agent-work/logs/test-twingate-connector-required.log
+ create mode 100644 .agent-work/logs/test-twingate-connector-skip.log
+ create mode 100644 .agent-work/outputs/issue-10-twingate.md
+944205b Enable Twingate automatically from connector secrets
+f24ae29 chore: recover OpenCode workspace [skip ci]
+68b928d Add optional Twingate connector with env-only secrets
+[0m
+[0m$ [0mgit push origin HEAD:main 2>&1
+To https://github.com/promikailamin/ultron_smp
+   f24ae29..944205b  HEAD -> main
+[0m
+[0m$ [0mgh issue comment 10 --repo promikailamin/ultron_smp --body 'Implemented in commit `944205b` (pushed to `main`).
+
+What changed:
+- `run.yml` now uses the `TWINGATE_ACCESS_TOKEN` and `TWINGATE_REFRESH_TOKEN` secrets automatically.
+- `TWINGATE_ENABLED` defaults to `auto`, so the connector starts when both secrets exist and skips cleanly when they do not. `false` disables it; `true` requires both secrets.
+- The connector step no longer has the old `TWINGATE_ENABLED == true` gate that prevented the new secrets from activating it.
+- `TWINGATE_NETWORK` is now optional: the script falls back to the access token JWT `aud` claim (the Twingate tenant/network slug). An explicit repository variable or secret still takes precedence.
+- Connector output is saved to `.agent-work/logs/twingate-connector.log`; token values are still passed only via environment and a mode-600 temp env file.
+- README setup instructions and the automated test were updated.
+
+Tests actually run and passed:
+- `bash -n scripts/twingate-connector.sh`
+- `bash -n .agent-work/tests/test_twingate_connector.sh`
+- Workflow YAML parse
+- `bash .agent-work/tests/test_twingate_connector.sh` — covers auto-start, auto-skip, explicit-required mode, network derivation from the token, token non-leakage, temp-file cleanup and stop/status handling.
+
+Remaining limitation: a real Twingate end-to-end connection was not tested because the actual connector tokens and Admin Console Resource are not available to this run. Create/assign the Minecraft Resource in the Twingate Admin Console for the private address. Public players should continue using the existing public tunnel.' 2>&1
+https://github.com/promikailamin/ultron_smp/issues/10#issuecomment-6977595192
+[0m
+[0m$ [0mgit status --short; echo '---'; git log --oneline -3; echo '---'; git rev-parse HEAD; git rev-parse origin/main; echo '---'; python3 - <<'PY'
+import re
+from pathlib import Path
+p = Path('.agent-work/logs/opencode-output.log')
+data = p.read_bytes()
+pattern = re.compile(rb'eyJ[A-Za-z0-9_-]+(?:\.[A-Za-z0-9_-]+){2,}')
+hits = pattern.findall(data)
+print(f'{p}: {len(hits)} JWT-like value(s)')
+PY
+M .agent-work/logs/opencode-output.log
+---
+944205b Enable Twingate automatically from connector secrets
+f24ae29 chore: recover OpenCode workspace [skip ci]
+68b928d Add optional Twingate connector with env-only secrets
+---
+944205b0ecd241d49e8fa4e7d61b5b1a93243fa7
+944205b0ecd241d49e8fa4e7d61b5b1a93243fa7
+---
+.agent-work/logs/opencode-output.log: 0 JWT-like value(s)
+[0m
