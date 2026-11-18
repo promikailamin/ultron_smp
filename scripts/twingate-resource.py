@@ -185,6 +185,13 @@ class Client:
                             )
                             and redirected != url
                         ):
+                            if env("TWINGATE_DEBUG"):
+                                print(
+                                    "Twingate redirect suffix: {}".format(
+                                        host.split(".", 1)[-1]
+                                    ),
+                                    file=sys.stderr,
+                                )
                             url = redirected
                             break
                         raise TwingateError(
