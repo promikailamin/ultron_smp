@@ -1,0 +1,182 @@
+ensure	Set up job	﻿2026-11-18T12:33:08.2744780Z Current runner version: '2.338.2'
+ensure	Set up job	2026-11-18T12:33:08.2781434Z ##[group]Runner Image Provisioner
+ensure	Set up job	2026-11-18T12:33:08.2783032Z Hosted Compute Agent
+ensure	Set up job	2026-11-18T12:33:08.2784054Z Version: 20261103.629
+ensure	Set up job	2026-11-18T12:33:08.2785186Z Commit: 15dbd9ccb5dbf34fae002b6ed1a2670f52df37bc
+ensure	Set up job	2026-11-18T12:33:08.2786457Z Build Date: 2026-11-03T17:26:59Z
+ensure	Set up job	2026-11-18T12:33:08.2787580Z Worker ID: {0c8e1b14-ce0e-40aa-a547-320084721bf1}
+ensure	Set up job	2026-11-18T12:33:08.2789701Z Region: eastus2
+ensure	Set up job	2026-11-18T12:33:08.2790595Z Cloud: Azure
+ensure	Set up job	2026-11-18T12:33:08.2791577Z ##[endgroup]
+ensure	Set up job	2026-11-18T12:33:08.2793535Z ##[group]Operating System
+ensure	Set up job	2026-11-18T12:33:08.2794715Z Ubuntu
+ensure	Set up job	2026-11-18T12:33:08.2795623Z 26.04.1
+ensure	Set up job	2026-11-18T12:33:08.2796443Z LTS
+ensure	Set up job	2026-11-18T12:33:08.2797368Z ##[endgroup]
+ensure	Set up job	2026-11-18T12:33:08.2798577Z ##[group]Runner Image
+ensure	Set up job	2026-11-18T12:33:08.2800253Z Image: ubuntu-26.04
+ensure	Set up job	2026-11-18T12:33:08.2801277Z Version: 20261111.196.1
+ensure	Set up job	2026-11-18T12:33:08.2802977Z Included Software: https://github.com/actions/runner-images/blob/ubuntu26/20261111.196/images/ubuntu/Ubuntu2604-Readme.md
+ensure	Set up job	2026-11-18T12:33:08.2805896Z Image Release: https://github.com/actions/runner-images/releases/tag/ubuntu26%2F20261111.196
+ensure	Set up job	2026-11-18T12:33:08.2807562Z ##[endgroup]
+ensure	Set up job	2026-11-18T12:33:08.2809612Z ##[group]GITHUB_TOKEN Permissions
+ensure	Set up job	2026-11-18T12:33:08.2813130Z Contents: read
+ensure	Set up job	2026-11-18T12:33:08.2814089Z Metadata: read
+ensure	Set up job	2026-11-18T12:33:08.2814949Z ##[endgroup]
+ensure	Set up job	2026-11-18T12:33:08.2818421Z Secret source: Actions
+ensure	Set up job	2026-11-18T12:33:08.2819834Z Cache mode: write
+ensure	Set up job	2026-11-18T12:33:08.2821669Z Prepare workflow directory
+ensure	Set up job	2026-11-18T12:33:08.3588590Z Prepare all required actions
+ensure	Set up job	2026-11-18T12:33:08.3660804Z Getting action download info
+ensure	Set up job	2026-11-18T12:33:08.5625784Z Download action repository 'actions/checkout@v4' (SHA:11d5960a326750d5838078e36cf38b85af677262)
+ensure	Set up job	2026-11-18T12:33:08.6758108Z Download action repository 'actions/upload-artifact@v4' (SHA:ea165f8d65b6e75b540449e92b4886f43607fa02)
+ensure	Set up job	2026-11-18T12:33:08.8595585Z Complete job name: ensure
+ensure	checkout_repo	﻿2026-11-18T12:33:08.9419756Z ##[group]Run actions/checkout@v4
+ensure	checkout_repo	2026-11-18T12:33:08.9420675Z with:
+ensure	checkout_repo	2026-11-18T12:33:08.9421263Z   repository: pro***/ultron_smp
+ensure	checkout_repo	2026-11-18T12:33:08.9425305Z   token: ***
+ensure	checkout_repo	2026-11-18T12:33:08.9425795Z   ssh-strict: true
+ensure	checkout_repo	2026-11-18T12:33:08.9426291Z   ssh-user: git
+ensure	checkout_repo	2026-11-18T12:33:08.9426788Z   persist-credentials: true
+ensure	checkout_repo	2026-11-18T12:33:08.9427321Z   clean: true
+ensure	checkout_repo	2026-11-18T12:33:08.9427978Z   sparse-checkout-cone-mode: true
+ensure	checkout_repo	2026-11-18T12:33:08.9428556Z   fetch-depth: 1
+ensure	checkout_repo	2026-11-18T12:33:08.9429026Z   fetch-tags: false
+ensure	checkout_repo	2026-11-18T12:33:08.9429510Z   show-progress: true
+ensure	checkout_repo	2026-11-18T12:33:08.9429989Z   lfs: false
+ensure	checkout_repo	2026-11-18T12:33:08.9430443Z   submodules: false
+ensure	checkout_repo	2026-11-18T12:33:08.9430936Z   set-safe-directory: true
+ensure	checkout_repo	2026-11-18T12:33:08.9431480Z   allow-unsafe-pr-checkout: false
+ensure	checkout_repo	2026-11-18T12:33:08.9432227Z env:
+ensure	checkout_repo	2026-11-18T12:33:08.9432680Z   TWINGATE_API_TOKEN: 
+ensure	checkout_repo	2026-11-18T12:33:08.9439190Z   TWINGATE_ACCESS_TOKEN: ***
+ensure	checkout_repo	2026-11-18T12:33:08.9439771Z   TWINGATE_NETWORK: ***
+ensure	checkout_repo	2026-11-18T12:33:08.9440284Z   TWINGATE_REMOTE_NETWORK: 
+ensure	checkout_repo	2026-11-18T12:33:08.9440879Z   TWINGATE_REMOTE_NETWORK_ID: 
+ensure	checkout_repo	2026-11-18T12:33:08.9441434Z   TWINGATE_RESOURCE_NAME: minecraft
+ensure	checkout_repo	2026-11-18T12:33:08.9442030Z   TWINGATE_RESOURCE_ADDRESS: 127.0.0.1
+ensure	checkout_repo	2026-11-18T12:33:08.9442627Z   TWINGATE_RESOURCE_PORT: 25565
+ensure	checkout_repo	2026-11-18T12:33:08.9443157Z ##[endgroup]
+ensure	checkout_repo	2026-11-18T12:33:09.1556924Z Syncing repository: pro***/ultron_smp
+ensure	checkout_repo	2026-11-18T12:33:09.1560493Z ##[group]Getting Git version info
+ensure	checkout_repo	2026-11-18T12:33:09.1562017Z Working directory is '/home/runner/work/ultron_smp/ultron_smp'
+ensure	checkout_repo	2026-11-18T12:33:09.1564058Z [command]/usr/bin/git version
+ensure	checkout_repo	2026-11-18T12:33:09.1572411Z git version 2.56.1
+ensure	checkout_repo	2026-11-18T12:33:09.1595242Z ##[endgroup]
+ensure	checkout_repo	2026-11-18T12:33:09.1610982Z Temporarily overriding HOME='/home/runner/work/_temp/9cd8e013-8a64-4c3f-be73-fb6693835df2' before making global git config changes
+ensure	checkout_repo	2026-11-18T12:33:09.1613612Z Adding repository directory to the temporary git global config as a safe directory
+ensure	checkout_repo	2026-11-18T12:33:09.1616913Z [command]/usr/bin/git config --global --add safe.directory /home/runner/work/ultron_smp/ultron_smp
+ensure	checkout_repo	2026-11-18T12:33:09.1680732Z Deleting the contents of '/home/runner/work/ultron_smp/ultron_smp'
+ensure	checkout_repo	2026-11-18T12:33:09.1702766Z ##[group]Initializing the repository
+ensure	checkout_repo	2026-11-18T12:33:09.1710518Z [command]/usr/bin/git init /home/runner/work/ultron_smp/ultron_smp
+ensure	checkout_repo	2026-11-18T12:33:09.1801836Z hint: Using 'master' as the name for the initial branch. This default branch name
+ensure	checkout_repo	2026-11-18T12:33:09.1804202Z hint: will change to "main" in Git 3.0. To configure the initial branch name
+ensure	checkout_repo	2026-11-18T12:33:09.1806239Z hint: to use in all of your new repositories, which will suppress this warning,
+ensure	checkout_repo	2026-11-18T12:33:09.1808026Z hint: call:
+ensure	checkout_repo	2026-11-18T12:33:09.1809046Z hint:
+ensure	checkout_repo	2026-11-18T12:33:09.1810290Z hint: 	git config --global init.defaultBranch <name>
+ensure	checkout_repo	2026-11-18T12:33:09.1811728Z hint:
+ensure	checkout_repo	2026-11-18T12:33:09.1813064Z hint: Names commonly chosen instead of 'master' are 'main', 'trunk' and
+ensure	checkout_repo	2026-11-18T12:33:09.1815045Z hint: 'development'. The just-created branch can be renamed via this command:
+ensure	checkout_repo	2026-11-18T12:33:09.1816803Z hint:
+ensure	checkout_repo	2026-11-18T12:33:09.1817954Z hint: 	git branch -m <name>
+ensure	checkout_repo	2026-11-18T12:33:09.1818999Z hint:
+ensure	checkout_repo	2026-11-18T12:33:09.1820402Z hint: Disable this message with "git config set advice.defaultBranchName false"
+ensure	checkout_repo	2026-11-18T12:33:09.1822855Z Initialized empty Git repository in /home/runner/work/ultron_smp/ultron_smp/.git/
+ensure	checkout_repo	2026-11-18T12:33:09.1830417Z [command]/usr/bin/git remote add origin https://github.com/pro***/ultron_smp
+ensure	checkout_repo	2026-11-18T12:33:09.1884032Z ##[endgroup]
+ensure	checkout_repo	2026-11-18T12:33:09.1885522Z ##[group]Disabling automatic garbage collection
+ensure	checkout_repo	2026-11-18T12:33:09.1889017Z [command]/usr/bin/git config --local gc.auto 0
+ensure	checkout_repo	2026-11-18T12:33:09.1925249Z ##[endgroup]
+ensure	checkout_repo	2026-11-18T12:33:09.1926549Z ##[group]Setting up auth
+ensure	checkout_repo	2026-11-18T12:33:09.1932644Z [command]/usr/bin/git config --local --name-only --get-regexp core\.sshCommand
+ensure	checkout_repo	2026-11-18T12:33:09.1972590Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+ensure	checkout_repo	2026-11-18T12:33:09.2469605Z [command]/usr/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+ensure	checkout_repo	2026-11-18T12:33:09.2503842Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+ensure	checkout_repo	2026-11-18T12:33:09.2818518Z [command]/usr/bin/git config --local --name-only --get-regexp ^includeIf\.gitdir:
+ensure	checkout_repo	2026-11-18T12:33:09.2864982Z [command]/usr/bin/git submodule foreach --recursive git config --local --show-origin --name-only --get-regexp remote.origin.url
+ensure	checkout_repo	2026-11-18T12:33:09.3186224Z [command]/usr/bin/git config --local http.https://github.com/.extraheader AUTHORIZATION: basic ***
+ensure	checkout_repo	2026-11-18T12:33:09.3233241Z ##[endgroup]
+ensure	checkout_repo	2026-11-18T12:33:09.3245719Z ##[group]Fetching the repository
+ensure	checkout_repo	2026-11-18T12:33:09.3250274Z [command]/usr/bin/git -c protocol.version=2 fetch --no-tags --prune --no-recurse-submodules --depth=1 origin +c7035b7669ab9d9c9eaec8ae6034695a3ea3fdbc:refs/remotes/origin/main
+ensure	checkout_repo	2026-11-18T12:33:13.6036818Z From https://github.com/pro***/ultron_smp
+ensure	checkout_repo	2026-11-18T12:33:13.6039643Z  * [new ref]         c7035b7669ab9d9c9eaec8ae6034695a3ea3fdbc -> origin/main
+ensure	checkout_repo	2026-11-18T12:33:13.6042809Z ##[endgroup]
+ensure	checkout_repo	2026-11-18T12:33:13.6044083Z ##[group]Determining the checkout info
+ensure	checkout_repo	2026-11-18T12:33:13.6045430Z ##[endgroup]
+ensure	checkout_repo	2026-11-18T12:33:13.6051694Z [command]/usr/bin/git sparse-checkout disable
+ensure	checkout_repo	2026-11-18T12:33:13.6105607Z [command]/usr/bin/git config --local --unset-all extensions.worktreeConfig
+ensure	checkout_repo	2026-11-18T12:33:13.6178640Z ##[group]Checking out the ref
+ensure	checkout_repo	2026-11-18T12:33:13.6180321Z [command]/usr/bin/git checkout --progress --force -B main refs/remotes/origin/main
+ensure	checkout_repo	2026-11-18T12:33:14.3802973Z Switched to a new branch 'main'
+ensure	checkout_repo	2026-11-18T12:33:14.3809045Z branch 'main' set up to track 'origin/main'.
+ensure	checkout_repo	2026-11-18T12:33:14.3866157Z ##[endgroup]
+ensure	checkout_repo	2026-11-18T12:33:14.3921089Z [command]/usr/bin/git log -1 --format=%H
+ensure	checkout_repo	2026-11-18T12:33:14.3949048Z c7035b7669ab9d9c9eaec8ae6034695a3ea3fdbc
+ensure	ensure_minecraft_resource	﻿2026-11-18T12:33:14.4186521Z ##[group]Run set -euo pipefail
+ensure	ensure_minecraft_resource	2026-11-18T12:33:14.4186992Z ^[[36;1mset -euo pipefail^[[0m
+ensure	ensure_minecraft_resource	2026-11-18T12:33:14.4187303Z ^[[36;1mmkdir -p .agent-work/logs^[[0m
+ensure	ensure_minecraft_resource	2026-11-18T12:33:14.4188003Z ^[[36;1mpython3 scripts/twingate-resource.py ensure | tee .agent-work/logs/twingate-resource.log^[[0m
+ensure	ensure_minecraft_resource	2026-11-18T12:33:14.4249313Z shell: /usr/bin/bash -e {0}
+ensure	ensure_minecraft_resource	2026-11-18T12:33:14.4249624Z env:
+ensure	ensure_minecraft_resource	2026-11-18T12:33:14.4249851Z   TWINGATE_API_TOKEN: 
+ensure	ensure_minecraft_resource	2026-11-18T12:33:14.4254135Z   TWINGATE_ACCESS_TOKEN: ***
+ensure	ensure_minecraft_resource	2026-11-18T12:33:14.4254439Z   TWINGATE_NETWORK: ***
+ensure	ensure_minecraft_resource	2026-11-18T12:33:14.4254716Z   TWINGATE_REMOTE_NETWORK: 
+ensure	ensure_minecraft_resource	2026-11-18T12:33:14.4254971Z   TWINGATE_REMOTE_NETWORK_ID: 
+ensure	ensure_minecraft_resource	2026-11-18T12:33:14.4255243Z   TWINGATE_RESOURCE_NAME: minecraft
+ensure	ensure_minecraft_resource	2026-11-18T12:33:14.4255540Z   TWINGATE_RESOURCE_ADDRESS: 127.0.0.1
+ensure	ensure_minecraft_resource	2026-11-18T12:33:14.4255827Z   TWINGATE_RESOURCE_PORT: 25565
+ensure	ensure_minecraft_resource	2026-11-18T12:33:14.4256121Z   TWINGATE_DEBUG: 1
+ensure	ensure_minecraft_resource	2026-11-18T12:33:14.4256402Z ##[endgroup]
+ensure	ensure_minecraft_resource	2026-11-18T12:33:14.4832223Z No TWINGATE_API_TOKEN configured; trying TWINGATE_ACCESS_TOKEN. Connector tokens cannot create Resources; use an Admin API token from Settings > API if this fails.
+ensure	ensure_minecraft_resource	2026-11-18T12:33:18.5072410Z ERROR: Could not reach the Twingate Admin API: [Errno -3] Temporary failure in name resolution. Network name length 10 (1 labels).
+ensure	ensure_minecraft_resource	2026-11-18T12:33:18.5188183Z ##[error]Process completed with exit code 1.
+ensure	upload_resource_log	﻿2026-11-18T12:33:18.5272066Z ##[group]Run actions/upload-artifact@v4
+ensure	upload_resource_log	2026-11-18T12:33:18.5272388Z with:
+ensure	upload_resource_log	2026-11-18T12:33:18.5272628Z   name: twingate-resource-log
+ensure	upload_resource_log	2026-11-18T12:33:18.5272933Z   path: .agent-work/logs/twingate-resource.log
+ensure	upload_resource_log	2026-11-18T12:33:18.5273255Z   if-no-files-found: ignore
+ensure	upload_resource_log	2026-11-18T12:33:18.5273513Z   compression-level: 6
+ensure	upload_resource_log	2026-11-18T12:33:18.5273748Z   overwrite: false
+ensure	upload_resource_log	2026-11-18T12:33:18.5273990Z   include-hidden-files: false
+ensure	upload_resource_log	2026-11-18T12:33:18.5355753Z env:
+ensure	upload_resource_log	2026-11-18T12:33:18.5356032Z   TWINGATE_API_TOKEN: 
+ensure	upload_resource_log	2026-11-18T12:33:18.5360529Z   TWINGATE_ACCESS_TOKEN: ***
+ensure	upload_resource_log	2026-11-18T12:33:18.5360860Z   TWINGATE_NETWORK: ***
+ensure	upload_resource_log	2026-11-18T12:33:18.5361112Z   TWINGATE_REMOTE_NETWORK: 
+ensure	upload_resource_log	2026-11-18T12:33:18.5361374Z   TWINGATE_REMOTE_NETWORK_ID: 
+ensure	upload_resource_log	2026-11-18T12:33:18.5361635Z   TWINGATE_RESOURCE_NAME: minecraft
+ensure	upload_resource_log	2026-11-18T12:33:18.5361917Z   TWINGATE_RESOURCE_ADDRESS: 127.0.0.1
+ensure	upload_resource_log	2026-11-18T12:33:18.5362196Z   TWINGATE_RESOURCE_PORT: 25565
+ensure	upload_resource_log	2026-11-18T12:33:18.5362465Z ##[endgroup]
+ensure	upload_resource_log	2026-11-18T12:33:18.7063067Z (node:2414) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+ensure	upload_resource_log	2026-11-18T12:33:18.7064085Z (Use `node --trace-deprecation ...` to show where the warning was created)
+ensure	upload_resource_log	2026-11-18T12:33:18.7125547Z With the provided path, there will be 1 file uploaded
+ensure	upload_resource_log	2026-11-18T12:33:18.7127105Z Artifact name is valid!
+ensure	upload_resource_log	2026-11-18T12:33:18.7128255Z Root directory input is valid!
+ensure	upload_resource_log	2026-11-18T12:33:18.9464626Z Beginning upload of artifact content to blob storage
+ensure	upload_resource_log	2026-11-18T12:33:18.9664366Z (node:2414) [DEP0169] DeprecationWarning: `url.parse()` behavior is not standardized and prone to errors that have security implications. Use the WHATWG URL API instead. CVEs are not issued for `url.parse()` vulnerabilities.
+ensure	upload_resource_log	2026-11-18T12:33:18.9893182Z Uploaded bytes 158
+ensure	upload_resource_log	2026-11-18T12:33:19.0029598Z Finished uploading artifact content to blob storage!
+ensure	upload_resource_log	2026-11-18T12:33:19.0030511Z SHA256 digest of uploaded artifact zip is ce33d1a4ac9e7df3dbcccee3dc5e163f79de277f5692aef5146013b529699edd
+ensure	upload_resource_log	2026-11-18T12:33:19.0032928Z Finalizing artifact upload
+ensure	upload_resource_log	2026-11-18T12:33:19.3763440Z Artifact twingate-resource-log.zip successfully finalized. Artifact ID 14428435159
+ensure	upload_resource_log	2026-11-18T12:33:19.3764616Z Artifact twingate-resource-log has been successfully uploaded! Final size is 158 bytes. Artifact ID is 14428435159
+ensure	upload_resource_log	2026-11-18T12:33:19.3771462Z Artifact download URL: https://github.com/pro***/ultron_smp/actions/runs/44304997006/artifacts/14428435159
+ensure	Post checkout_repo	﻿2026-11-18T12:33:19.4010771Z Post job cleanup.
+ensure	Post checkout_repo	2026-11-18T12:33:19.4877034Z [command]/usr/bin/git version
+ensure	Post checkout_repo	2026-11-18T12:33:19.4926261Z git version 2.56.1
+ensure	Post checkout_repo	2026-11-18T12:33:19.4970992Z Temporarily overriding HOME='/home/runner/work/_temp/6f481881-ef6e-492f-abe8-d19cc8589965' before making global git config changes
+ensure	Post checkout_repo	2026-11-18T12:33:19.4971966Z Adding repository directory to the temporary git global config as a safe directory
+ensure	Post checkout_repo	2026-11-18T12:33:19.4977368Z [command]/usr/bin/git config --global --add safe.directory /home/runner/work/ultron_smp/ultron_smp
+ensure	Post checkout_repo	2026-11-18T12:33:19.5026518Z [command]/usr/bin/git config --local --name-only --get-regexp core\.sshCommand
+ensure	Post checkout_repo	2026-11-18T12:33:19.5066321Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+ensure	Post checkout_repo	2026-11-18T12:33:19.5389725Z [command]/usr/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+ensure	Post checkout_repo	2026-11-18T12:33:19.5424268Z http.https://github.com/.extraheader
+ensure	Post checkout_repo	2026-11-18T12:33:19.5445529Z [command]/usr/bin/git config --local --unset-all http.https://github.com/.extraheader
+ensure	Post checkout_repo	2026-11-18T12:33:19.5482991Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+ensure	Post checkout_repo	2026-11-18T12:33:19.5828851Z [command]/usr/bin/git config --local --name-only --get-regexp ^includeIf\.gitdir:
+ensure	Post checkout_repo	2026-11-18T12:33:19.5867988Z [command]/usr/bin/git submodule foreach --recursive git config --local --show-origin --name-only --get-regexp remote.origin.url
+ensure	Complete job	﻿2026-11-18T12:33:19.6331217Z Cleaning up orphan processes
+ensure	Complete job	2026-11-18T12:33:19.6732157Z ##[warning]Node.js 20 is deprecated. The following actions target Node.js 20 but are being forced to run on Node.js 24: actions/checkout@v4, actions/upload-artifact@v4. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/

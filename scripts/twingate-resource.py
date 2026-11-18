@@ -140,8 +140,9 @@ def resource_port():
 
 class Client:
     def __init__(self, token, tenant):
-        self.endpoint = env("TWINGATE_API_URL") or "https://{}/api/graphql/".format(
-            tenant
+        self.endpoint = (
+            env("TWINGATE_API_URL")
+            or "https://{}.twingate.com/api/graphql/".format(tenant)
         )
         self.token = token
 
@@ -152,113 +153,69 @@ class Client:
 
         url = self.endpoint
         body = None
-        original_getaddrinfo = None
 
-        if env("TWINGATE_DEBUG"):
-            import socket
-
-            parsed_endpoint = urllib.parse.urlparse(url)
-            print(
-                "debug endpoint suffix {} host length {}".format(
-                    (parsed_endpoint.hostname or "").split(".", 1)[-1],
-                    len(parsed_endpoint.hostname or ""),
-                ),
-                file=sys.stderr,
+        for _ in range(4):
+            request = urllib.request.Request(
+                url,
+                data=json.dumps(payload).encode("utf-8"),
+                headers={
+                    "X-API-KEY": self.token,
+                    "Content-Type": "application/json",
+                    "Accept": "application/json",
+                    "User-Agent": "ultron-smp-twingate-resource/1.0",
+                },
+                method="POST",
             )
-            original_getaddrinfo = socket.getaddrinfo
 
-            def debug_getaddrinfo(host, port, *args, **kwargs):
+            for attempt in range(3):
                 try:
-                    return original_getaddrinfo(host, port, *args, **kwargs)
-                except Exception as exc:
-                    text = str(host)
-                    print(
-                        "debug getaddrinfo suffix {} length {} error {}".format(
-                            text.split(".", 1)[-1], len(text), type(exc).__name__
-                        ),
-                        file=sys.stderr,
-                    )
-                    raise
-
-            socket.getaddrinfo = debug_getaddrinfo
-
-        try:
-            for _ in range(4):
-                request = urllib.request.Request(
-                    url,
-                    data=json.dumps(payload).encode("utf-8"),
-                    headers={
-                        "X-API-KEY": self.token,
-                        "Content-Type": "application/json",
-                        "Accept": "application/json",
-                        "User-Agent": "ultron-smp-twingate-resource/1.0",
-                    },
-                    method="POST",
-                )
-
-                for attempt in range(3):
-                    try:
-                        with urllib.request.urlopen(request, timeout=30) as response:
-                            body = response.read().decode("utf-8", errors="replace")
-                        break
-                    except urllib.error.HTTPError as exc:
-                        location = exc.headers.get("Location")
-                        if exc.code in (301, 302, 303, 307, 308) and location:
-                            redirected = urllib.parse.urljoin(url, location)
-                            parsed = urllib.parse.urlparse(redirected)
-                            host = (parsed.hostname or "").lower()
-                            if (
-                                parsed.scheme == "https"
-                                and (
-                                    host == "twingate.com"
-                                    or host.endswith(".twingate.com")
-                                )
-                                and redirected != url
-                            ):
-                                if env("TWINGATE_DEBUG"):
-                                    print(
-                                        "Twingate redirect suffix: {}".format(
-                                            host.split(".", 1)[-1]
-                                        ),
-                                        file=sys.stderr,
-                                    )
-                                url = redirected
-                                break
-                            raise TwingateError(
-                                "Twingate Admin API redirected to an unexpected host."
-                            )
-
-                        detail = exc.read().decode("utf-8", errors="replace")
-                        message = "Twingate Admin API returned HTTP {}.".format(
-                            exc.code
-                        )
-                        if exc.code in (401, 403):
-                            message += (
-                                " Authentication failed. Set TWINGATE_API_TOKEN to a "
-                                "Read & Write Admin API token from Settings > API."
-                            )
-                        elif detail:
-                            message += " {}".format(redact(detail))
-                        raise TwingateError(message)
-                    except urllib.error.URLError as exc:
-                        if attempt < 2:
-                            time.sleep(2)
-                            continue
-                        raise TwingateError(
-                            "Could not reach the Twingate Admin API: {}.".format(
-                                exc.reason
-                            )
-                        )
-
-                if body is not None:
+                    with urllib.request.urlopen(request, timeout=30) as response:
+                        body = response.read().decode("utf-8", errors="replace")
                     break
-            else:
-                raise TwingateError("Twingate Admin API redirected too many times.")
-        finally:
-            if original_getaddrinfo is not None:
-                import socket
+                except urllib.error.HTTPError as exc:
+                    location = exc.headers.get("Location")
+                    if exc.code in (301, 302, 303, 307, 308) and location:
+                        redirected = urllib.parse.urljoin(url, location)
+                        parsed = urllib.parse.urlparse(redirected)
+                        host = (parsed.hostname or "").lower()
+                        if (
+                            parsed.scheme == "https"
+                            and (
+                                host == "twingate.com"
+                                or host.endswith(".twingate.com")
+                            )
+                            and redirected != url
+                        ):
+                            url = redirected
+                            break
+                        raise TwingateError(
+                            "Twingate Admin API redirected to an unexpected host."
+                        )
 
-                socket.getaddrinfo = original_getaddrinfo
+                    detail = exc.read().decode("utf-8", errors="replace")
+                    message = "Twingate Admin API returned HTTP {}.".format(exc.code)
+                    if exc.code in (401, 403):
+                        message += (
+                            " Authentication failed. Set TWINGATE_API_TOKEN to a "
+                            "Read & Write Admin API token from Settings > API."
+                        )
+                    elif detail:
+                        message += " {}".format(redact(detail))
+                    raise TwingateError(message)
+                except urllib.error.URLError as exc:
+                    if attempt < 2:
+                        time.sleep(2)
+                        continue
+                    raise TwingateError(
+                        "Could not reach the Twingate Admin API: {}.".format(
+                            exc.reason
+                        )
+                    )
+
+            if body is not None:
+                break
+        else:
+            raise TwingateError("Twingate Admin API redirected too many times.")
 
         if body is None:
             raise TwingateError("Twingate Admin API returned an empty response.")
@@ -476,27 +433,6 @@ def ensure_resource():
 
     candidates = network_candidates(token)
     last_error = None
-
-    if env("TWINGATE_DEBUG"):
-        import socket
-
-        for candidate in candidates:
-            host = candidate + ".twingate.com"
-            try:
-                addresses = socket.getaddrinfo(host, 443)
-                print(
-                    "debug host suffix {} resolves ({} records)".format(
-                        host.split(".", 1)[-1], len(addresses)
-                    ),
-                    file=sys.stderr,
-                )
-            except Exception as exc:
-                print(
-                    "debug host suffix {} resolution error {}".format(
-                        host.split(".", 1)[-1], type(exc).__name__
-                    ),
-                    file=sys.stderr,
-                )
 
     for tenant in candidates:
         try:
