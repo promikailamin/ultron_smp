@@ -57,15 +57,56 @@ def api_token():
     return ""
 
 
-def network():
-    value = env("TWINGATE_NETWORK")
-    if not value:
+def valid_network(value):
+    return bool(value) and all(ch.isalnum() or ch in ".-_" for ch in value)
+
+
+def derive_network_from_token(token):
+    parts = token.split(".")
+    if len(parts) < 2:
+        return ""
+
+    import base64
+
+    payload = parts[1] + "=" * (-len(parts[1]) % 4)
+    try:
+        claims = json.loads(base64.urlsafe_b64decode(payload.encode("ascii")))
+    except Exception:
+        return ""
+
+    audience = claims.get("aud")
+    if isinstance(audience, list):
+        audience = next(
+            (item for item in audience if isinstance(item, str) and item), None
+        )
+    if not isinstance(audience, str):
+        return ""
+
+    audience = audience.strip()
+    return audience if valid_network(audience) else ""
+
+
+def network_candidates(token):
+    candidates = []
+    configured = env("TWINGATE_NETWORK")
+    if configured:
+        if not valid_network(configured):
+            raise TwingateError("TWINGATE_NETWORK contains invalid characters.")
+        candidates.append(configured)
+
+    for value in (
+        derive_network_from_token(token),
+        derive_network_from_token(env("TWINGATE_API_TOKEN")),
+        derive_network_from_token(env("TWINGATE_ACCESS_TOKEN")),
+    ):
+        if value and value not in candidates:
+            candidates.append(value)
+
+    if not candidates:
         raise TwingateError(
             "TWINGATE_NETWORK is required to reach the Twingate Admin API."
         )
-    if not all(ch.isalnum() or ch in ".-_" for ch in value):
-        raise TwingateError("TWINGATE_NETWORK contains invalid characters.")
-    return value
+    return candidates
 
 
 def resource_port():
@@ -333,33 +374,55 @@ def ensure_resource():
     if not address:
         raise TwingateError("TWINGATE_RESOURCE_ADDRESS must not be empty.")
 
-    client = Client(token, network())
-    network_id = select_remote_network(client)
-    existing = find_resource(client, name)
+    candidates = network_candidates(token)
+    last_error = None
 
-    if existing:
-        entity = existing
-        current_address = (existing.get("address") or {}).get("value")
-        current_network = (existing.get("remoteNetwork") or {}).get("id")
-        if current_address != address or current_network != network_id:
-            entity = update_resource(
-                client, existing.get("id"), address, network_id, port
-            )
+    for tenant in candidates:
+        try:
+            client = Client(token, tenant)
+            network_id = select_remote_network(client)
+            existing = find_resource(client, name)
+
+            if existing:
+                entity = existing
+                current_address = (existing.get("address") or {}).get("value")
+                current_network = (existing.get("remoteNetwork") or {}).get("id")
+                if current_address != address or current_network != network_id:
+                    entity = update_resource(
+                        client, existing.get("id"), address, network_id, port
+                    )
+                    print(
+                        "Twingate resource '{}' updated to {}:{}.".format(
+                            name, address, port
+                        )
+                    )
+                else:
+                    print("Twingate resource '{}' already exists.".format(name))
+            else:
+                entity = create_resource(client, name, address, network_id, port)
+                print(
+                    "Twingate resource '{}' created at {}:{}.".format(
+                        name, address, port
+                    )
+                )
+
             print(
-                "Twingate resource '{}' updated to {}:{}.".format(name, address, port)
+                "Resource id: {}. Assign users or groups to it in the Twingate "
+                "Admin Console.".format(entity.get("id", "unknown"))
             )
-        else:
-            print("Twingate resource '{}' already exists.".format(name))
-    else:
-        entity = create_resource(client, name, address, network_id, port)
-        print("Twingate resource '{}' created at {}:{}.".format(name, address, port))
+            return 0
+        except TwingateError as exc:
+            last_error = exc
+            if len(candidates) > 1:
+                print(
+                    "Twingate Admin API attempt failed; trying another network "
+                    "name.",
+                    file=sys.stderr,
+                )
+                continue
+            break
 
-    print(
-        "Resource id: {}. Assign users or groups to it in the Twingate Admin Console.".format(
-            entity.get("id", "unknown")
-        )
-    )
-    return 0
+    raise last_error or TwingateError("Twingate Admin API request failed.")
 
 
 def main(argv):
