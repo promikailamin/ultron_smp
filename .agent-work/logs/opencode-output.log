@@ -5326,3 +5326,61 @@ github.com
   - Token: ghp_************************************
   - Token scopes: 'admin:enterprise', 'admin:gpg_key', 'admin:org', 'admin:org_hook', 'admin:public_key', 'admin:repo_hook', 'admin:ssh_signing_key', 'audit_log', 'codespace', 'copilot', 'delete:packages', 'delete_repo', 'gist', 'notifications', 'project', 'repo', 'user', 'workflow', 'write:discussion', 'write:network_configurations', 'write:packages'
 [0m
+[0m$ [0mgit add -A && git status --short && git -c user.name="ultron" -c user.email="ultron@users.noreply.github.com" commit -m "Add selectable free tunnel region for Bangladesh" && git push origin HEAD:main
+M  .agent-work/logs/opencode-output.log
+M  .agent-work/logs/serveo-tunnel-test.log
+A  .agent-work/logs/test-low-latency-region.log
+A  .agent-work/logs/test-region-tunnel-suite.log
+M  .agent-work/logs/test-serveo-http.log
+A  .agent-work/outputs/issue-16-tunnel-region.md
+A  .agent-work/tests/test_low_latency_region.sh
+M  .github/workflows/run.yml
+M  README.md
+M  scripts/low-latency-tunnel.sh
+M  scripts/tunnel.sh
+[main 0db8d4d] Add selectable free tunnel region for Bangladesh
+ 11 files changed, 5054 insertions(+), 4288 deletions(-)
+ create mode 100644 .agent-work/logs/test-low-latency-region.log
+ create mode 100644 .agent-work/logs/test-region-tunnel-suite.log
+ create mode 100644 .agent-work/outputs/issue-16-tunnel-region.md
+ create mode 100755 .agent-work/tests/test_low_latency_region.sh
+To https://github.com/promikailamin/ultron_smp
+   7c462df..0db8d4d  HEAD -> main
+[0m
+[0m$ [0mgh issue comment 16 --repo promikailamin/ultron_smp --body "$(cat <<'EOF'
+Implemented selectable free tunnel regions.
+
+**What changed (commit `0db8d4d`):**
+- Added a **Free relay region** input to the **Run UltronSMP** workflow: `auto`, `bangladesh`, `asia-pacific`, `united-states`, `europe`.
+- `scripts/low-latency-tunnel.sh` now accepts `TUNNEL_REGION` and maps `bangladesh`/`asia-pacific` to Pinggy's Singapore relay (`ap.free.pinggy.io`), plus US/EU relays.
+- `auto` keeps the previous behaviour: measure all free relays and apply the `PLAYER_REGION=bangladesh` preference.
+- Documented the setting in `README.md` and `.agent-work/outputs/issue-16-tunnel-region.md`.
+
+**How to use:** Run workflow -> set **Public tunnel provider** to `pinggy` or `tunnl` -> set **Free relay region** to `bangladesh` -> start the run.
+
+**Tests passed:**
+- `bash .agent-work/tests/test_low_latency_region.sh` (Bangladesh/AP, US, EU mappings)
+- `bash .agent-work/tests/test_tunnel.sh`
+- `bash .agent-work/tests/test_serveo_tunnel.sh`
+- `bash .agent-work/tests/test_tunnl_provider.sh`
+- Workflow YAML and shell syntax checks
+
+**Important:** Pinggy's free tier has no relay inside Bangladesh. `bangladesh` uses the Singapore relay. Since the game server runs on a US GitHub Actions runner, Singapore is not always faster than the US relay; `auto` measures both legs and is the safest default. The only way to remove the remaining distance is to host the server closer to Bangladesh (e.g. a Singapore/India/Bangladesh VPS).
+EOF
+)"
+https://github.com/promikailamin/ultron_smp/issues/16#issuecomment-6980604368
+[0m
+[0m$ [0mgit status --short && git log --oneline -3 && git rev-parse HEAD
+M .agent-work/logs/opencode-output.log
+0db8d4d Add selectable free tunnel region for Bangladesh
+7c462df chore: recover OpenCode workspace [skip ci]
+fbf3090 Auto-save Minecraft server data
+0db8d4d62b28743d9023cae988ee07dfffa1fab5
+[0m
+[0m# [0mTodos
+[✓] Add explicit tunnel region support to Pinggy low-latency script
+[✓] Expose tunnel_region input in run workflow
+[✓] Document region selection and free-tier behavior
+[✓] Add and run region selection tests
+[✓] Commit, push, and comment on issue 16
+[0m
