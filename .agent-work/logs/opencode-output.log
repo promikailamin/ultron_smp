@@ -3045,3 +3045,41 @@ Index: /home/runner/work/ultron_smp/ultron_smp/.agent-work/tests/test_tunnel.sh
      2>&1 | tee "$LOG_DIR/tunnel-test.log"
 
 [0m
+[0m$ [0mcd /home/runner/work/ultron_smp/ultron_smp && bash .agent-work/tests/test_tunnel.sh 2>&1 | tee .agent-work/logs/tunnel-test-run.log && git add -A && git commit -m "Harden LocalXpose address parsing for test mode" && git push origin HEAD:main
+Tunnel is live at 127.0.0.1:25601
+HTTP/1.0 200 OK
+Tunnel end-to-end test passed: public TCP endpoint is reachable
+[main a2723cb] Harden LocalXpose address parsing for test mode
+ 5 files changed, 121 insertions(+), 4 deletions(-)
+To https://github.com/promikailamin/ultron_smp
+   e0cc193..a2723cb  HEAD -> main
+[0m
+[0m$ [0mcd /home/runner/work/ultron_smp/ultron_smp && git status --short && git log --oneline -3 && git rev-parse HEAD
+M .agent-work/logs/opencode-output.log
+a2723cb Harden LocalXpose address parsing for test mode
+e0cc193 Switch tunnel provider to LocalXpose with bore fallback
+cc69ac1 update
+a2723cbc9cca5e7a6ad5ecda1b4c5e44b0af47a5
+[0m
+[0m$ [0mcd /home/runner/work/ultron_smp/ultron_smp && gh issue comment 4 --repo promikailamin/ultron_smp --body "Implemented LocalXpose as the primary tunnel provider.
+
+Changes:
+- \`scripts/tunnel.sh\` now downloads and runs the LocalXpose (\`loclx\`) TCP tunnel, authenticates with \`LOCALXPOSE_ACCESS_TOKEN\`, supports \`LOCALXPOSE_REGION\`, and writes the public address to \`SERVER_ADDRESS.txt\`.
+- The previous bore implementation was preserved as \`scripts/bore-tunnel.sh\` and is used as an automatic fallback if LocalXpose fails (disable with \`LOCALXPOSE_BORE_FALLBACK=false\`).
+- \`.github/workflows/run.yml\` now uses the LocalXpose secret/variables. The Pinggy low-latency steps and stale \`SERVER_ADDRESS_LOW_LATENCY.txt\` were removed. World autosave/cancellation handling is unchanged.
+- The token was stored as the GitHub Actions secret \`LOCALXPOSE_ACCESS_TOKEN\`; it is not written into the repository.
+
+Important: the supplied token belongs to a LocalXpose FREE account. LocalXpose TCP tunnels (required by Minecraft) require a PRO account. A real probe returned \`Error: PRO account only\`, so with this token the workflow will currently fall back to \`bore.pub\`. Upgrade the LocalXpose account or replace the secret with a PRO token for LocalXpose to be used. Since the token was posted publicly in this issue, please rotate it.
+
+Validation:
+- \`bash .agent-work/tests/test_tunnel.sh\` passed end-to-end using a fake loclx client (address parsing, forwarding, PID handling).
+- \`shellcheck\` passed for all scripts and tests.
+- Both workflow YAML files parse successfully.
+- Real LocalXpose probe confirmed the FREE-account TCP rejection; log saved in \`.agent-work/logs/localxpose-free-account-test.log\`.
+
+Commits \`e0cc193\` and \`a2723cb\` were pushed to \`main\` successfully."
+https://github.com/promikailamin/ultron_smp/issues/4#issuecomment-6971597230
+[0m
+[0m$ [0mcd /home/runner/work/ultron_smp/ultron_smp && git status --short
+M .agent-work/logs/opencode-output.log
+[0m
