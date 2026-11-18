@@ -748,7 +748,8 @@
       "minecraft:skeleton": "2026-11-15 10:50:47 +0000",
       "minecraft:piglin": "2026-11-17 02:10:13 +0000",
       "minecraft:zombie": "2026-11-15 10:49:42 +0000",
-      "minecraft:creeper": "2026-11-15 10:50:00 +0000"
+      "minecraft:creeper": "2026-11-15 10:50:00 +0000",
+      "minecraft:zombie_villager": "2026-11-17 12:01:32 +0000"
     },
     "done": false
   },
