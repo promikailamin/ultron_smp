@@ -121,9 +121,9 @@ account; if there are several, set the repository variable
 `TWINGATE_REMOTE_NETWORK` (name) or `TWINGATE_REMOTE_NETWORK_ID`. Resource
 settings can be overridden with the repository variables
 `TWINGATE_RESOURCE_NAME`, `TWINGATE_RESOURCE_ADDRESS` and
-`TWINGATE_RESOURCE_PORT`. The script never prints token values. If no API
-token is configured it skips cleanly; set `TWINGATE_RESOURCE_ENABLED=true` to
-make a missing Admin API token fatal instead.
+`TWINGATE_RESOURCE_PORT`. The script never prints token values. When neither
+`TWINGATE_API_TOKEN` nor `TWINGATE_ACCESS_TOKEN` is set it skips cleanly; set
+`TWINGATE_RESOURCE_ENABLED=true` to make a missing token fatal instead.
 
 The standalone **Ensure Twingate Resource** workflow can also be run manually
 from the Actions tab. This is useful after adding or rotating

@@ -115,6 +115,19 @@ cleanup() {
 trap cleanup EXIT
 
 python3 -m py_compile "$SCRIPT"
+
+env -u TWINGATE_API_URL python3 - "$SCRIPT" <<'PY'
+import importlib.util
+import sys
+
+spec = importlib.util.spec_from_file_location("twingate_resource", sys.argv[1])
+module = importlib.util.module_from_spec(spec)
+spec.loader.exec_module(module)
+endpoint = module.Client("token", "testnet").endpoint
+if endpoint != "https://testnet.twingate.com/api/graphql/":
+    raise SystemExit("unexpected Twingate Admin API endpoint: {}".format(endpoint))
+PY
+
 bash -n "$ROOT_DIR/.github/workflows/run.yml" 2>/dev/null || true
 
 python3 - "$ROOT_DIR/.github/workflows/run.yml" <<'PY'
