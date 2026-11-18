@@ -3152,3 +3152,17 @@ https://github.com/promikailamin/ultron_smp/issues/4#issuecomment-6971607500
 [0m$ [0mcd /home/runner/work/ultron_smp/ultron_smp && git status --short
 M .agent-work/logs/opencode-output.log
 [0m
+[0m$ [0mcd /home/runner/work/ultron_smp/ultron_smp && git add -A && git commit -m "Update OpenCode execution log" && git push origin HEAD:main
+[main 7853285] Update OpenCode execution log
+ 1 file changed, 13 insertions(+)
+To https://github.com/promikailamin/ultron_smp
+   f9a3fba..7853285  HEAD -> main
+[0m
+Implemented LocalXpose as the primary tunnel provider and pushed to `main`.
+
+- `scripts/tunnel.sh` now runs a LocalXpose TCP tunnel via `LOCALXPOSE_ACCESS_TOKEN`, with configurable region.
+- Old bore tunnel preserved as `scripts/bore-tunnel.sh` and used as automatic fallback.
+- Workflow updated, Pinggy low-latency path removed, token stored as the `LOCALXPOSE_ACCESS_TOKEN` GitHub secret.
+- Tests passed: fake-loclx end-to-end, bore fallback end-to-end, shellcheck, YAML parsing.
+
+Important: the supplied token is a **FREE** LocalXpose account, which cannot create TCP tunnels (Minecraft requires TCP). A real probe returned `PRO account only`, so the workflow currently falls back to `bore.pub`. Upgrade to LocalXpose PRO or replace the secret with a PRO token. Since the token was posted publicly, rotate it. Final pushed commit: `7853285`.
