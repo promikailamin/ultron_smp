@@ -5656,3 +5656,36 @@ M .agent-work/logs/opencode-output.log
 2d416486cc81ad9d957d0c51b8d98682ee21c015
 2d416486cc81ad9d957d0c51b8d98682ee21c015	refs/heads/main
 [0m
+[0m$ [0mgit add .agent-work/logs/opencode-output.log && git commit -m "Record issue 20 agent execution log" && git push origin HEAD:main 2>&1 | tail -5; echo "PUSH_EXIT:${PIPESTATUS[0]}"; git status --short | head; git ls-remote origin refs/heads/main | head -1
+[main 4ebab65] Record issue 20 agent execution log
+ 1 file changed, 46 insertions(+)
+To https://github.com/promikailamin/ultron_smp
+   2d41648..4ebab65  HEAD -> main
+PUSH_EXIT:0
+4ebab65ff7273aa4e1e33c095f03403f367c7a1e	refs/heads/main
+[0m
+[0m$ [0mgit status --short; git log --oneline -3
+M .agent-work/logs/opencode-output.log
+4ebab65 Record issue 20 agent execution log
+2d41648 Fix Cloudflare tunnel TCP fallback and restarts
+08639a4 Final Minecraft server backup
+[0m
+[0m# [0mTodos
+[✓] Fix Cloudflare TCP handling so quick tunnels (HTTP-only) do not publish a broken Minecraft address
+[✓] Add reliable tunnel restart/supervision and Bangladesh-prioritized TCP fallback
+[✓] Wire workflow env and keep-alive checks for the new Cloudflare behavior
+[✓] Update tests and docs, run validation
+[✓] Commit/push changes and comment on issue 20
+[0m
+Fixed and pushed to `main` (`2d41648`, log commit `4ebab65`). Commented on issue 20.
+
+Root cause: Cloudflare Quick Tunnels are HTTP-only and cannot carry Minecraft TCP. The workflow published a dead `trycloudflare.com` address and kept restarting it with a new hostname.
+
+Key changes:
+- Named Cloudflare tunnels are now required for Minecraft TCP.
+- Without one, the game uses the Bangladesh-prioritised Pinggy Asia-Pacific relay (or `bore`/`none`).
+- Named restarts keep the same hostname; the workflow checks the access proxy and publishes address changes immediately.
+- Added `CLOUDFLARE_REGION`, `CLOUDFLARE_TCP_FALLBACK`, and `CLOUDFLARE_ALLOW_QUICK_TCP`.
+- Cleared the dead address from `SERVER_ADDRESS.txt`.
+
+Tests passed: `bash -n`, `shellcheck`, YAML parse, `test_cloudflare_tunnel.sh`, `test_tunnel.sh`, `test_low_latency_region.sh`, `test_serveo_tunnel.sh`.
