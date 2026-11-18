@@ -13,6 +13,8 @@ on:
                     - localxpose
                     - bore
                     - serveo
+                    - cloudflare
+                    - cloudflared
                     - pinggy
                     - tunnl
                     - minekube
@@ -53,6 +55,16 @@ jobs:
             MINEKUBE_CONNECT_TOKEN: ${{ secrets.MINEKUBE_CONNECT_TOKEN }}
             MINEKUBE_GATE_VERSION: ${{ vars.MINEKUBE_GATE_VERSION || '0.81.1' }}
             MINEKUBE_AUTO: ${{ vars.MINEKUBE_AUTO || 'true' }}
+            CLOUDFLARE_TUNNEL_TOKEN: ${{ secrets.CLOUDFLARE_TUNNEL_TOKEN || secrets.CLOUDFLARE_TOKEN }}
+            CLOUDFLARE_TUNNEL_HOSTNAME: ${{ vars.CLOUDFLARE_TUNNEL_HOSTNAME || vars.CLOUDFLARE_HOSTNAME }}
+            CLOUDFLARE_TUNNEL_CONFIG: ${{ vars.CLOUDFLARE_TUNNEL_CONFIG }}
+            CLOUDFLARE_MODE: ${{ vars.CLOUDFLARE_MODE || 'auto' }}
+            CLOUDFLARE_VERSION: ${{ vars.CLOUDFLARE_VERSION || '2026.11.1' }}
+            CLOUDFLARE_BORE_FALLBACK: ${{ vars.CLOUDFLARE_BORE_FALLBACK || 'true' }}
+            CLOUDFLARE_ACCESS_PORT: ${{ vars.CLOUDFLARE_ACCESS_PORT || '25571' }}
+            CLOUDFLARE_DNS_WAIT_SECONDS: ${{ vars.CLOUDFLARE_DNS_WAIT_SECONDS || '60' }}
+            CLOUDFLARE_ACCESS_CLIENT_ID: ${{ secrets.CLOUDFLARE_ACCESS_CLIENT_ID }}
+            CLOUDFLARE_ACCESS_CLIENT_SECRET: ${{ secrets.CLOUDFLARE_ACCESS_CLIENT_SECRET }}
             TWINGATE_ENABLED: ${{ vars.TWINGATE_ENABLED || 'auto' }}
             TWINGATE_NETWORK: ${{ vars.TWINGATE_NETWORK || secrets.TWINGATE_NETWORK || 'mikailamin' }}
             TWINGATE_CONNECTOR_NAME: ${{ vars.TWINGATE_CONNECTOR_NAME || 'twingate-mccon' }}
@@ -196,6 +208,8 @@ jobs:
               id: expose-tunnel
               run: |
                   set -euo pipefail
+                  verify_address_file="${RUNNER_TEMP:-$PWD/.agent-work/tmp}/ultron-tunnel-verify-address"
+                  rm -f "$verify_address_file"
                   bash scripts/tunnel.sh | tee .agent-work/logs/tunnel-start.log
 
                   address="$(grep -v '^#' SERVER_ADDRESS.txt | grep -E ':[0-9]+$' | tail -n 1)"
@@ -206,6 +220,17 @@ jobs:
 
                   echo "Tunnel has been started at ${address}"
                   echo "SERVER_ADDRESS=${address}" >> "$GITHUB_ENV"
+
+                  # Cloudflare TCP tunnels are reached through a local
+                  # cloudflared access proxy; use that endpoint for the
+                  # connectivity check instead of the public hostname.
+                  if [ -s "$verify_address_file" ]; then
+                      verify_address="$(grep -v '^#' "$verify_address_file" | grep -E ':[0-9]+$' | tail -n 1 || true)"
+                      if [ -n "$verify_address" ]; then
+                          echo "Verification proxy is listening at ${verify_address}"
+                          echo "SERVER_VERIFY_ADDRESS=${verify_address}" >> "$GITHUB_ENV"
+                      fi
+                  fi
 
                   status_url="$(grep -v '^#' SERVER_STATUS_URL.txt 2>/dev/null | tail -n 1 || true)"
                   if [ -n "$status_url" ]; then
@@ -228,11 +253,15 @@ jobs:
             - name: verify_public_tunnel
               run: |
                   set -euo pipefail
-                  address="${SERVER_ADDRESS:-$(grep -v '^#' SERVER_ADDRESS.txt | grep -E ':[0-9]+$' | tail -n 1)}"
+                  address="${SERVER_VERIFY_ADDRESS:-${SERVER_ADDRESS:-$(grep -v '^#' SERVER_ADDRESS.txt | grep -E ':[0-9]+$' | tail -n 1)}}"
                   host="${address%:*}"
                   port="${address##*:}"
 
-                  echo "Checking public endpoint ${host}:${port}..."
+                  if [ -n "${SERVER_VERIFY_ADDRESS:-}" ]; then
+                      echo "Checking the Cloudflare route through the local access proxy ${host}:${port}..."
+                  else
+                      echo "Checking public endpoint ${host}:${port}..."
+                  fi
 
                   for attempt in $(seq 1 20); do
                       if python3 - "$host" "$port" <<'PY'
@@ -256,6 +285,8 @@ jobs:
                   echo "ERROR: the public tunnel is not reachable."
                   tail -100 .agent-work/logs/localxpose-tunnel.log \
                       .agent-work/logs/serveo-tunnel.log \
+                      .agent-work/logs/cloudflare-tunnel.log \
+                      .agent-work/logs/cloudflare-access.log \
                       .agent-work/logs/tunnl-tunnel.log \
                       .agent-work/logs/tunnl-status.log \
                       .agent-work/logs/pinggy-tunnel.log \

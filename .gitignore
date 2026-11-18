@@ -1,7 +1,9 @@
 .agent-work/tools/bore-*
 .agent-work/tools/loclx-*
 .agent-work/tools/gate-*
+.agent-work/tools/cloudflared-*
 .agent-work/tools/.gate-download-*
+.agent-work/tools/.cloudflared-download-*
 .agent-work/tmp/*
 !.agent-work/tmp/.gitkeep
 .agent-work/logs/tunnel.log
@@ -29,6 +31,12 @@
 .agent-work/logs/test-tunnl-http.log
 .agent-work/logs/tunnl-provider-test.log
 .agent-work/logs/test-tunnl-provider-http.log
+.agent-work/logs/cloudflare-tunnel.log
+.agent-work/logs/cloudflare-access.log
+.agent-work/logs/cloudflare-named-attempt.log
+.agent-work/logs/cloudflare-quick-attempt.log
+.agent-work/logs/test-cloudflare-http.log
+.agent-work/logs/test-cloudflare-tunnel.log
 
 __pycache__/
 *.pyc

@@ -1,0 +1,11 @@
+=== quick tunnel ===
+Tunnel is live at fake-cloudflare.trycloudflare.com:25565
+HTTP/1.0 200 OK
+Cloudflare route is reachable through the access proxy
+quick tunnel test passed
+=== named tunnel ===
+Tunnel is live at mc.example.com:25565
+HTTP/1.0 200 OK
+Cloudflare route is reachable through the access proxy
+named tunnel test passed
+cloudflare-tunnel test passed

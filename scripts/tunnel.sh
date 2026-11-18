@@ -19,6 +19,9 @@
 #   localxpose  Force the LocalXpose tunnel
 #   bore        Force the bore.pub tunnel
 #   serveo      Force the Serveo SSH tunnel
+#   cloudflare  Use a Cloudflare Tunnel (cloudflared). A named tunnel is used
+#               when CLOUDFLARE_TUNNEL_TOKEN and CLOUDFLARE_TUNNEL_HOSTNAME
+#               are set, otherwise a quick trycloudflare.com tunnel is used.
 #   pinggy      Force the Bangladesh-prioritised Pinggy TCP relay
 #   tunnl       Use a low-latency TCP relay for Minecraft and add a
 #               tunnl.gg HTTP status page (tunnl.gg cannot carry raw TCP)
@@ -82,6 +85,9 @@ case "$PROVIDER" in
     serveo)
         exec bash "$ROOT_DIR/scripts/serveo-tunnel.sh"
         ;;
+    cloudflare | cloudflared | cloudflare-tunnel | cf)
+        exec bash "$ROOT_DIR/scripts/cloudflare-tunnel.sh"
+        ;;
     pinggy | low-latency)
         default_pid_dir="${RUNNER_TEMP:-$ROOT_DIR/.agent-work/tmp}"
         export PLAYER_REGION="${PLAYER_REGION:-bangladesh}"
@@ -106,7 +112,7 @@ case "$PROVIDER" in
         exec bash "$ROOT_DIR/scripts/bore-tunnel.sh"
         ;;
     *)
-        echo "ERROR: unsupported TUNNEL_PROVIDER '${PROVIDER}' (use auto, localxpose, bore, serveo, pinggy, tunnl or minekube)." >&2
+        echo "ERROR: unsupported TUNNEL_PROVIDER '${PROVIDER}' (use auto, localxpose, bore, serveo, cloudflare, pinggy, tunnl or minekube)." >&2
         exit 2
         ;;
 esac

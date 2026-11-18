@@ -19,6 +19,7 @@ for the `pinggy` and `tunnl` providers:
 | `localxpose` | `scripts/tunnel.sh` | Uses the access token stored in the `LOCALXPOSE_ACCESS_TOKEN` repository secret. |
 | `bore` | `scripts/bore-tunnel.sh` | Stable free relay at `bore.pub`. Tries a fixed port list, then a random port. |
 | `serveo` | `scripts/serveo-tunnel.sh` | Free SSH relay at `serveo.net`. Reconnects automatically and updates `SERVER_ADDRESS.txt` when the random port changes. |
+| `cloudflare` (or `cloudflared`) | `scripts/cloudflare-tunnel.sh` | Cloudflare Tunnel. Uses a named tunnel with `CLOUDFLARE_TUNNEL_TOKEN`/`CLOUDFLARE_TUNNEL_HOSTNAME`, or a free random `trycloudflare.com` quick tunnel when no token is configured. Minecraft clients need Modflared or `cloudflared access tcp`. |
 | `pinggy` | `scripts/low-latency-tunnel.sh` | Free TCP relay with an Asia-Pacific relay. Prioritises the route with the best latency for Bangladeshi players. |
 | `tunnl` | `scripts/tunnel.sh` | Starts a Bangladesh-prioritised TCP relay for Minecraft and adds a free `tunnl.gg` HTTP status page. |
 
@@ -100,12 +101,56 @@ The token is never stored in the repository. Add or rotate it under
 **Settings > Secrets and variables > Actions > Secrets** as
 `LOCALXPOSE_ACCESS_TOKEN`.
 
+## Cloudflare Tunnel
+
+Select `cloudflare` (or `cloudflared`) as the **Public tunnel provider** to use
+Cloudflare Tunnel. The provider works in two modes:
+
+- **Quick tunnel (default, no setup).** When no tunnel token is configured,
+  `scripts/cloudflare-tunnel.sh` starts a free account-less quick tunnel and
+  publishes the random `<name>.trycloudflare.com` hostname. The hostname
+  changes every run.
+- **Named tunnel (stable hostname).** Create a Cloudflare Tunnel in **Zero
+  Trust > Networks > Tunnels**, add a public hostname with the service
+  `tcp://localhost:25565`, and configure:
+
+  | Name | Type | Purpose |
+  | --- | --- | --- |
+  | `CLOUDFLARE_TUNNEL_TOKEN` | repository secret | Connector token from the tunnel installation command. |
+  | `CLOUDFLARE_TUNNEL_HOSTNAME` | repository variable | Public hostname, for example `mc.example.com`. |
+
+  A named tunnel can also be described by `CLOUDFLARE_TUNNEL_CONFIG`
+  (repository variable), which points cloudflared at a config file. The
+  config's first `hostname:` entry is used when
+  `CLOUDFLARE_TUNNEL_HOSTNAME` is not set.
+
+Cloudflare TCP tunnels are **not plain public TCP ports**. Cloudflare only
+gives end users a WebSocket route, so every player needs either the
+[Modflared](https://modrinth.com/mod/modflared) Minecraft mod or the
+`cloudflared` client on their own computer. With the client installed, players
+run:
+
+```bash
+cloudflared access tcp --hostname <hostname> --url localhost:25565
+```
+
+and then join `localhost:25565` in Minecraft. Only the hostname part of
+`SERVER_ADDRESS.txt` is used; do not enter `hostname:25565` directly in the
+Minecraft server list. The workflow starts the same access proxy locally and
+uses it for the public-route check, so a successful run confirms that the
+tunnel itself works.
+
+If the named tunnel cannot start, the script tries a quick tunnel and then
+falls back to `bore.pub` (`CLOUDFLARE_BORE_FALLBACK=false` disables that final
+fallback). The `cloudflared` binary is downloaded into `.agent-work/tools/` on
+demand and is not committed.
+
 ## Twingate private access (optional)
 
 Twingate is not a public tunnel and does not replace the addresses above. It
 is a zero-trust access service, so the Minecraft server stays private and only
 authorized Twingate users can reach it. Public players should keep using
-Minekube, LocalXpose, bore, Serveo, Pinggy or tunnl.
+Minekube, LocalXpose, bore, Serveo, Cloudflare, Pinggy or tunnl.
 
 The server can run a Twingate Connector alongside the public tunnel:
 
@@ -297,6 +342,29 @@ Additional Minekube settings:
 - `MINEKUBE_BIND_PORT` (optional environment variable) - local port Gate
   listens on. Default: `25566`.
 
+Additional Cloudflare settings:
+
+- `CLOUDFLARE_TUNNEL_TOKEN` (repository secret) - token for a named tunnel.
+  Without it the script uses a quick `trycloudflare.com` tunnel.
+- `CLOUDFLARE_TUNNEL_HOSTNAME` (repository variable) - public hostname of the
+  named tunnel. Default: the first `hostname:` in `CLOUDFLARE_TUNNEL_CONFIG`.
+- `CLOUDFLARE_TUNNEL_CONFIG` (repository variable) - optional cloudflared
+  config file.
+- `CLOUDFLARE_MODE` (repository variable) - `auto`, `named` or `quick`.
+  Default: `auto`.
+- `CLOUDFLARE_VERSION` (repository variable) - cloudflared release to
+  download. Default: `2026.11.1`; use `latest` to follow new releases.
+- `CLOUDFLARE_BORE_FALLBACK` (repository variable) - fall back to `bore.pub`
+  when Cloudflare cannot start. Default: `true`.
+- `CLOUDFLARE_ACCESS_PORT` (repository variable) - local port for the
+  verification access proxy. Default: `25571`.
+- `CLOUDFLARE_ACCESS_CLIENT_ID` and `CLOUDFLARE_ACCESS_CLIENT_SECRET`
+  (repository secrets) - optional Cloudflare Access service token used by the
+  local access proxy when the hostname is protected by Access.
+- `CLOUDFLARE_DNS_WAIT_SECONDS` (optional environment variable) - how long to
+  wait for a new quick-tunnel hostname to resolve before starting the access
+  proxy. Default: `60`.
+
 ## World saving and cancelled runs
 
 The server runs through `scripts/server-control.sh`, which gives the
@@ -386,6 +454,8 @@ The workflow makes the best of the available infrastructure:
   available.
 - `scripts/serveo-tunnel.sh` provides an alternative free SSH relay with
   automatic reconnects.
+- `scripts/cloudflare-tunnel.sh` adds a named or quick Cloudflare Tunnel and
+  verifies the TCP route through a local `cloudflared access` proxy.
 - `scripts/low-latency-tunnel.sh` selects the Pinggy free relay from
   `TUNNEL_REGION` (or measures all relays with `auto`), prefers the
   Asia-Pacific relay for Bangladeshi players, and reconnects when the free
@@ -404,6 +474,7 @@ bash .agent-work/tests/test_run.sh
 bash .agent-work/tests/test_server_control.sh
 bash .agent-work/tests/test_tunnel.sh
 bash .agent-work/tests/test_serveo_tunnel.sh
+bash .agent-work/tests/test_cloudflare_tunnel.sh
 bash .agent-work/tests/test_tunnl_tunnel.sh
 bash .agent-work/tests/test_tunnl_provider.sh
 bash .agent-work/tests/test_low_latency_region.sh
@@ -420,6 +491,8 @@ bash .agent-work/tests/test_network_optimizer.sh
 `test_tunnel.sh` uses a fake `loclx` client so it can validate the address
 parsing, forwarding and process handling without spending LocalXpose quota.
 `test_serveo_tunnel.sh` uses a fake `ssh` client for the same reason.
+`test_cloudflare_tunnel.sh` uses a fake `cloudflared` client to exercise both
+the quick and named tunnel modes plus the `cloudflared access tcp` proxy.
 `test_tunnl_tunnel.sh` also uses a fake `ssh` client and checks that the
 tunnl.gg URL serves the status page and its `/healthz` endpoint.
 `test_tunnl_provider.sh` validates the full `TUNNEL_PROVIDER=tunnl` path:
