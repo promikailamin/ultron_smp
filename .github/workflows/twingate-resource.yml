@@ -23,6 +23,7 @@ jobs:
             TWINGATE_RESOURCE_NAME: ${{ vars.TWINGATE_RESOURCE_NAME || 'minecraft' }}
             TWINGATE_RESOURCE_ADDRESS: ${{ vars.TWINGATE_RESOURCE_ADDRESS || '127.0.0.1' }}
             TWINGATE_RESOURCE_PORT: ${{ vars.TWINGATE_RESOURCE_PORT || '25565' }}
+            TWINGATE_DEBUG: ${{ vars.TWINGATE_DEBUG }}
         steps:
             - name: checkout_repo
               uses: actions/checkout@v4

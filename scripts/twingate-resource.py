@@ -15,6 +15,7 @@ import os
 import socket
 import sys
 import time
+import traceback
 import urllib.error
 import urllib.parse
 import urllib.request
@@ -215,6 +216,8 @@ class Client:
                         raise TwingateError(message)
                     except urllib.error.URLError as exc:
                         last_network_error = exc
+                        if env("TWINGATE_DEBUG"):
+                            print(traceback.format_exc(), file=sys.stderr)
                         if attempt < 2:
                             time.sleep(2)
 
