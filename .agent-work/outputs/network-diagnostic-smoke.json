@@ -1,0 +1,251 @@
+{
+  "bandwidth": {
+    "download": {
+      "mbps_avg": 158.04,
+      "mbps_max": 158.04,
+      "mbps_median": 158.04,
+      "mbps_min": 158.04,
+      "rounds": [
+        {
+          "bytes": 2000000,
+          "mbps": 158.04,
+          "ok": true,
+          "round": 1,
+          "seconds": 0.101241
+        }
+      ],
+      "rounds_failed": 0,
+      "rounds_ok": 1,
+      "rounds_total": 1
+    },
+    "upload": {
+      "mbps_avg": 122.97,
+      "mbps_max": 122.97,
+      "mbps_median": 122.97,
+      "mbps_min": 122.97,
+      "rounds": [
+        {
+          "bytes": 1000000,
+          "mbps": 122.97,
+          "ok": true,
+          "round": 1,
+          "seconds": 0.065057
+        }
+      ],
+      "rounds_failed": 0,
+      "rounds_ok": 1,
+      "rounds_total": 1
+    }
+  },
+  "json_output": ".agent-work/outputs/network-diagnostic-smoke.json",
+  "label": "smoke",
+  "latency": [
+    {
+      "addresses": [
+        "1.1.1.1"
+      ],
+      "avg_ms": 9.32,
+      "dns_ms": 0.01,
+      "host": "1.1.1.1",
+      "jitter_ms": 3.41,
+      "loss_percent": 0.0,
+      "max_ms": 13.33,
+      "median_ms": 8.13,
+      "min_ms": 6.5,
+      "p95_ms": 13.33,
+      "port": 443,
+      "samples": 3,
+      "successful": 3
+    },
+    {
+      "addresses": [
+        "8.8.8.8"
+      ],
+      "avg_ms": 9.74,
+      "dns_ms": 0.01,
+      "host": "8.8.8.8",
+      "jitter_ms": 2.82,
+      "loss_percent": 0.0,
+      "max_ms": 11.79,
+      "median_ms": 11.29,
+      "min_ms": 6.15,
+      "p95_ms": 11.79,
+      "port": 443,
+      "samples": 3,
+      "successful": 3
+    },
+    {
+      "addresses": [
+        "140.82.112.3"
+      ],
+      "avg_ms": 8.07,
+      "dns_ms": 5.56,
+      "host": "github.com",
+      "jitter_ms": 2.15,
+      "loss_percent": 0.0,
+      "max_ms": 9.01,
+      "median_ms": 8.57,
+      "min_ms": 6.64,
+      "p95_ms": 9.01,
+      "port": 443,
+      "samples": 3,
+      "successful": 3
+    },
+    {
+      "addresses": [
+        "140.82.112.5"
+      ],
+      "avg_ms": 15.77,
+      "dns_ms": 6.75,
+      "host": "api.github.com",
+      "jitter_ms": 5.54,
+      "loss_percent": 0.0,
+      "max_ms": 18.95,
+      "median_ms": 16.27,
+      "min_ms": 12.08,
+      "p95_ms": 18.95,
+      "port": 443,
+      "samples": 3,
+      "successful": 3
+    },
+    {
+      "addresses": [
+        "162.159.140.220",
+        "172.66.0.218",
+        "2606:4700:7::da",
+        "2a06:98c1:58::da"
+      ],
+      "avg_ms": 10.14,
+      "dns_ms": 0.26,
+      "host": "speed.cloudflare.com",
+      "jitter_ms": 3.32,
+      "loss_percent": 0.0,
+      "max_ms": 12.56,
+      "median_ms": 11.96,
+      "min_ms": 5.91,
+      "p95_ms": 12.56,
+      "port": 443,
+      "samples": 3,
+      "successful": 3
+    },
+    {
+      "addresses": [
+        "167.254.176.50",
+        "2600:1901:0:1d27::"
+      ],
+      "avg_ms": 11.69,
+      "dns_ms": 0.3,
+      "host": "twingate.com",
+      "jitter_ms": 4.44,
+      "loss_percent": 0.0,
+      "max_ms": 16.07,
+      "median_ms": 11.84,
+      "min_ms": 7.18,
+      "p95_ms": 16.07,
+      "port": 443,
+      "samples": 3,
+      "successful": 3
+    }
+  ],
+  "settings": {
+    "bandwidth_rounds": 1,
+    "download_bytes": 2000000,
+    "download_url": "https://speed.cloudflare.com/__down?bytes={bytes}",
+    "latency_interval": 0.25,
+    "latency_probes": 3,
+    "soak_bytes": 200000,
+    "soak_interval": 2.0,
+    "soak_seconds": 5,
+    "twingate_monitor_interval": 10.0,
+    "twingate_monitor_seconds": 0,
+    "upload_bytes": 1000000,
+    "upload_url": "https://speed.cloudflare.com/__up"
+  },
+  "soak": {
+    "details": [
+      {
+        "download_bytes": 200000,
+        "download_mbps": 15.55,
+        "latency_ms": 6.7,
+        "ok": true,
+        "sample": 1,
+        "timestamp": "2026-11-18T15:34:04Z"
+      },
+      {
+        "download_bytes": 200000,
+        "download_mbps": 21.04,
+        "latency_ms": 8.82,
+        "ok": true,
+        "sample": 2,
+        "timestamp": "2026-11-18T15:34:06Z"
+      },
+      {
+        "download_bytes": 200000,
+        "download_mbps": 4.73,
+        "latency_ms": 17.79,
+        "ok": true,
+        "sample": 3,
+        "timestamp": "2026-11-18T15:34:08Z"
+      }
+    ],
+    "download_mbps_avg": 13.77,
+    "download_mbps_max": 21.04,
+    "download_mbps_min": 4.73,
+    "duration_seconds": 5,
+    "enabled": true,
+    "failed_samples": 0,
+    "interval_seconds": 2.0,
+    "latency": {
+      "avg_ms": 11.1,
+      "jitter_ms": 5.54,
+      "loss_percent": 0.0,
+      "max_ms": 17.79,
+      "median_ms": 8.82,
+      "min_ms": 6.7,
+      "p95_ms": 17.79,
+      "samples": 3,
+      "successful": 3
+    },
+    "latency_ms_avg": 11.1,
+    "latency_ms_max": 17.79,
+    "latency_ms_min": 6.7,
+    "samples": 3,
+    "success_percent": 100.0
+  },
+  "system": {
+    "addresses": "eth0             UP             10.1.1.98/20 metric 100 \ndocker0          DOWN           172.17.0.1/16",
+    "cpu_count": 4,
+    "default_qdisc": "fq_codel",
+    "default_route": "default via 10.1.0.1 dev eth0 proto dhcp src 10.1.1.98 metric 100",
+    "disk_free_bytes": 91902644224,
+    "github_run_id": "44336227756",
+    "github_runner_arch": "X64",
+    "github_runner_name": "GitHub Actions 1000002107",
+    "github_runner_os": "Linux",
+    "hostname": "runnervmccnms",
+    "kernel": "7.0.0-1019-azure",
+    "link_speeds_mbps": {
+      "docker0": "-1",
+      "ens1": "16000",
+      "eth0": "16000"
+    },
+    "machine": "x86_64",
+    "memory_bytes": 16759439360,
+    "platform": "Linux-7.0.0-1019-azure-x86_64-with-glibc2.43",
+    "public_ip": "172.206.30.251",
+    "python": "3.14.4",
+    "tcp_congestion_control": "cubic",
+    "timestamp": "2026-11-18T15:34:01Z"
+  },
+  "twingate_monitor": {
+    "enabled": false,
+    "reason": "monitor duration is zero"
+  },
+  "verdict": {
+    "bandwidth": "good",
+    "max_jitter_ms": 5.54,
+    "max_loss_percent": 0.0,
+    "stability": "good",
+    "twingate_connector": "not monitored"
+  }
+}

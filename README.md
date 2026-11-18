@@ -201,6 +201,44 @@ token that has been posted publicly must be revoked and regenerated in the
 Twingate Admin Console. The value pasted into issue 9 was not used or stored
 by this repository.
 
+## Network diagnostics
+
+The **Network Diagnostic** workflow and `scripts/network-diagnostic.py` measure
+the runner's own network and, optionally, the Twingate Connector:
+
+- download and upload throughput against Cloudflare's speed endpoint,
+- TCP connect latency, jitter and packet loss to Cloudflare, GitHub and the
+  Twingate tenant,
+- a soak test that reports failed samples and speed/latency spikes,
+- Twingate Connector state through the Admin API and Docker while it is
+  running.
+
+Run it from **Actions > Network Diagnostic > Run workflow**. The sizes,
+soak duration and whether to start the Twingate Connector are inputs. Results
+are written to `.agent-work/logs/issue-18-*` and
+`.agent-work/outputs/network-diagnostic-*.json`, uploaded as the
+`network-diagnostic` artifact, and committed to the branch when
+`publish_results` is enabled.
+
+The same measurements can be run locally:
+
+```bash
+python3 scripts/network-diagnostic.py \
+    --label my-runner \
+    --download-bytes 25000000 \
+    --upload-bytes 10000000 \
+    --soak-seconds 60
+```
+
+The throughput test uses the runner's normal internet egress. The Twingate
+Connector serves remote Twingate clients; it does not route the runner's own
+speed-test traffic. These numbers therefore show whether the GitHub runner
+itself has a bandwidth, loss or jitter problem, while the connector monitor
+shows whether the connector stayed online during the same period. A slow
+client-to-connector game session can still be limited by the player's ISP,
+the Twingate relay, or the long path to the runner even when the runner speed
+test is healthy.
+
 ## Tunnel settings
 
 - `LOCALXPOSE_REGION` (repository variable) - relay region: `ap`, `us`, `eu`,
@@ -374,6 +412,7 @@ bash .agent-work/tests/test_twingate_connector.sh
 bash .agent-work/tests/test_twingate_resource.sh
 bash .agent-work/tests/test_twingate_admin.sh
 bash .agent-work/tests/test_twingate_docker_host.sh
+bash .agent-work/tests/test_network_diagnostic.sh
 bash .agent-work/tests/test_network_tune.sh
 bash .agent-work/tests/test_network_optimizer.sh
 ```
@@ -391,6 +430,9 @@ contacting the public relays.
 `test_minekube_tunnel.sh` uses a fake Gate connector to validate the
 `TUNNEL_PROVIDER=minekube` path, generated Gate config, address file and
 local forwarding without registering a real endpoint.
+`test_network_diagnostic.sh` runs the diagnostic against a local HTTP server,
+so it validates download/upload, latency, soak sampling, JSON output and token
+secrecy without using external bandwidth.
 `test_network_optimizer.sh` builds the mod, checks its mixin targets against
 `server-26.3.jar`, and starts a disposable server to confirm the mod loads
 without injection errors.
