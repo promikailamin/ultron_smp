@@ -1,16 +1,16 @@
 === TUNNEL_REGION=bangladesh (expected ap.free.pinggy.io) ===
 Using the bangladesh relay from TUNNEL_REGION: ap.free.pinggy.io
-Low-latency tunnel is live at 127.0.0.1:34959 (pid 3104)
+Low-latency tunnel is live at 127.0.0.1:43079 (pid 4242)
 TUNNEL_REGION=bangladesh -> ap.free.pinggy.io
 === TUNNEL_REGION=asia-pacific (expected ap.free.pinggy.io) ===
 Using the asia-pacific relay from TUNNEL_REGION: ap.free.pinggy.io
-Low-latency tunnel is live at 127.0.0.1:42333 (pid 3162)
+Low-latency tunnel is live at 127.0.0.1:34099 (pid 4295)
 TUNNEL_REGION=asia-pacific -> ap.free.pinggy.io
 === TUNNEL_REGION=united-states (expected us.free.pinggy.io) ===
 Using the united-states relay from TUNNEL_REGION: us.free.pinggy.io
-Low-latency tunnel is live at 127.0.0.1:34345 (pid 3215)
+Low-latency tunnel is live at 127.0.0.1:35257 (pid 4348)
 TUNNEL_REGION=united-states -> us.free.pinggy.io
 === TUNNEL_REGION=europe (expected eu.free.pinggy.io) ===
 Using the europe relay from TUNNEL_REGION: eu.free.pinggy.io
-Low-latency tunnel is live at 127.0.0.1:45191 (pid 3268)
+Low-latency tunnel is live at 127.0.0.1:38843 (pid 4402)
 TUNNEL_REGION=europe -> eu.free.pinggy.io

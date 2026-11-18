@@ -1,19 +1,29 @@
 #!/usr/bin/env bash
 # Expose the local Minecraft TCP port through a Cloudflare Tunnel.
 #
-# Two modes are supported:
+# Two Cloudflare modes are supported:
 #
 #   named  Run a pre-created Cloudflare Tunnel with a tunnel token. The tunnel
 #          needs a public hostname whose service points at
 #          tcp://localhost:25565 (set it in the Zero Trust dashboard or in the
-#          config file supplied through CLOUDFLARE_TUNNEL_CONFIG).
-#   quick  Start an account-less quick tunnel (trycloudflare.com). No domain or
-#          token is required, but the hostname changes on every run.
+#          config file supplied through CLOUDFLARE_TUNNEL_CONFIG). This is the
+#          only Cloudflare mode that can carry Minecraft's raw TCP traffic.
+#   quick  Start an account-less quick tunnel (trycloudflare.com). Cloudflare
+#          Quick Tunnels only proxy HTTP/HTTPS, so this mode cannot carry
+#          Minecraft TCP and is disabled by default. It is kept for tests and
+#          for HTTP-only use through CLOUDFLARE_ALLOW_QUICK_TCP=true.
 #
 # Cloudflare TCP tunnels are not plain public TCP ports: the client must use
 # the Modflared Minecraft mod or run cloudflared access on their own machine.
 # See README.md for the player instructions. The script starts a local
 # cloudflared access proxy so the workflow can verify the route end-to-end.
+#
+# When a named tunnel is not configured, the script deliberately does not
+# publish a broken trycloudflare.com Minecraft address. Instead it hands the
+# game port to a real TCP relay. The default fallback is the Bangladesh
+# prioritised Pinggy Asia-Pacific relay, or bore.pub when explicitly chosen.
+# This keeps players able to join instead of seeing a tunnel that "stopped and
+# restarted" because the HTTP-only quick tunnel could never carry the game.
 #
 # It writes the resulting hostname to SERVER_ADDRESS.txt and leaves the tunnel
 # running in the background. The PID is stored in:
@@ -34,8 +44,20 @@
 #   CLOUDFLARE_ACCESS_CLIENT_ID    Access service token ID for the proxy
 #   CLOUDFLARE_ACCESS_CLIENT_SECRET
 #                                  Access service token secret for the proxy
-#   CLOUDFLARE_BORE_FALLBACK       Fall back to bore.pub on failure
-#                                  (default: true)
+#   CLOUDFLARE_REGION              auto/global (default) or us. Cloudflare only
+#                                  supports forcing the US edge region; every
+#                                  other value keeps the global anycast edge,
+#                                  which already routes each player (including
+#                                  Bangladeshi players) to the closest edge.
+#   CLOUDFLARE_ALLOW_QUICK_TCP     Allow the HTTP-only quick tunnel for TCP
+#                                  (default: false; used by tests)
+#   CLOUDFLARE_TCP_FALLBACK        TCP relay used when Cloudflare cannot carry
+#                                  the game: pinggy (default, Asia-Pacific and
+#                                  Bangladesh-prioritised), bore, or none.
+#   CLOUDFLARE_BORE_FALLBACK       Legacy switch. When CLOUDFLARE_TCP_FALLBACK
+#                                  is unset, true selects pinggy and false
+#                                  disables the fallback (default: true)
+#   CLOUDFLARE_DNS_WAIT_SECONDS    Seconds to wait for DNS (default: 60)
 set -euo pipefail
 
 ROOT_DIR="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")/.." && pwd)"
@@ -55,10 +77,15 @@ TUNNEL_CONFIG="${CLOUDFLARE_TUNNEL_CONFIG:-${CLOUDFLARE_CONFIG:-}}"
 MODE="$(printf '%s' "${CLOUDFLARE_MODE:-auto}" | tr '[:upper:]' '[:lower:]')"
 VERSION="${CLOUDFLARE_VERSION:-2026.11.1}"
 BORE_FALLBACK="${CLOUDFLARE_BORE_FALLBACK:-true}"
+TCP_FALLBACK="${CLOUDFLARE_TCP_FALLBACK:-}"
+ALLOW_QUICK_TCP="${CLOUDFLARE_ALLOW_QUICK_TCP:-false}"
+REGION_RAW="${CLOUDFLARE_REGION:-${TUNNEL_REGION:-auto}}"
+CF_REGION=""
 ACCESS_PORT="${CLOUDFLARE_ACCESS_PORT:-25571}"
 ACCESS_CLIENT_ID="${CLOUDFLARE_ACCESS_CLIENT_ID:-${CLOUDFLARE_ACCESS_SERVICE_TOKEN_ID:-}}"
 ACCESS_CLIENT_SECRET="${CLOUDFLARE_ACCESS_CLIENT_SECRET:-${CLOUDFLARE_ACCESS_SERVICE_TOKEN_SECRET:-}}"
 DNS_WAIT_SECONDS="${CLOUDFLARE_DNS_WAIT_SECONDS:-60}"
+ACTIVE_MODE="named"
 
 mkdir -p "$TOOLS_DIR" "$LOGS_DIR" "$(dirname -- "$PID_FILE")" "$(dirname -- "$VERIFY_FILE")"
 
@@ -77,6 +104,40 @@ detect_arch() {
 
 strip_ansi() {
     sed -E $'s/\x1B\\[[0-9;]*[mK]//g'
+}
+
+resolve_region() {
+    local region
+    region="$(printf '%s' "$REGION_RAW" | tr '[:upper:]' '[:lower:]' | tr '_' '-')"
+
+    case "$region" in
+        us | usa | united-states | america | north-america | na)
+            # Cloudflare currently documents "us" as the only forced region.
+            CF_REGION="us"
+            echo "Cloudflare Tunnel will use the US edge region (--region us)." >&2
+            ;;
+        "" | auto | global)
+            CF_REGION=""
+            ;;
+        *)
+            # "ap"/"eu"/"bangladesh" are not valid cloudflared regions. Keeping
+            # the global edge gives players the closest Cloudflare location.
+            CF_REGION=""
+            echo "NOTE: Cloudflare only supports forcing the 'us' edge region; '${REGION_RAW}' will use the global anycast edge, which already routes each player to the nearest Cloudflare location." >&2
+            ;;
+    esac
+}
+
+# Background processes must survive the end of the workflow step. nohup keeps
+# them from receiving SIGHUP when the step's shell exits, and the explicit
+# redirections detach them from the step's stdin/stdout/stderr.
+start_background() {
+    local background_log="$1"
+    shift
+
+    : >"$background_log"
+    nohup "$@" >"$background_log" 2>&1 </dev/null &
+    echo $!
 }
 
 ensure_cloudflared() {
@@ -153,6 +214,9 @@ write_address() {
         echo "# Ultron SMP public server address"
         echo "# Updated: $(date -u '+%Y-%m-%d %H:%M:%S UTC')"
         echo "# Provider: Cloudflare Tunnel (${ACTIVE_MODE})"
+        if [ "$ACTIVE_MODE" = "named" ]; then
+            echo "# Players connect through the nearest Cloudflare edge automatically."
+        fi
         echo "# Cloudflare TCP tunnels require the Modflared mod or a local proxy:"
         echo "#   cloudflared access tcp --hostname ${host} --url localhost:25565"
         echo "# Then join localhost:25565 in Minecraft."
@@ -245,9 +309,7 @@ start_access_proxy() {
             --service-token-secret "$ACCESS_CLIENT_SECRET")
     fi
 
-    : >"$access_log"
-    "$CLOUDFLARE_BIN" "${args[@]}" >"$access_log" 2>&1 </dev/null &
-    access_pid=$!
+    access_pid="$(start_background "$access_log" "$CLOUDFLARE_BIN" "${args[@]}")"
 
     for _ in $(seq 1 100); do
         if ! kill -0 "$access_pid" 2>/dev/null; then
@@ -273,22 +335,27 @@ start_access_proxy() {
     return 1
 }
 
+named_args() {
+    NAMED_ARGS=(tunnel --no-autoupdate)
+    if [ -n "$CF_REGION" ]; then
+        NAMED_ARGS+=(--region "$CF_REGION")
+    fi
+    if [ -n "$TUNNEL_CONFIG" ]; then
+        NAMED_ARGS+=(--config "$TUNNEL_CONFIG")
+    fi
+    NAMED_ARGS+=(run --token "$TUNNEL_TOKEN")
+}
+
 start_named_tunnel() {
     local attempt_log="$LOGS_DIR/cloudflare-named-attempt.log"
     local cf_pid=""
-    local -a args=(tunnel --no-autoupdate run --token "$TUNNEL_TOKEN")
-
-    if [ -n "$TUNNEL_CONFIG" ]; then
-        args=(tunnel --no-autoupdate --config "$TUNNEL_CONFIG" run --token "$TUNNEL_TOKEN")
-    fi
 
     {
-        echo "=== $(date -u '+%Y-%m-%d %H:%M:%S UTC') named tunnel host=${TUNNEL_HOSTNAME} ==="
+        echo "=== $(date -u '+%Y-%m-%d %H:%M:%S UTC') named tunnel host=${TUNNEL_HOSTNAME} region=${CF_REGION:-global} ==="
     } >>"$TUNNEL_LOG"
 
-    : >"$attempt_log"
-    "$CLOUDFLARE_BIN" "${args[@]}" >"$attempt_log" 2>&1 </dev/null &
-    cf_pid=$!
+    named_args
+    cf_pid="$(start_background "$attempt_log" "$CLOUDFLARE_BIN" "${NAMED_ARGS[@]}")"
 
     for _ in $(seq 1 300); do
         if ! kill -0 "$cf_pid" 2>/dev/null; then
@@ -319,16 +386,18 @@ start_quick_tunnel() {
     local attempt_log="$LOGS_DIR/cloudflare-quick-attempt.log"
     local cf_pid=""
     local host=""
+    local -a args=(tunnel --no-autoupdate)
+
+    if [ -n "$CF_REGION" ]; then
+        args+=(--region "$CF_REGION")
+    fi
+    args+=(--url "tcp://127.0.0.1:${LOCAL_PORT}")
 
     {
-        echo "=== $(date -u '+%Y-%m-%d %H:%M:%S UTC') quick tunnel ==="
+        echo "=== $(date -u '+%Y-%m-%d %H:%M:%S UTC') quick tunnel region=${CF_REGION:-global} ==="
     } >>"$TUNNEL_LOG"
 
-    : >"$attempt_log"
-    "$CLOUDFLARE_BIN" tunnel --no-autoupdate \
-        --url "tcp://127.0.0.1:${LOCAL_PORT}" \
-        >"$attempt_log" 2>&1 </dev/null &
-    cf_pid=$!
+    cf_pid="$(start_background "$attempt_log" "$CLOUDFLARE_BIN" "${args[@]}")"
 
     for _ in $(seq 1 300); do
         if ! kill -0 "$cf_pid" 2>/dev/null; then
@@ -357,22 +426,63 @@ start_quick_tunnel() {
     return 1
 }
 
-fallback_to_bore() {
+fallback_to_tcp() {
     local reason="$1"
+    local fallback="$TCP_FALLBACK"
 
     echo "WARNING: ${reason}" >&2
     rm -f "$VERIFY_FILE"
-    if [ "$BORE_FALLBACK" = "true" ] && [ -x "$ROOT_DIR/scripts/bore-tunnel.sh" ]; then
-        echo "Falling back to the stable bore.pub tunnel..." >&2
-        exec bash "$ROOT_DIR/scripts/bore-tunnel.sh"
-    fi
 
-    echo "ERROR: ${reason}" >&2
-    exit 1
+    if [ -z "$fallback" ]; then
+        if [ "$BORE_FALLBACK" = "true" ]; then
+            fallback="pinggy"
+        else
+            fallback="none"
+        fi
+    fi
+    fallback="$(printf '%s' "$fallback" | tr '[:upper:]' '[:lower:]')"
+
+    case "$fallback" in
+        pinggy | low-latency | auto)
+            if [ ! -x "$ROOT_DIR/scripts/low-latency-tunnel.sh" ]; then
+                echo "ERROR: the Pinggy low-latency tunnel script is missing." >&2
+                exit 1
+            fi
+            echo "Cloudflare Quick Tunnels only proxy HTTP/HTTPS, so the Minecraft port will use the Bangladesh-prioritised Pinggy Asia-Pacific TCP relay instead." >&2
+            export PLAYER_REGION="${PLAYER_REGION:-bangladesh}"
+            case "$(printf '%s' "${TUNNEL_REGION:-auto}" | tr '[:upper:]' '[:lower:]')" in
+                "" | auto)
+                    export TUNNEL_REGION="bangladesh"
+                    ;;
+            esac
+            export LOW_LATENCY_ADDRESS_FILE="$ADDRESS_FILE"
+            export LOW_LATENCY_PID_FILE="$PID_FILE"
+            exec bash "$ROOT_DIR/scripts/low-latency-tunnel.sh"
+            ;;
+        bore | bore.pub)
+            if [ ! -x "$ROOT_DIR/scripts/bore-tunnel.sh" ]; then
+                echo "ERROR: the bore tunnel script is missing." >&2
+                exit 1
+            fi
+            echo "Cloudflare Quick Tunnels only proxy HTTP/HTTPS, so the Minecraft port will use the stable bore.pub TCP relay instead." >&2
+            exec bash "$ROOT_DIR/scripts/bore-tunnel.sh"
+            ;;
+        none | false | off)
+            echo "ERROR: ${reason}" >&2
+            echo "ERROR: Configure CLOUDFLARE_TUNNEL_TOKEN and CLOUDFLARE_TUNNEL_HOSTNAME for a Minecraft-capable named tunnel, or set CLOUDFLARE_TCP_FALLBACK=pinggy (or bore) to keep the server reachable." >&2
+            exit 1
+            ;;
+        *)
+            echo "ERROR: unsupported CLOUDFLARE_TCP_FALLBACK '${TCP_FALLBACK}' (use pinggy, bore or none)." >&2
+            exit 2
+            ;;
+    esac
 }
 
+resolve_region
+
 if ! ensure_cloudflared; then
-    fallback_to_bore "The cloudflared client could not be installed."
+    fallback_to_tcp "The cloudflared client could not be installed."
 fi
 
 stop_existing_tunnel
@@ -394,21 +504,24 @@ fi
 named_ready=0
 if [ "$MODE" != "quick" ] && [ -n "$TUNNEL_TOKEN" ]; then
     if [ -z "$TUNNEL_HOSTNAME" ]; then
-        echo "WARNING: CLOUDFLARE_TUNNEL_TOKEN is set but CLOUDFLARE_TUNNEL_HOSTNAME is missing; using a quick tunnel so an address can be published." >&2
+        fallback_to_tcp "CLOUDFLARE_TUNNEL_TOKEN is set but CLOUDFLARE_TUNNEL_HOSTNAME is missing, so an address players could join cannot be published."
     elif start_named_tunnel; then
         named_ready=1
     else
-        echo "WARNING: the named Cloudflare Tunnel could not be started; trying a quick tunnel..." >&2
+        echo "WARNING: the named Cloudflare Tunnel could not be started; trying a TCP fallback..." >&2
     fi
 fi
 
 if [ "$named_ready" -eq 0 ]; then
     if [ "$MODE" = "named" ] && [ -z "$TUNNEL_TOKEN" ]; then
-        echo "ERROR: CLOUDFLARE_MODE=named needs CLOUDFLARE_TUNNEL_TOKEN." >&2
-        fallback_to_bore "No Cloudflare Tunnel token was configured."
+        fallback_to_tcp "CLOUDFLARE_MODE=named needs CLOUDFLARE_TUNNEL_TOKEN."
+    fi
+
+    if [ "$ALLOW_QUICK_TCP" != "true" ]; then
+        fallback_to_tcp "Cloudflare Quick Tunnels (trycloudflare.com) only proxy HTTP/HTTPS and cannot carry Minecraft TCP. Create a named tunnel with a public hostname and set CLOUDFLARE_TUNNEL_TOKEN and CLOUDFLARE_TUNNEL_HOSTNAME."
     fi
 
     if ! start_quick_tunnel; then
-        fallback_to_bore "Could not establish a Cloudflare Tunnel."
+        fallback_to_tcp "Could not establish a Cloudflare quick tunnel."
     fi
 fi

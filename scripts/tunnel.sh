@@ -21,7 +21,9 @@
 #   serveo      Force the Serveo SSH tunnel
 #   cloudflare  Use a Cloudflare Tunnel (cloudflared). A named tunnel is used
 #               when CLOUDFLARE_TUNNEL_TOKEN and CLOUDFLARE_TUNNEL_HOSTNAME
-#               are set, otherwise a quick trycloudflare.com tunnel is used.
+#               are set. Quick trycloudflare.com tunnels are HTTP-only, so
+#               without a named tunnel the game port falls back to the
+#               Bangladesh-prioritised Pinggy TCP relay (or bore.pub).
 #   pinggy      Force the Bangladesh-prioritised Pinggy TCP relay
 #   tunnl       Use a low-latency TCP relay for Minecraft and add a
 #               tunnl.gg HTTP status page (tunnl.gg cannot carry raw TCP)
@@ -39,6 +41,11 @@
 #   PLAYER_REGION               bangladesh/bd prioritises the Asia-Pacific
 #                               Pinggy relay (default: bangladesh for
 #                               pinggy/tunnl, auto for the standalone script)
+#   CLOUDFLARE_REGION           auto/global (default) or us. Cloudflare only
+#                               supports forcing the US edge; other values
+#                               use the global anycast edge.
+#   CLOUDFLARE_TCP_FALLBACK     TCP relay for Cloudflare without a named
+#                               tunnel: pinggy (default), bore, or none
 #   LOCALXPOSE_ACCESS_TOKEN     LocalXpose access token (required)
 #   ACCESS_TOKEN                Alternative token variable name
 #   MINECRAFT_PORT              Local Minecraft port (default: 25565)

@@ -39,6 +39,11 @@ import threading
 args = sys.argv[1:]
 public_port = int(os.environ.get("FAKE_CLOUDFLARE_PUBLIC_PORT", "25640"))
 
+args_file = os.environ.get("FAKE_CLOUDFLARE_ARGS_FILE")
+if args_file:
+    with open(args_file, "a", encoding="utf-8") as handle:
+        handle.write(" ".join(args) + "\n")
+
 
 def pump(source, destination):
     try:
@@ -195,21 +200,33 @@ PY
     echo "${label} passed"
 }
 
+QUICK_ARGS_FILE="$TMP_DIR/fake-cloudflared-args-quick.log"
+rm -f "$QUICK_ARGS_FILE"
+
 echo "=== quick tunnel ==="
 RUNNER_TEMP="$RUN_TEMP" \
     TUNNEL_PROVIDER="cloudflare" \
     MINECRAFT_PORT="$LOCAL_PORT" \
     CLOUDFLARE_BIN="$FAKE_CLOUDFLARED" \
     CLOUDFLARE_MODE="quick" \
+    CLOUDFLARE_ALLOW_QUICK_TCP="true" \
+    CLOUDFLARE_REGION="bangladesh" \
     CLOUDFLARE_BORE_FALLBACK="false" \
     CLOUDFLARE_DNS_WAIT_SECONDS="0" \
     CLOUDFLARE_ACCESS_PORT="$ACCESS_PORT" \
     FAKE_CLOUDFLARE_PUBLIC_PORT="$PUBLIC_PORT" \
+    FAKE_CLOUDFLARE_ARGS_FILE="$QUICK_ARGS_FILE" \
     TUNNEL_PID_FILE="$PID_FILE" \
     bash "$ROOT_DIR/scripts/tunnel.sh" \
     2>&1 | tee "$LOG_DIR/test-cloudflare-tunnel.log"
 
 check_route "quick tunnel test" "fake-cloudflare.trycloudflare.com:25565" "quick"
+
+if grep -q -- "--region" "$QUICK_ARGS_FILE"; then
+    echo "FAIL: the Bangladesh/global edge request must not force a region"
+    cat "$QUICK_ARGS_FILE"
+    exit 1
+fi
 
 for pid_file in "$ACCESS_PID_FILE" "$PID_FILE"; do
     if [ -f "$pid_file" ]; then
@@ -219,6 +236,9 @@ done
 sleep 1
 rm -f "$VERIFY_FILE"
 
+NAMED_ARGS_FILE="$TMP_DIR/fake-cloudflared-args-named.log"
+rm -f "$NAMED_ARGS_FILE"
+
 echo "=== named tunnel ==="
 RUNNER_TEMP="$RUN_TEMP" \
     TUNNEL_PROVIDER="cloudflare" \
@@ -226,15 +246,98 @@ RUNNER_TEMP="$RUN_TEMP" \
     CLOUDFLARE_BIN="$FAKE_CLOUDFLARED" \
     CLOUDFLARE_TUNNEL_TOKEN="test-token" \
     CLOUDFLARE_TUNNEL_HOSTNAME="mc.example.com" \
+    CLOUDFLARE_REGION="united-states" \
     CLOUDFLARE_BORE_FALLBACK="false" \
     CLOUDFLARE_DNS_WAIT_SECONDS="0" \
     CLOUDFLARE_ACCESS_PORT="$((ACCESS_PORT + 1))" \
     FAKE_CLOUDFLARE_PUBLIC_PORT="$((PUBLIC_PORT + 1))" \
     FAKE_CLOUDFLARE_ORIGIN_PORT="$LOCAL_PORT" \
+    FAKE_CLOUDFLARE_ARGS_FILE="$NAMED_ARGS_FILE" \
     TUNNEL_PID_FILE="$PID_FILE" \
     bash "$ROOT_DIR/scripts/tunnel.sh" \
     2>&1 | tee -a "$LOG_DIR/test-cloudflare-tunnel.log"
 
 check_route "named tunnel test" "mc.example.com:25565" "named"
+
+if ! grep -q -- "--region us" "$NAMED_ARGS_FILE"; then
+    echo "FAIL: the US region request was not passed to cloudflared"
+    cat "$NAMED_ARGS_FILE"
+    exit 1
+fi
+
+echo "=== quick tunnel TCP guard ==="
+set +e
+guard_output="$(RUNNER_TEMP="$RUN_TEMP" \
+    TUNNEL_PROVIDER="cloudflare" \
+    MINECRAFT_PORT="$LOCAL_PORT" \
+    CLOUDFLARE_BIN="$FAKE_CLOUDFLARED" \
+    CLOUDFLARE_MODE="quick" \
+    CLOUDFLARE_TCP_FALLBACK="none" \
+    CLOUDFLARE_DNS_WAIT_SECONDS="0" \
+    TUNNEL_PID_FILE="$PID_FILE" \
+    bash "$ROOT_DIR/scripts/tunnel.sh" 2>&1)"
+guard_status=$?
+set -e
+
+if [ "$guard_status" -eq 0 ]; then
+    echo "FAIL: the HTTP-only quick tunnel was published for Minecraft TCP"
+    exit 1
+fi
+case "$guard_output" in
+    *"only proxy HTTP"*) ;;
+    *)
+        echo "FAIL: the quick-tunnel TCP guard did not explain the limitation"
+        printf '%s\n' "$guard_output"
+        exit 1
+        ;;
+esac
+echo "quick tunnel TCP guard passed"
+
+echo "=== Bangladesh TCP fallback ==="
+FAKE_SSH="$TMP_DIR/fake-pinggy-ssh"
+FALLBACK_PORT="${TEST_FALLBACK_PORT:-25699}"
+cat >"$FAKE_SSH" <<'SH'
+#!/usr/bin/env bash
+printf 'tcp://127.0.0.1:%s\n' "${FAKE_PINGGY_PUBLIC_PORT:-25699}"
+while :; do sleep 3600; done
+SH
+chmod +x "$FAKE_SSH"
+
+RUNNER_TEMP="$RUN_TEMP" \
+    TUNNEL_PROVIDER="cloudflare" \
+    MINECRAFT_PORT="$LOCAL_PORT" \
+    CLOUDFLARE_BIN="$FAKE_CLOUDFLARED" \
+    CLOUDFLARE_MODE="quick" \
+    CLOUDFLARE_TCP_FALLBACK="pinggy" \
+    CLOUDFLARE_DNS_WAIT_SECONDS="0" \
+    TUNNEL_REGION="bangladesh" \
+    PLAYER_REGION="bangladesh" \
+    PINGGY_SSH_BIN="$FAKE_SSH" \
+    PINGGY_RECONNECT_SECONDS="10" \
+    PINGGY_KNOWN_HOSTS="$TMP_DIR/fake-pinggy-known-hosts" \
+    FAKE_PINGGY_PUBLIC_PORT="$FALLBACK_PORT" \
+    TUNNEL_PID_FILE="$PID_FILE" \
+    bash "$ROOT_DIR/scripts/tunnel.sh" \
+    2>&1 | tee -a "$LOG_DIR/test-cloudflare-tunnel.log"
+
+fallback_address="$(grep -v '^#' "$ADDRESS_FILE" | grep -E ':[0-9]+$' | tail -n 1)"
+if [ "$fallback_address" != "127.0.0.1:${FALLBACK_PORT}" ]; then
+    echo "FAIL: expected the Pinggy fallback address 127.0.0.1:${FALLBACK_PORT}, got ${fallback_address}"
+    exit 1
+fi
+if ! grep -qi "Pinggy" "$ADDRESS_FILE"; then
+    echo "FAIL: the fallback address was not labelled as Pinggy"
+    cat "$ADDRESS_FILE"
+    exit 1
+fi
+
+fallback_pid="$(cat "$PID_FILE" 2>/dev/null || true)"
+if [ -n "$fallback_pid" ]; then
+    kill "$fallback_pid" 2>/dev/null || true
+    wait "$fallback_pid" 2>/dev/null || true
+fi
+rm -f "$PID_FILE" "$ACCESS_PID_FILE" "$VERIFY_FILE" "$FAKE_SSH" \
+    "$TMP_DIR/fake-pinggy-known-hosts"
+echo "Bangladesh TCP fallback passed"
 
 echo "cloudflare-tunnel test passed"

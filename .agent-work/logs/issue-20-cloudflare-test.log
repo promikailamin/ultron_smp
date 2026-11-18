@@ -1,0 +1,22 @@
+=== quick tunnel ===
+NOTE: Cloudflare only supports forcing the 'us' edge region; 'bangladesh' will use the global anycast edge, which already routes each player to the nearest Cloudflare location.
+Tunnel is live at fake-cloudflare.trycloudflare.com:25565
+HTTP/1.0 200 OK
+Cloudflare route is reachable through the access proxy
+quick tunnel test passed
+=== named tunnel ===
+Cloudflare Tunnel will use the US edge region (--region us).
+Tunnel is live at mc.example.com:25565
+HTTP/1.0 200 OK
+Cloudflare route is reachable through the access proxy
+named tunnel test passed
+=== quick tunnel TCP guard ===
+quick tunnel TCP guard passed
+=== Bangladesh TCP fallback ===
+NOTE: Cloudflare only supports forcing the 'us' edge region; 'bangladesh' will use the global anycast edge, which already routes each player to the nearest Cloudflare location.
+WARNING: Cloudflare Quick Tunnels (trycloudflare.com) only proxy HTTP/HTTPS and cannot carry Minecraft TCP. Create a named tunnel with a public hostname and set CLOUDFLARE_TUNNEL_TOKEN and CLOUDFLARE_TUNNEL_HOSTNAME.
+Cloudflare Quick Tunnels only proxy HTTP/HTTPS, so the Minecraft port will use the Bangladesh-prioritised Pinggy Asia-Pacific TCP relay instead.
+Using the bangladesh relay from TUNNEL_REGION: ap.free.pinggy.io
+Low-latency tunnel is live at 127.0.0.1:25699 (pid 4918)
+Bangladesh TCP fallback passed
+cloudflare-tunnel test passed

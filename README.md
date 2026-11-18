@@ -19,7 +19,7 @@ for the `pinggy` and `tunnl` providers:
 | `localxpose` | `scripts/tunnel.sh` | Uses the access token stored in the `LOCALXPOSE_ACCESS_TOKEN` repository secret. |
 | `bore` | `scripts/bore-tunnel.sh` | Stable free relay at `bore.pub`. Tries a fixed port list, then a random port. |
 | `serveo` | `scripts/serveo-tunnel.sh` | Free SSH relay at `serveo.net`. Reconnects automatically and updates `SERVER_ADDRESS.txt` when the random port changes. |
-| `cloudflare` (or `cloudflared`) | `scripts/cloudflare-tunnel.sh` | Cloudflare Tunnel. Uses a named tunnel with `CLOUDFLARE_TUNNEL_TOKEN`/`CLOUDFLARE_TUNNEL_HOSTNAME`, or a free random `trycloudflare.com` quick tunnel when no token is configured. Minecraft clients need Modflared or `cloudflared access tcp`. |
+| `cloudflare` (or `cloudflared`) | `scripts/cloudflare-tunnel.sh` | Cloudflare Tunnel. A named tunnel (`CLOUDFLARE_TUNNEL_TOKEN` + `CLOUDFLARE_TUNNEL_HOSTNAME`) is required for Minecraft TCP. Without it, the game uses the Bangladesh-prioritised Pinggy TCP relay because Cloudflare Quick Tunnels are HTTP-only. Minecraft clients need Modflared or `cloudflared access tcp`. |
 | `pinggy` | `scripts/low-latency-tunnel.sh` | Free TCP relay with an Asia-Pacific relay. Prioritises the route with the best latency for Bangladeshi players. |
 | `tunnl` | `scripts/tunnel.sh` | Starts a Bangladesh-prioritised TCP relay for Minecraft and adds a free `tunnl.gg` HTTP status page. |
 
@@ -104,25 +104,38 @@ The token is never stored in the repository. Add or rotate it under
 ## Cloudflare Tunnel
 
 Select `cloudflare` (or `cloudflared`) as the **Public tunnel provider** to use
-Cloudflare Tunnel. The provider works in two modes:
+Cloudflare Tunnel. A **named tunnel** is required for Minecraft because Cloudflare
+Quick Tunnels only proxy HTTP/HTTPS traffic.
 
-- **Quick tunnel (default, no setup).** When no tunnel token is configured,
-  `scripts/cloudflare-tunnel.sh` starts a free account-less quick tunnel and
-  publishes the random `<name>.trycloudflare.com` hostname. The hostname
-  changes every run.
-- **Named tunnel (stable hostname).** Create a Cloudflare Tunnel in **Zero
-  Trust > Networks > Tunnels**, add a public hostname with the service
-  `tcp://localhost:25565`, and configure:
+Create a Cloudflare Tunnel in **Zero Trust > Networks > Tunnels**, add a public
+hostname with the service `tcp://localhost:25565`, and configure:
 
-  | Name | Type | Purpose |
-  | --- | --- | --- |
-  | `CLOUDFLARE_TUNNEL_TOKEN` | repository secret | Connector token from the tunnel installation command. |
-  | `CLOUDFLARE_TUNNEL_HOSTNAME` | repository variable | Public hostname, for example `mc.example.com`. |
+| Name | Type | Purpose |
+| --- | --- | --- |
+| `CLOUDFLARE_TUNNEL_TOKEN` | repository secret | Connector token from the tunnel installation command. |
+| `CLOUDFLARE_TUNNEL_HOSTNAME` | repository variable | Public hostname, for example `mc.example.com`. |
 
-  A named tunnel can also be described by `CLOUDFLARE_TUNNEL_CONFIG`
-  (repository variable), which points cloudflared at a config file. The
-  config's first `hostname:` entry is used when
-  `CLOUDFLARE_TUNNEL_HOSTNAME` is not set.
+A named tunnel can also be described by `CLOUDFLARE_TUNNEL_CONFIG`
+(repository variable), which points cloudflared at a config file. The
+config's first `hostname:` entry is used when
+`CLOUDFLARE_TUNNEL_HOSTNAME` is not set.
+
+When no named tunnel is configured, `scripts/cloudflare-tunnel.sh` does **not**
+publish a broken `*.trycloudflare.com` Minecraft address. It gives the game
+port to a real TCP relay instead: the Bangladesh-prioritised Pinggy
+Asia-Pacific relay by default, or `bore.pub` when
+`CLOUDFLARE_TCP_FALLBACK=bore`. This is why players no longer see the tunnel
+"stop and restart" after connecting to a quick-tunnel hostname that could
+never carry Minecraft traffic. Set `CLOUDFLARE_TCP_FALLBACK=none` to make a
+missing named tunnel fatal instead.
+
+Cloudflare edge routing is anycast: players in Bangladesh connect to the
+nearest Cloudflare location automatically, then travel over Cloudflare's
+backbone to the tunnel connector. Cloudflare only supports forcing the `us`
+edge region (`CLOUDFLARE_REGION=us`); `auto`/`bangladesh`/`asia-pacific`/`europe`
+keep the global edge, which is the lowest-latency option Cloudflare offers.
+The actual player-facing Bangladesh preference comes from the Pinggy
+Asia-Pacific fallback when a named tunnel is not available.
 
 Cloudflare TCP tunnels are **not plain public TCP ports**. Cloudflare only
 gives end users a WebSocket route, so every player needs either the
@@ -140,10 +153,10 @@ Minecraft server list. The workflow starts the same access proxy locally and
 uses it for the public-route check, so a successful run confirms that the
 tunnel itself works.
 
-If the named tunnel cannot start, the script tries a quick tunnel and then
-falls back to `bore.pub` (`CLOUDFLARE_BORE_FALLBACK=false` disables that final
-fallback). The `cloudflared` binary is downloaded into `.agent-work/tools/` on
-demand and is not committed.
+Named tunnels keep the same hostname when the workflow restarts them, so a
+temporary process failure no longer changes the address players have saved.
+The `cloudflared` binary is downloaded into `.agent-work/tools/` on demand and
+is not committed.
 
 ## Twingate private access (optional)
 
@@ -294,6 +307,17 @@ test is healthy.
 - `LOCALXPOSE_PORT_CANDIDATES` (optional environment variable) - remote TCP
   ports to try before asking LocalXpose for a random port. The default is
   `25565 25566 25567 25568 25569 25570`.
+
+- `CLOUDFLARE_REGION` (repository variable, or the workflow **Free relay
+  region** input) - `auto`/`global` (default) keeps Cloudflare's global anycast
+  edge, `us` forces the US edge. Cloudflare does not expose an Asia-Pacific
+  edge option; other values fall back to global and are logged.
+- `CLOUDFLARE_TCP_FALLBACK` (repository variable) - TCP relay used when no
+  named Cloudflare tunnel is configured: `pinggy` (default, Asia-Pacific and
+  Bangladesh-prioritised), `bore`, or `none`.
+- `CLOUDFLARE_ALLOW_QUICK_TCP` (repository variable) - allow the HTTP-only
+  quick tunnel even for TCP. Default: `false`; it is only useful for tests or
+  HTTP services.
 
 - `SERVEO_SERVER` (optional environment variable) - Serveo relay host.
   Default: `serveo.net`.
@@ -454,8 +478,11 @@ The workflow makes the best of the available infrastructure:
   available.
 - `scripts/serveo-tunnel.sh` provides an alternative free SSH relay with
   automatic reconnects.
-- `scripts/cloudflare-tunnel.sh` adds a named or quick Cloudflare Tunnel and
-  verifies the TCP route through a local `cloudflared access` proxy.
+- `scripts/cloudflare-tunnel.sh` adds a named Cloudflare Tunnel and verifies
+  the TCP route through a local `cloudflared access` proxy. Because Quick
+  Tunnels are HTTP-only, a missing named tunnel falls back to the
+  Bangladesh-prioritised Pinggy TCP relay instead of publishing a dead
+  `trycloudflare.com` Minecraft address.
 - `scripts/low-latency-tunnel.sh` selects the Pinggy free relay from
   `TUNNEL_REGION` (or measures all relays with `auto`), prefers the
   Asia-Pacific relay for Bangladeshi players, and reconnects when the free
