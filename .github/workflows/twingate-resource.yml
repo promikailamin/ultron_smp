@@ -27,6 +27,26 @@ jobs:
             - name: checkout_repo
               uses: actions/checkout@v4
 
+            - name: diagnose_dns
+              run: |
+                  set -euo pipefail
+                  echo "resolver:"
+                  cat /etc/resolv.conf
+                  python3 - <<'PY'
+                  import os
+                  import socket
+
+                  network = os.environ.get("TWINGATE_NETWORK", "")
+                  hosts = ["twingate.com", "github.com", network + ".twingate.com"]
+                  for index, host in enumerate(hosts):
+                      label = host if index < 2 else "<network>.twingate.com"
+                      try:
+                          addresses = socket.getaddrinfo(host, 443)
+                          print(label, "->", sorted({item[4][0] for item in addresses}))
+                      except Exception as exc:
+                          print(label, "->", type(exc).__name__, getattr(exc, "errno", None))
+                  PY
+
             - name: ensure_minecraft_resource
               run: |
                   set -euo pipefail
