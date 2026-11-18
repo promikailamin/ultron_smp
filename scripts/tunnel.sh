@@ -15,16 +15,20 @@
 #   ${TUNNEL_PID_FILE:-${RUNNER_TEMP:-<repo>/.agent-work/tmp}/ultron-tunnel.pid}
 #
 # TUNNEL_PROVIDER selects the provider used by the workflow:
-#   auto        Use LocalXpose, then fall back to bore.pub (default)
+#   auto        Try Minekube Connect, then LocalXpose, then bore.pub (default)
 #   localxpose  Force the LocalXpose tunnel
 #   bore        Force the bore.pub tunnel
 #   serveo      Force the Serveo SSH tunnel
 #   pinggy      Force the Bangladesh-prioritised Pinggy TCP relay
 #   tunnl       Use a low-latency TCP relay for Minecraft and add a
 #               tunnl.gg HTTP status page (tunnl.gg cannot carry raw TCP)
+#   minekube    Use the Minekube Connect network through the Gate connector
 #
 # Optional environment variables:
 #   TUNNEL_PROVIDER             Tunnel provider (default: auto)
+#   MINEKUBE_AUTO               Set to false to skip Minekube for auto
+#   MINEKUBE_ENDPOINT           Stable Minekube endpoint name
+#   MINEKUBE_CONNECT_TOKEN      Minekube connector token (repository secret)
 #   PLAYER_REGION               bangladesh/bd prioritises the Asia-Pacific
 #                               Pinggy relay (default: bangladesh for
 #                               pinggy/tunnl, auto for the standalone script)
@@ -49,6 +53,17 @@ ROOT_DIR="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")/.." && pwd)"
 PROVIDER="$(printf '%s' "${TUNNEL_PROVIDER:-auto}" | tr '[:upper:]' '[:lower:]')"
 case "$PROVIDER" in
     "" | auto)
+        if [ "${MINEKUBE_AUTO:-true}" = "true" ]; then
+            default_pid_dir="${RUNNER_TEMP:-$ROOT_DIR/.agent-work/tmp}"
+            if TUNNEL_PID_FILE="${TUNNEL_PID_FILE:-$default_pid_dir/ultron-tunnel.pid}" \
+                bash "$ROOT_DIR/scripts/minekube-tunnel.sh"; then
+                exit 0
+            fi
+            echo "WARNING: Minekube Connect could not be started; trying LocalXpose..." >&2
+        fi
+        ;;
+    minekube | minekube-connect | connect)
+        exec bash "$ROOT_DIR/scripts/minekube-tunnel.sh"
         ;;
     localxpose | loclx)
         # An explicit provider choice should not silently switch to bore.pub.
@@ -87,7 +102,7 @@ case "$PROVIDER" in
         exec bash "$ROOT_DIR/scripts/bore-tunnel.sh"
         ;;
     *)
-        echo "ERROR: unsupported TUNNEL_PROVIDER '${PROVIDER}' (use auto, localxpose, bore, serveo, pinggy or tunnl)." >&2
+        echo "ERROR: unsupported TUNNEL_PROVIDER '${PROVIDER}' (use auto, localxpose, bore, serveo, pinggy, tunnl or minekube)." >&2
         exit 2
         ;;
 esac

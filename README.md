@@ -13,7 +13,8 @@ provider** input:
 
 | Provider | Script | Notes |
 | --- | --- | --- |
-| `auto` | `scripts/tunnel.sh` | Default. Tries LocalXpose, then falls back to `bore.pub`. |
+| `auto` | `scripts/tunnel.sh` | Default. Tries Minekube Connect, then LocalXpose, then `bore.pub`. |
+| `minekube` | `scripts/minekube-tunnel.sh` | Minekube Connect through the Gate connector. Gives a free `<endpoint>.play.minekube.net` address without port forwarding. |
 | `localxpose` | `scripts/tunnel.sh` | Uses the access token stored in the `LOCALXPOSE_ACCESS_TOKEN` repository secret. |
 | `bore` | `scripts/bore-tunnel.sh` | Stable free relay at `bore.pub`. Tries a fixed port list, then a random port. |
 | `serveo` | `scripts/serveo-tunnel.sh` | Free SSH relay at `serveo.net`. Reconnects automatically and updates `SERVER_ADDRESS.txt` when the random port changes. |
@@ -32,6 +33,44 @@ The selection is passed to the workflow as `TUNNEL_PROVIDER`. The same
 provider is used for automatic tunnel restarts during the run. `pinggy` and
 `tunnl` also use the repository variable `PLAYER_REGION` (default:
 `bangladesh`) so the Asia-Pacific relay is preferred for South Asian players.
+
+## Minekube Connect
+
+Minekube's fast-start Connect plugin is a Paper/Spigot/Velocity/BungeeCord
+plugin, so a Fabric server cannot load it directly. Gate is Minekube's own
+Minecraft proxy and the supported platform-independent Connect connector, so
+this repository uses it instead of converting the Paper plugin. Gate runs
+next to the Fabric server, forwards players to `127.0.0.1:25565` and keeps an
+outbound tunnel to the Connect network. The public address is
+`<endpoint>.play.minekube.net`.
+
+No setup is required: `auto` tries Minekube first, and the `minekube`
+provider forces it. If Minekube cannot be reached, `auto` falls back to
+LocalXpose and then `bore.pub`. Set the repository variable
+`MINEKUBE_AUTO=false` to keep the old `auto` behaviour.
+
+The Gate binary is pinned to `0.81.1` and downloaded into `.agent-work/tools/`
+on demand; it is not committed. `MINEKUBE_GATE_VERSION` (repository variable)
+overrides the version.
+
+By default a temporary endpoint name is generated for each run and stored in
+`SERVER_ADDRESS.txt`. To keep a stable address:
+
+1. Set the repository variable `MINEKUBE_ENDPOINT` to a name of 1-16
+   lowercase letters, digits or hyphens (for example `ultron-smp-bd`).
+2. On the first run, Gate creates `.agent-work/tmp/minekube/connect.json` and
+   registers the endpoint. Copy its `token` value, or get the token from
+   <https://app.minekube.com>, and add it as the repository secret
+   `MINEKUBE_CONNECT_TOKEN`.
+
+With both values set, every run reuses the same endpoint. If a configured
+name is already owned by another connector and no token is provided,
+`scripts/minekube-tunnel.sh` warns and temporarily uses a random endpoint so
+the server stays reachable.
+
+The connector allows offline-mode players by default because this server runs
+with `online-mode=false`. `enforce-secure-profile` is also disabled so players
+arriving through Connect without a Mojang profile key can still chat.
 
 LocalXpose TCP tunnels require a **PRO** account. If the token is missing, is
 invalid, or belongs to a FREE account (which only supports HTTP/HTTPS), the
@@ -84,6 +123,19 @@ The token is never stored in the repository. Add or rotate it under
 The LocalXpose CLI (`loclx`) is downloaded automatically into
 `.agent-work/tools/` and is not committed. Serveo only needs the system
 `ssh` client.
+
+Additional Minekube settings:
+
+- `MINEKUBE_ENDPOINT` (repository variable) - stable endpoint name, 1-16
+  lowercase letters, digits or hyphens.
+- `MINEKUBE_CONNECT_TOKEN` (repository secret) - connector token for a stable
+  endpoint. Never commit it.
+- `MINEKUBE_GATE_VERSION` (repository variable) - Gate release to download.
+  Default: `0.81.1`.
+- `MINEKUBE_ALLOW_OFFLINE_PLAYERS` (optional environment variable) - allow
+  offline/cracked players through Connect. Default: `true`.
+- `MINEKUBE_BIND_PORT` (optional environment variable) - local port Gate
+  listens on. Default: `25566`.
 
 ## World saving and cancelled runs
 
@@ -157,6 +209,8 @@ The workflow makes the best of the available infrastructure:
 - `scripts/network-tune.sh` enables BBR, larger TCP buffers, a lower
   unsent-byte watermark, and a larger network backlog so long-haul
   connections recover better from packet loss.
+- `scripts/minekube-tunnel.sh` uses Minekube Connect through Gate, which gives
+  players a nearby Connect edge and avoids exposing the runner directly.
 - `scripts/tunnel.sh` selects the tunnel provider and uses a LocalXpose TCP
   tunnel, with the region selectable through `LOCALXPOSE_REGION`.
 - `scripts/bore-tunnel.sh` keeps the stable `bore.pub` option and fallback
@@ -181,6 +235,7 @@ bash .agent-work/tests/test_tunnel.sh
 bash .agent-work/tests/test_serveo_tunnel.sh
 bash .agent-work/tests/test_tunnl_tunnel.sh
 bash .agent-work/tests/test_tunnl_provider.sh
+bash .agent-work/tests/test_minekube_tunnel.sh
 bash .agent-work/tests/test_network_tune.sh
 bash .agent-work/tests/test_network_optimizer.sh
 ```
@@ -192,6 +247,9 @@ parsing, forwarding and process handling without spending LocalXpose quota.
 tunnl.gg URL serves the status page and its `/healthz` endpoint.
 `test_tunnl_provider.sh` validates the full `TUNNEL_PROVIDER=tunnl` path:
 a TCP game relay plus the tunnl.gg status page.
+`test_minekube_tunnel.sh` uses a fake Gate connector to validate the
+`TUNNEL_PROVIDER=minekube` path, generated Gate config, address file and
+local forwarding without registering a real endpoint.
 `test_network_optimizer.sh` builds the mod, checks its mixin targets against
 `server-26.3.jar`, and starts a disposable server to confirm the mod loads
 without injection errors.

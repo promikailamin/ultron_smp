@@ -1,5 +1,7 @@
 .agent-work/tools/bore-*
 .agent-work/tools/loclx-*
+.agent-work/tools/gate-*
+.agent-work/tools/.gate-download-*
 .agent-work/tmp/*
 !.agent-work/tmp/.gitkeep
 .agent-work/logs/tunnel.log
@@ -20,6 +22,8 @@
 .agent-work/tmp/serveo_known_hosts
 .agent-work/logs/tunnl-tunnel.log
 .agent-work/logs/tunnl-attempt.log
+.agent-work/logs/minekube-tunnel.log
+.agent-work/logs/test-minekube-http.log
 .agent-work/logs/tunnl-status.log
 .agent-work/logs/tunnl-tunnel-test.log
 .agent-work/logs/test-tunnl-http.log

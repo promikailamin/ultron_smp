@@ -15,6 +15,7 @@ on:
                     - serveo
                     - pinggy
                     - tunnl
+                    - minekube
 
 permissions:
     contents: write
@@ -36,6 +37,10 @@ jobs:
             LOCALXPOSE_REGION: ${{ vars.LOCALXPOSE_REGION || 'ap' }}
             LOCALXPOSE_BORE_FALLBACK: ${{ vars.LOCALXPOSE_BORE_FALLBACK }}
             PLAYER_REGION: ${{ vars.PLAYER_REGION || 'bangladesh' }}
+            MINEKUBE_ENDPOINT: ${{ vars.MINEKUBE_ENDPOINT }}
+            MINEKUBE_CONNECT_TOKEN: ${{ secrets.MINEKUBE_CONNECT_TOKEN }}
+            MINEKUBE_GATE_VERSION: ${{ vars.MINEKUBE_GATE_VERSION || '0.81.1' }}
+            MINEKUBE_AUTO: ${{ vars.MINEKUBE_AUTO || 'true' }}
 
         steps:
             - name: checkout_repo

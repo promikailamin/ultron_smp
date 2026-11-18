@@ -135,6 +135,7 @@ http_pid=$!
 sleep 1
 
 MINECRAFT_PORT="$LOCAL_PORT" \
+    TUNNEL_PROVIDER="localxpose" \
     LOCALXPOSE_ACCESS_TOKEN="test-token" \
     LOCALXPOSE_BORE_FALLBACK="false" \
     LOCALXPOSE_ALLOW_LOCAL_ADDRESS="true" \
