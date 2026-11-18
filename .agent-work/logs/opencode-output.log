@@ -8938,3 +8938,46 @@ M .agent-work/logs/opencode-output.log
  .agent-work/logs/opencode-output.log | 35 +++++++++++++++++++++++++++++++++++
  1 file changed, 35 insertions(+)
 [0m
+[0m$ [0mgit add -A && GIT_AUTHOR_NAME=ultron GIT_AUTHOR_EMAIL=ultron@users.noreply.github.com GIT_COMMITTER_NAME=ultron GIT_COMMITTER_EMAIL=ultron@users.noreply.github.com git commit -m "Record issue 17 execution logs" && git push origin HEAD:main 2>&1 | tee -a .agent-work/logs/issue-17-push.log && git status --short
+[main 0e3699f] Record issue 17 execution logs
+ 2 files changed, 43 insertions(+)
+ create mode 100644 .agent-work/logs/issue-17-push.log
+To https://github.com/promikailamin/ultron_smp
+   b4b02fe..0e3699f  HEAD -> main
+ M .agent-work/logs/issue-17-push.log
+[0m
+[0m$ [0mgh issue comment 17 --repo promikailamin/ultron_smp --body "$(cat <<'EOF'
+Implemented further server-side network optimization and pushed it to `main`.
+
+### Changes
+- Upgraded `mods/ultron-network-optimizer-1.1.0.jar` (replaces 1.0.0) with:
+  - Entity-sound culling, visual-only entity event/animation culling, block-break animation culling, and distant non-knockback explosion culling.
+  - Identical entity-metadata deduplication and world-time update throttling (20 -> 100 ticks).
+  - `TCP_NODELAY` and `SO_KEEPALIVE` on player sockets.
+  - Existing particle/sound/block-entity/level-event/block-event/duplicate-block filters remain active.
+- All new filters are configurable in `config/ultron-network.properties`.
+- Extended `scripts/network-tune.sh`: lower `tcp_notsent_lowat` (8192) to reduce bufferbloat, plus SACK/DSACK, timestamps, larger SYN/backlog and socket limits.
+- Reduced `view-distance` and `simulation-distance` to 5, and `entity-broadcast-range-percentage` to 50.
+
+### Validation
+Passed locally on the runner:
+- `bash .agent-work/tests/test_network_optimizer.sh`
+- `bash .agent-work/tests/test_network_tune.sh`
+- `bash .agent-work/tests/test_run.sh`
+
+The optimizer build was checked against the 26.3 server jar and a disposable server loaded it cleanly with no mixin failures.
+
+Logs and details: `.agent-work/outputs/issue-17-network-optimizer.md`
+
+### Commits
+- `b4b02fe` Optimize network optimizer packet filtering and TCP tuning
+- `0e3699f` Record issue 17 execution logs
+
+Both are pushed to `main`.
+
+### Important limitation
+The client ping value is the keepalive round-trip time through the actual Twingate path. Packet culling and TCP tuning reduce bandwidth, bufferbloat and server work, but they cannot guarantee a drop from 230 ms to 120-150 ms if the tunnel/ISP route itself is 230 ms. A guaranteed 120-150 ms from Bangladesh needs a server host closer to the players (Singapore/India/Bangladesh VPS), not a GitHub Actions runner in the US. I did not claim a measured real-world ping improvement because the end-to-end Twingate path was not benchmarked from here.
+EOF
+)" 2>&1 | tee .agent-work/logs/issue-17-comment.log
+https://github.com/promikailamin/ultron_smp/issues/17#issuecomment-6982124557
+[0m
