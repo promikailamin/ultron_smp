@@ -1,0 +1,3 @@
+ERROR: LocalXpose rejected the tunnel. The supplied access token may be invalid or belong to a FREE account; LocalXpose TCP tunnels require a PRO account.
+WARNING: Could not establish a LocalXpose TCP tunnel.
+ERROR: Could not establish a LocalXpose TCP tunnel.

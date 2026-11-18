@@ -1,9 +1,13 @@
 .agent-work/tools/bore-*
+.agent-work/tools/loclx-*
 .agent-work/tmp/*
 !.agent-work/tmp/.gitkeep
 .agent-work/logs/tunnel.log
 .agent-work/logs/tunnel-start.log
 .agent-work/logs/tunnel-restarts.log
+.agent-work/logs/localxpose-tunnel.log
+.agent-work/logs/localxpose-attempt.log
+.agent-work/logs/localxpose-tunnel-restarts.log
 .agent-work/logs/test-http.log
 .agent-work/logs/pinggy-tunnel.log
 .agent-work/logs/pinggy-attempt.log

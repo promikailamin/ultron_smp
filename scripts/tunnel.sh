@@ -1,19 +1,31 @@
 #!/usr/bin/env bash
-# Expose the local Minecraft TCP port through bore.pub.
+# Expose the local Minecraft TCP port through LocalXpose.
 #
-# The script tries a short list of fixed remote ports first so that players
-# can keep using the same address between runs. If every fixed port is already
-# taken on the public bore server it falls back to a random port.
+# LocalXpose is the primary tunnel provider. It is authenticated with an
+# access token supplied through the LOCALXPOSE_ACCESS_TOKEN (or ACCESS_TOKEN)
+# environment variable; the token is never written into this repository.
+#
+# LocalXpose TCP tunnels require a PRO account. If the token belongs to a
+# FREE account (HTTP/HTTPS only), or the tunnel cannot be established for any
+# other reason, this script falls back to the stable bore.pub tunnel unless
+# LOCALXPOSE_BORE_FALLBACK=false is set.
 #
 # It writes the resulting address to SERVER_ADDRESS.txt and leaves the tunnel
 # running in the background. The PID is stored in:
 #   ${TUNNEL_PID_FILE:-${RUNNER_TEMP:-<repo>/.agent-work/tmp}/ultron-tunnel.pid}
 #
 # Optional environment variables:
-#   MINECRAFT_PORT         Local Minecraft port (default: 25565)
-#   BORE_SERVER            bore server hostname (default: bore.pub)
-#   BORE_VERSION           bore release to download (default: 0.5.3)
-#   TUNNEL_PORT_CANDIDATES Space separated remote ports to try (default below)
+#   LOCALXPOSE_ACCESS_TOKEN     LocalXpose access token (required)
+#   ACCESS_TOKEN                Alternative token variable name
+#   MINECRAFT_PORT              Local Minecraft port (default: 25565)
+#   LOCALXPOSE_REGION           Relay region: us, ap, eu, or auto
+#                               (default: ap)
+#   LOCALXPOSE_PORT_CANDIDATES  Space separated remote ports to try before
+#                               asking LocalXpose for a random port
+#   LOCALXPOSE_DOWNLOAD_URL     Override the loclx download URL
+#   LOCALXPOSE_BORE_FALLBACK    Fall back to bore.pub on failure
+#                               (default: true)
+#   LOCLX_BIN                   Use an existing loclx binary (used by tests)
 set -euo pipefail
 
 ROOT_DIR="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")/.." && pwd)"
@@ -22,19 +34,20 @@ LOGS_DIR="$ROOT_DIR/.agent-work/logs"
 ADDRESS_FILE="$ROOT_DIR/SERVER_ADDRESS.txt"
 DEFAULT_PID_DIR="${RUNNER_TEMP:-$ROOT_DIR/.agent-work/tmp}"
 PID_FILE="${TUNNEL_PID_FILE:-$DEFAULT_PID_DIR/ultron-tunnel.pid}"
-TUNNEL_LOG="$LOGS_DIR/tunnel.log"
+TUNNEL_LOG="$LOGS_DIR/localxpose-tunnel.log"
 
 LOCAL_PORT="${MINECRAFT_PORT:-25565}"
-REMOTE_HOST="${BORE_SERVER:-bore.pub}"
-BORE_VERSION="${BORE_VERSION:-0.5.3}"
-PORT_CANDIDATES="${TUNNEL_PORT_CANDIDATES:-25565 25566 25567 25568 25569 25570}"
+REGION="${LOCALXPOSE_REGION:-ap}"
+PORT_CANDIDATES="${LOCALXPOSE_PORT_CANDIDATES:-25565 25566 25567 25568 25569 25570}"
+ACCESS_TOKEN="${LOCALXPOSE_ACCESS_TOKEN:-${ACCESS_TOKEN:-${LX_ACCESS_TOKEN:-}}}"
+BORE_FALLBACK="${LOCALXPOSE_BORE_FALLBACK:-true}"
 
 mkdir -p "$TOOLS_DIR" "$LOGS_DIR" "$(dirname -- "$PID_FILE")"
 
 detect_arch() {
     case "$(uname -m)" in
-        x86_64 | amd64) echo "x86_64" ;;
-        aarch64 | arm64) echo "aarch64" ;;
+        x86_64 | amd64) echo "amd64" ;;
+        aarch64 | arm64) echo "arm64" ;;
         *)
             echo "ERROR: unsupported CPU architecture: $(uname -m)" >&2
             return 1
@@ -45,23 +58,6 @@ detect_arch() {
 strip_ansi() {
     sed -E $'s/\x1B\\[[0-9;]*[mK]//g'
 }
-
-ARCH="$(detect_arch)"
-BORE_BIN="$TOOLS_DIR/bore-$BORE_VERSION-$ARCH"
-
-if [ ! -x "$BORE_BIN" ]; then
-    echo "Downloading bore ${BORE_VERSION} for ${ARCH}..." >&2
-    DOWNLOAD_DIR="$TOOLS_DIR/.bore-download-$$"
-    mkdir -p "$DOWNLOAD_DIR"
-    trap 'rm -rf "$DOWNLOAD_DIR"' EXIT
-    curl -fsSL --retry 3 --connect-timeout 15 \
-        "https://github.com/ekzhang/bore/releases/download/v${BORE_VERSION}/bore-v${BORE_VERSION}-${ARCH}-unknown-linux-musl.tar.gz" \
-        -o "$DOWNLOAD_DIR/bore.tar.gz"
-    tar -xzf "$DOWNLOAD_DIR/bore.tar.gz" -C "$DOWNLOAD_DIR"
-    install -m 0755 "$DOWNLOAD_DIR/bore" "$BORE_BIN"
-    rm -rf "$DOWNLOAD_DIR"
-    trap - EXIT
-fi
 
 stop_existing_tunnel() {
     if [ ! -f "$PID_FILE" ]; then
@@ -82,17 +78,19 @@ stop_existing_tunnel() {
 }
 
 write_address() {
-    local port="$1"
-    local address="${REMOTE_HOST}:${port}"
+    local address="$1"
+    local host="${address%:*}"
+    local port="${address##*:}"
     local tmp="$ADDRESS_FILE.tmp"
 
     {
         echo "# Ultron SMP public server address"
         echo "# Updated: $(date -u '+%Y-%m-%d %H:%M:%S UTC')"
+        echo "# Provider: LocalXpose TCP tunnel (region ${REGION:-default})"
         echo "# Add this server in Minecraft (host and port):"
         echo "$address"
         echo "#"
-        echo "# Host: $REMOTE_HOST"
+        echo "# Host: $host"
         echo "# Port: $port"
     } >"$tmp"
     mv "$tmp" "$ADDRESS_FILE"
@@ -100,56 +98,160 @@ write_address() {
     echo "$address"
 }
 
-start_bore() {
-    local requested_port="$1"
-    local -a args=(local "$LOCAL_PORT" --to "$REMOTE_HOST")
+fallback_to_bore() {
+    local reason="$1"
 
+    echo "WARNING: ${reason}" >&2
+    if [ "$BORE_FALLBACK" = "true" ] && [ -x "$ROOT_DIR/scripts/bore-tunnel.sh" ]; then
+        echo "Falling back to the stable bore.pub tunnel..." >&2
+        exec bash "$ROOT_DIR/scripts/bore-tunnel.sh"
+    fi
+
+    echo "ERROR: ${reason}" >&2
+    exit 1
+}
+
+ensure_loclx() {
+    if [ -n "${LOCLX_BIN:-}" ]; then
+        if [ ! -x "$LOCLX_BIN" ]; then
+            echo "ERROR: LOCLX_BIN is not executable: $LOCLX_BIN" >&2
+            return 1
+        fi
+        return 0
+    fi
+
+    local arch download_url download_dir
+    arch="$(detect_arch)"
+    LOCLX_BIN="$TOOLS_DIR/loclx-$arch"
+
+    if [ -x "$LOCLX_BIN" ]; then
+        return 0
+    fi
+
+    download_url="${LOCALXPOSE_DOWNLOAD_URL:-https://api.localxpose.io/api/downloads/loclx-linux-${arch}.zip}"
+    download_dir="$TOOLS_DIR/.loclx-download-$$"
+    mkdir -p "$download_dir"
+    trap 'rm -rf "$download_dir"' EXIT
+
+    echo "Downloading LocalXpose client for ${arch}..." >&2
+    curl -fsSL --retry 3 --connect-timeout 15 "$download_url" \
+        -o "$download_dir/loclx.zip"
+    if command -v unzip >/dev/null 2>&1; then
+        unzip -oq "$download_dir/loclx.zip" -d "$download_dir"
+    else
+        python3 -m zipfile -e "$download_dir/loclx.zip" "$download_dir"
+    fi
+    install -m 0755 "$download_dir/loclx" "$LOCLX_BIN"
+    rm -rf "$download_dir"
+    trap - EXIT
+
+    return 0
+}
+
+extract_address() {
+    local log_file="$1"
+    local address=""
+
+    # Prefer the public *.loclx.io endpoint over the local forwarded address.
+    address="$(strip_ansi <"$log_file" \
+        | grep -oE '[A-Za-z0-9][A-Za-z0-9.-]*\.loclx\.io:[0-9]{1,5}' \
+        | head -n 1 || true)"
+    if [ -z "$address" ]; then
+        address="$(strip_ansi <"$log_file" \
+            | grep -oE '(localhost|([0-9]{1,3}\.){3}[0-9]{1,3}):[0-9]{1,5}' \
+            | head -n 1 || true)"
+    fi
+
+    printf '%s' "$address"
+}
+
+start_localxpose() {
+    local requested_port="${1:-}"
+    local -a args=(tunnel --raw-mode tcp --to "127.0.0.1:${LOCAL_PORT}")
+    local attempt_log="$LOGS_DIR/localxpose-attempt.log"
+    local address=""
+    local loclx_pid=""
+
+    if [ -n "$REGION" ] && [ "$REGION" != "auto" ]; then
+        args+=(--region "$REGION")
+    fi
     if [ -n "$requested_port" ]; then
         args+=(--port "$requested_port")
     fi
 
-    : >"$TUNNEL_LOG"
-    nohup "$BORE_BIN" "${args[@]}" >"$TUNNEL_LOG" 2>&1 </dev/null &
-    local tunnel_pid=$!
+    {
+        echo "=== $(date -u '+%Y-%m-%d %H:%M:%S UTC') attempt port=${requested_port:-random} region=${REGION:-default} ==="
+    } >>"$TUNNEL_LOG"
 
-    local escaped_host="${REMOTE_HOST//./\\.}"
-    local port=""
-    for _ in $(seq 1 50); do
-        if ! kill -0 "$tunnel_pid" 2>/dev/null; then
+    : >"$attempt_log"
+    (
+        export ACCESS_TOKEN
+        exec "$LOCLX_BIN" "${args[@]}"
+    ) >"$attempt_log" 2>&1 </dev/null &
+    loclx_pid=$!
+
+    for _ in $(seq 1 100); do
+        if ! kill -0 "$loclx_pid" 2>/dev/null; then
             break
         fi
 
-        port="$(strip_ansi <"$TUNNEL_LOG" \
-            | grep -oE "${escaped_host}:[0-9]+" \
-            | head -n 1 | cut -d: -f2 || true)"
-        if [ -n "$port" ]; then
-            echo "$tunnel_pid" >"$PID_FILE"
-            echo "Tunnel is live at $(write_address "$port")"
-            strip_ansi <"$TUNNEL_LOG" | tail -n 5 >&2 || true
+        address="$(extract_address "$attempt_log")"
+        if [ -n "$address" ]; then
+            echo "$loclx_pid" >"$PID_FILE"
+            echo "Tunnel is live at $(write_address "$address")"
+            strip_ansi <"$attempt_log" | tail -n 10 >>"$TUNNEL_LOG" || true
             return 0
         fi
 
         sleep 0.2
     done
 
-    kill "$tunnel_pid" 2>/dev/null || true
-    wait "$tunnel_pid" 2>/dev/null || true
+    kill "$loclx_pid" 2>/dev/null || true
+    wait "$loclx_pid" 2>/dev/null || true
+
+    strip_ansi <"$attempt_log" | tail -n 20 >>"$TUNNEL_LOG" || true
+    if grep -qiE 'PRO account only|authentication|unauthorized|invalid[^ ]* token' "$attempt_log"; then
+        echo "ERROR: LocalXpose rejected the tunnel. The supplied access token may be invalid or belong to a FREE account; LocalXpose TCP tunnels require a PRO account." >&2
+        return 2
+    fi
+
     return 1
 }
 
-stop_existing_tunnel
-
-for port in $PORT_CANDIDATES; do
-    if start_bore "$port"; then
-        exit 0
-    fi
-    echo "Remote port ${port} is unavailable; trying the next one..." >&2
-done
-
-if start_bore ""; then
-    exit 0
+if [ -z "$ACCESS_TOKEN" ]; then
+    fallback_to_bore "LOCALXPOSE_ACCESS_TOKEN is not set."
 fi
 
-echo "ERROR: could not establish a bore.pub tunnel." >&2
-strip_ansi <"$TUNNEL_LOG" | tail -n 20 >&2 || true
-exit 1
+if ! ensure_loclx; then
+    fallback_to_bore "The LocalXpose client could not be installed."
+fi
+
+stop_existing_tunnel
+: >"$TUNNEL_LOG"
+
+fatal=0
+for port in $PORT_CANDIDATES; do
+    if start_localxpose "$port"; then
+        exit 0
+    else
+        status=$?
+    fi
+    if [ "$status" -eq 2 ]; then
+        fatal=1
+        break
+    fi
+    echo "LocalXpose port ${port} is unavailable; trying the next one..." >&2
+done
+
+if [ "$fatal" -eq 0 ]; then
+    if start_localxpose ""; then
+        exit 0
+    else
+        status=$?
+    fi
+    if [ "$status" -eq 2 ]; then
+        fatal=1
+    fi
+fi
+
+fallback_to_bore "Could not establish a LocalXpose TCP tunnel."
