@@ -4913,3 +4913,82 @@ PY
 grep -a -cE 'T-[A-Za-z0-9]{20,}' .agent-work/logs/opencode-output.log || true
 0
 [0m
+[0m$ [0mcd /home/runner/work/ultron_smp/ultron_smp && git add -A && (git diff --cached -a | grep -acE 'T-[A-Za-z0-9]{20,}' || true) && (git diff --cached -a | grep -acE 'ghp_[A-Za-z0-9]{10,}|github_pat_[A-Za-z0-9_]{10,}' || true) && git status --short
+0
+0
+A  .agent-work/logs/minekube-auto-test.log
+A  .agent-work/logs/minekube-minekube-test.log
+M  .agent-work/logs/opencode-output.log
+M  .agent-work/logs/run-test.log
+M  .agent-work/logs/serveo-tunnel-test.log
+M  .agent-work/logs/test-serveo-http.log
+A  .agent-work/outputs/issue-8-minekube-implementation.md
+A  .agent-work/tests/test_minekube_tunnel.sh
+M  .agent-work/tests/test_tunnel.sh
+M  .github/workflows/run.yml
+M  .gitignore
+M  README.md
+A  scripts/minekube-tunnel.sh
+M  scripts/tunnel.sh
+M  server.properties
+[0m
+[0m$ [0mcd /home/runner/work/ultron_smp/ultron_smp && git commit -m "Add Minekube Connect tunnel via Gate" && git push origin HEAD:main
+Author identity unknown
+
+*** Please tell me who you are.
+
+Run
+
+  git config --global user.email "you@example.com"
+  git config --global user.name "Your Name"
+
+to set your account's default identity.
+Omit --global to set the identity only in this repository.
+
+fatal: empty ident name (for <runner@runnervmccnms.5svf0n5jzeeuzemd0l3pozd44h.gx.internal.cloudapp.net>) not allowed
+[0m
+[0m$ [0mcd /home/runner/work/ultron_smp/ultron_smp && git config user.name "ultron" && git config user.email "ultron@users.noreply.github.com" && git commit -m "Add Minekube Connect tunnel via Gate" && git push origin HEAD:main
+[main 4d71153] Add Minekube Connect tunnel via Gate
+ 15 files changed, 4732 insertions(+), 6779 deletions(-)
+ create mode 100644 .agent-work/logs/minekube-auto-test.log
+ create mode 100644 .agent-work/logs/minekube-minekube-test.log
+ create mode 100644 .agent-work/outputs/issue-8-minekube-implementation.md
+ create mode 100755 .agent-work/tests/test_minekube_tunnel.sh
+ create mode 100755 scripts/minekube-tunnel.sh
+To https://github.com/promikailamin/ultron_smp
+   9ce6889..4d71153  HEAD -> main
+[0m
+[0m$ [0mcat > /tmp/issue8-comment.md <<'EOF'
+Implemented Minekube Connect support for the Fabric server.
+
+**Why Gate instead of converting the Paper plugin**
+The Minekube fast-start Connect plugin targets Paper/Spigot, Velocity and BungeeCord APIs, so a Fabric server cannot load it. Gate is Minekube's own supported platform-independent Connect connector, so it provides the same `<endpoint>.play.minekube.net` address without a Paper plugin port: Gate runs next to the Fabric server, forwards players to `127.0.0.1:25565` and keeps the outbound Connect tunnel.
+
+**Changes**
+- Added `scripts/minekube-tunnel.sh` (downloads pinned Gate 0.81.1 to `.agent-work/tools`, generates config, registers endpoint, writes `SERVER_ADDRESS.txt`).
+- Added `TUNNEL_PROVIDER=minekube`; the default `auto` now tries Minekube first and falls back to LocalXpose/bore.
+- Added the `minekube` option and `MINEKUBE_*` variables/secrets to `run.yml`.
+- Set `enforce-secure-profile=false` so offline Connect players can use chat.
+- Added `test_minekube_tunnel.sh` (fake Gate, validates provider, config, address and forwarding) and documentation in `README.md` and `.agent-work/outputs/issue-8-minekube-implementation.md`.
+
+**Verification**
+- Real test: Gate registered a temporary endpoint, and the public Minecraft status ping succeeded through Minekube (`connect=48ms`, correct MOTD). The temporary endpoint was stopped afterwards.
+- PASS: `test_minekube_tunnel.sh`, `test_tunnel.sh`, `test_serveo_tunnel.sh`, `test_tunnl_provider.sh`, `test_run.sh`.
+- Shellcheck and workflow YAML parsing passed.
+
+**Commit**
+`4d71153` - Add Minekube Connect tunnel via Gate (pushed to `main`).
+
+**Notes / remaining**
+- Without extra setup the endpoint name is temporary per run. For a stable address, set repository variable `MINEKUBE_ENDPOINT` (1-16 lowercase letters/digits/hyphens) and secret `MINEKUBE_CONNECT_TOKEN` after the first run (token is created in `.agent-work/tmp/minekube/connect.json` or available from app.minekube.com). No token is stored in the repo.
+- Gate 0.81.1's own random names can exceed Minekube's 16-character limit, so the script validates names and generates its own `ultron-<hex>` fallback.
+EOF
+gh issue comment "8" --repo "promikailamin/ultron_smp" --body-file /tmp/issue8-comment.md
+https://github.com/promikailamin/ultron_smp/issues/8#issuecomment-6975499758
+[0m
+[0m$ [0mcd /home/runner/work/ultron_smp/ultron_smp && git status --short && git log --oneline -3
+M .agent-work/logs/opencode-output.log
+4d71153 Add Minekube Connect tunnel via Gate
+9ce6889 Final Minecraft server backup
+3b956c2 Auto-save Minecraft server data (run stopping)
+[0m
