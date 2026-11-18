@@ -7,12 +7,17 @@
   },
   "minecraft:adventure/adventuring_time": {
     "criteria": {
+      "minecraft:old_growth_birch_forest": "2026-11-18 15:21:49 +0000",
       "minecraft:beach": "2026-11-18 15:20:19 +0000",
+      "minecraft:dark_forest": "2026-11-18 15:22:32 +0000",
       "minecraft:deep_dark": "2026-11-15 11:05:22 +0000",
       "minecraft:ocean": "2026-11-18 15:20:01 +0000",
+      "minecraft:jungle": "2026-11-18 15:22:36 +0000",
       "minecraft:river": "2026-11-15 11:12:16 +0000",
       "minecraft:meadow": "2026-11-15 10:38:17 +0000",
+      "minecraft:birch_forest": "2026-11-18 15:21:39 +0000",
       "minecraft:stony_shore": "2026-11-16 17:07:36 +0000",
+      "minecraft:lush_caves": "2026-11-18 15:22:56 +0000",
       "minecraft:plains": "2026-11-15 10:35:22 +0000"
     },
     "done": false
@@ -1744,6 +1749,18 @@
   "minecraft:recipes/food/cooked_porkchop_from_smoking": {
     "criteria": {
       "has_porkchop": "2026-11-17 02:17:33 +0000"
+    },
+    "done": true
+  },
+  "minecraft:recipes/food/suspicious_stew_from_poppy": {
+    "criteria": {
+      "has_poppy": "2026-11-18 15:24:41 +0000"
+    },
+    "done": true
+  },
+  "minecraft:recipes/misc/red_dye_from_poppy": {
+    "criteria": {
+      "has_poppy": "2026-11-18 15:24:41 +0000"
     },
     "done": true
   },
