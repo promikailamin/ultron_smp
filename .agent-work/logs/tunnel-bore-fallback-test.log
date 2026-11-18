@@ -1,0 +1,6 @@
+WARNING: LOCALXPOSE_ACCESS_TOKEN is not set.
+Falling back to the stable bore.pub tunnel...
+Downloading bore 0.5.3 for x86_64...
+Tunnel is live at bore.pub:25611
+2026-11-18T07:03:31.155873Z  INFO bore_cli::client: connected to server remote_port=25611
+2026-11-18T07:03:31.155900Z  INFO bore_cli::client: listening at bore.pub:25611

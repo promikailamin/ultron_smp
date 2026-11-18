@@ -3083,3 +3083,59 @@ https://github.com/promikailamin/ultron_smp/issues/4#issuecomment-6971597230
 [0m$ [0mcd /home/runner/work/ultron_smp/ultron_smp && git status --short
 M .agent-work/logs/opencode-output.log
 [0m
+[0m$ [0mcd /home/runner/work/ultron_smp/ultron_smp && git add -A && git commit -m "Update OpenCode execution log" && git push origin HEAD:main && git status --short
+[main aaac987] Update OpenCode execution log
+ 1 file changed, 38 insertions(+)
+To https://github.com/promikailamin/ultron_smp
+   a2723cb..aaac987  HEAD -> main
+[0m
+[0m$ [0mcd /home/runner/work/ultron_smp/ultron_smp
+set -euo pipefail
+BACKUP=".agent-work/tmp/SERVER_ADDRESS.fallback-backup"
+LOG=".agent-work/logs/tunnel-bore-fallback-test.log"
+PID=".agent-work/tmp/fallback-tunnel.pid"
+cp SERVER_ADDRESS.txt "$BACKUP"
+http_pid=""
+tunnel_pid=""
+cleanup() {
+  if [ -n "$tunnel_pid" ]; then kill "$tunnel_pid" 2>/dev/null || true; wait "$tunnel_pid" 2>/dev/null || true; fi
+  if [ -n "$http_pid" ]; then kill "$http_pid" 2>/dev/null || true; fi
+  cp "$BACKUP" SERVER_ADDRESS.txt 2>/dev/null || true
+}
+trap cleanup EXIT
+python3 -m http.server 25566 --bind 127.0.0.1 >.agent-work/logs/test-fallback-http.log 2>&1 &
+http_pid=$!
+sleep 1
+env -u LOCALXPOSE_ACCESS_TOKEN -u ACCESS_TOKEN -u LX_ACCESS_TOKEN \
+  LOCALXPOSE_BORE_FALLBACK=true MINECRAFT_PORT=25566 \
+  TUNNEL_PORT_CANDIDATES="25611 25612 25613" TUNNEL_PID_FILE="$PID" \
+  bash scripts/tunnel.sh >"$LOG" 2>&1
+address="$(grep -v '^#' SERVER_ADDRESS.txt | grep -E ':[0-9]+$' | tail -n 1)"
+tunnel_pid="$(cat "$PID" 2>/dev/null || true)"
+host="${address%:*}"
+port="${address##*:}"
+python3 - "$host" "$port" <<'PY'
+import socket, sys
+host, port = sys.argv[1], int(sys.argv[2])
+with socket.create_connection((host, port), timeout=15) as sock:
+    sock.sendall(b"GET / HTTP/1.0\r\nHost: test\r\n\r\n")
+    response = sock.recv(200)
+print(response.split(b"\r\n")[0].decode())
+if b"200" not in response:
+    raise SystemExit(f"unexpected response: {response!r}")
+print("Bore fallback test passed")
+PY
+cat "$LOG" | tail -5
+HTTP/1.0 200 OK
+Bore fallback test passed
+Falling back to the stable bore.pub tunnel...
+Downloading bore 0.5.3 for x86_64...
+Tunnel is live at bore.pub:25611
+2026-11-18T07:03:31.155873Z  INFO bore_cli::client: connected to server remote_port=25611
+2026-11-18T07:03:31.155900Z  INFO bore_cli::client: listening at bore.pub:25611
+[0m
+[0m$ [0mcd /home/runner/work/ultron_smp/ultron_smp && git status --short
+M .agent-work/logs/opencode-output.log
+?? .agent-work/logs/test-fallback-http.log
+?? .agent-work/logs/tunnel-bore-fallback-test.log
+[0m
