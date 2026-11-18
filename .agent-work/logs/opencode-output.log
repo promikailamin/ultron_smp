@@ -5610,3 +5610,49 @@ origin	https://github.com/promikailamin/ultron_smp (fetch)
 origin	https://github.com/promikailamin/ultron_smp (push)
 main
 [0m
+[0m$ [0mgit config user.name "ultron" && git config user.email "ultron@users.noreply.github.com" && git add -A && git commit -m "Fix Cloudflare tunnel TCP fallback and restarts" && git log --oneline -3
+[main 2d41648] Fix Cloudflare tunnel TCP fallback and restarts
+ 15 files changed, 5100 insertions(+), 3586 deletions(-)
+ create mode 100644 .agent-work/logs/issue-20-cloudflare-test.log
+ create mode 100644 .agent-work/logs/issue-20-test-low-latency-region.log
+ create mode 100644 .agent-work/logs/issue-20-test-serveo.log
+ create mode 100644 .agent-work/logs/issue-20-test-tunnel.log
+ create mode 100644 .agent-work/outputs/issue-20-cloudflare-fix.md
+2d41648 Fix Cloudflare tunnel TCP fallback and restarts
+08639a4 Final Minecraft server backup
+54ff05f Auto-save Minecraft server data
+[0m
+[0m$ [0mgit push origin HEAD:main 2>&1 | tail -30; echo "PUSH_EXIT:${PIPESTATUS[0]}"
+To https://github.com/promikailamin/ultron_smp
+   08639a4..2d41648  HEAD -> main
+PUSH_EXIT:0
+[0m
+[0m$ [0mgh issue comment 20 --repo promikailamin/ultron_smp --body 'Fixed in commit `2d41648` (pushed to `main`).
+
+**Root cause:** Cloudflare Quick Tunnels (`*.trycloudflare.com`) only proxy HTTP/HTTPS, so the `tcp://` Minecraft address added in issue 19 could never carry the game. When `cloudflared` dropped, the keep-alive loop restarted it with a new hostname, which is the "tunnel stopped and restarting" loop players saw.
+
+**Changes:**
+- The Cloudflare provider now uses a **named tunnel** (`CLOUDFLARE_TUNNEL_TOKEN` + `CLOUDFLARE_TUNNEL_HOSTNAME`) for Minecraft TCP.
+- Without a named tunnel it no longer publishes a dead quick-tunnel address. It uses the **Bangladesh-prioritised Pinggy Asia-Pacific TCP relay** by default (or `bore` with `CLOUDFLARE_TCP_FALLBACK=bore`, or `none` to fail instead).
+- Named-tunnel restarts keep the same hostname. The workflow now also checks the `cloudflared` access proxy and pushes the current address immediately after a restart.
+- Added `CLOUDFLARE_REGION`. Cloudflare only supports forcing the `us` edge; `auto`/`bangladesh`/`asia-pacific`/`europe` keep the global anycast edge, which already sends each player to the nearest Cloudflare location. The Bangladesh preference is applied through the Pinggy Asia-Pacific fallback.
+- Background `cloudflared` processes now start with `nohup`, so they survive between workflow steps.
+- `SERVER_ADDRESS.txt` no longer advertises the previous dead quick-tunnel address.
+
+**Validation actually run (all passed):**
+- `bash -n` on all scripts
+- `shellcheck` on the changed scripts
+- YAML parse of `.github/workflows/run.yml`
+- `test_cloudflare_tunnel.sh` (quick-tunnel TCP guard, named tunnel `--region us`, Bangladesh `ap.free.pinggy.io` fallback)
+- `test_tunnel.sh`, `test_low_latency_region.sh`, `test_serveo_tunnel.sh`
+
+**Remaining limitation:** A real Cloudflare Minecraft address requires creating a named tunnel with a public hostname pointing at `tcp://localhost:25565` and adding the token/hostname to the repository. Players then need Modflared or `cloudflared access tcp`. Quick tunnels cannot carry raw TCP. Setup details and logs are in the README Cloudflare section and `.agent-work/logs/issue-20-*`.' 2>&1; echo "COMMENT_EXIT:$?"
+https://github.com/promikailamin/ultron_smp/issues/20#issuecomment-6984678584
+COMMENT_EXIT:0
+[0m
+[0m$ [0mgit status --short; git log --oneline -1; git rev-parse HEAD; git ls-remote origin refs/heads/main | head -1
+M .agent-work/logs/opencode-output.log
+2d41648 Fix Cloudflare tunnel TCP fallback and restarts
+2d416486cc81ad9d957d0c51b8d98682ee21c015
+2d416486cc81ad9d957d0c51b8d98682ee21c015	refs/heads/main
+[0m
