@@ -30,6 +30,25 @@ public final class OptimizerConfig {
             cull-sounds=true
             max-sound-distance=48.0
 
+            # Drop sounds attached to an entity (mob noises, item pickup, ...)
+            # farther away than this many blocks.
+            cull-entity-sounds=true
+            max-entity-sound-distance=48.0
+
+            # Drop visual-only entity events, arm swings, hurt animations and
+            # item-pickup animations farther away than this many blocks.
+            cull-entity-visuals=true
+            max-entity-visual-distance=48.0
+
+            # Drop block-break crack animations farther away than this.
+            cull-block-destruction=true
+            max-block-destruction-distance=48.0
+
+            # Explosions carry a large particle list. Drop the visual packet
+            # for distant explosions that do not push the player.
+            cull-explosions=true
+            max-explosion-distance=64.0
+
             # Drop block-entity data (signs, chests, spawners, ...) farther than this.
             cull-block-entities=true
             max-block-entity-distance=64.0
@@ -51,6 +70,21 @@ public final class OptimizerConfig {
             # ClientboundSetEntityDataPacket with no values does nothing.
             drop-empty-entity-data=true
 
+            # Skip an identical entity-metadata packet for the same entity
+            # within this many ticks.
+            deduplicate-entity-data=true
+            entity-data-dedup-ticks=10
+
+            # The client advances world time itself. Sending time less often
+            # removes a small packet from almost every player tick.
+            throttle-time-updates=true
+            time-update-interval-ticks=100
+
+            # Disable Nagle's algorithm and enable TCP keepalive on player
+            # sockets. Nagle can add tens of milliseconds to small responses.
+            tcp-no-delay=true
+            tcp-keepalive=true
+
             # Log the number of suppressed packets every N seconds (0 = off).
             log-stats-seconds=300
             """;
@@ -60,6 +94,14 @@ public final class OptimizerConfig {
     public double maxParticleDistance = 32.0;
     public boolean cullSounds = true;
     public double maxSoundDistance = 48.0;
+    public boolean cullEntitySounds = true;
+    public double maxEntitySoundDistance = 48.0;
+    public boolean cullEntityVisuals = true;
+    public double maxEntityVisualDistance = 48.0;
+    public boolean cullBlockDestruction = true;
+    public double maxBlockDestructionDistance = 48.0;
+    public boolean cullExplosions = true;
+    public double maxExplosionDistance = 64.0;
     public boolean cullBlockEntities = true;
     public double maxBlockEntityDistance = 64.0;
     public boolean cullLevelEvents = true;
@@ -69,6 +111,12 @@ public final class OptimizerConfig {
     public boolean deduplicateBlockUpdates = true;
     public int blockUpdateDedupTicks = 20;
     public boolean dropEmptyEntityData = true;
+    public boolean deduplicateEntityData = true;
+    public int entityDataDedupTicks = 10;
+    public boolean throttleTimeUpdates = true;
+    public int timeUpdateIntervalTicks = 100;
+    public boolean tcpNoDelay = true;
+    public boolean tcpKeepalive = true;
     public int logStatsSeconds = 300;
 
     public static OptimizerConfig load(Path path) {
@@ -90,6 +138,14 @@ public final class OptimizerConfig {
             config.maxParticleDistance = positiveDouble(properties, "max-particle-distance", config.maxParticleDistance);
             config.cullSounds = bool(properties, "cull-sounds", config.cullSounds);
             config.maxSoundDistance = positiveDouble(properties, "max-sound-distance", config.maxSoundDistance);
+            config.cullEntitySounds = bool(properties, "cull-entity-sounds", config.cullEntitySounds);
+            config.maxEntitySoundDistance = positiveDouble(properties, "max-entity-sound-distance", config.maxEntitySoundDistance);
+            config.cullEntityVisuals = bool(properties, "cull-entity-visuals", config.cullEntityVisuals);
+            config.maxEntityVisualDistance = positiveDouble(properties, "max-entity-visual-distance", config.maxEntityVisualDistance);
+            config.cullBlockDestruction = bool(properties, "cull-block-destruction", config.cullBlockDestruction);
+            config.maxBlockDestructionDistance = positiveDouble(properties, "max-block-destruction-distance", config.maxBlockDestructionDistance);
+            config.cullExplosions = bool(properties, "cull-explosions", config.cullExplosions);
+            config.maxExplosionDistance = positiveDouble(properties, "max-explosion-distance", config.maxExplosionDistance);
             config.cullBlockEntities = bool(properties, "cull-block-entities", config.cullBlockEntities);
             config.maxBlockEntityDistance = positiveDouble(properties, "max-block-entity-distance", config.maxBlockEntityDistance);
             config.cullLevelEvents = bool(properties, "cull-level-events", config.cullLevelEvents);
@@ -99,6 +155,12 @@ public final class OptimizerConfig {
             config.deduplicateBlockUpdates = bool(properties, "deduplicate-block-updates", config.deduplicateBlockUpdates);
             config.blockUpdateDedupTicks = nonNegativeInt(properties, "block-update-dedup-ticks", config.blockUpdateDedupTicks);
             config.dropEmptyEntityData = bool(properties, "drop-empty-entity-data", config.dropEmptyEntityData);
+            config.deduplicateEntityData = bool(properties, "deduplicate-entity-data", config.deduplicateEntityData);
+            config.entityDataDedupTicks = nonNegativeInt(properties, "entity-data-dedup-ticks", config.entityDataDedupTicks);
+            config.throttleTimeUpdates = bool(properties, "throttle-time-updates", config.throttleTimeUpdates);
+            config.timeUpdateIntervalTicks = nonNegativeInt(properties, "time-update-interval-ticks", config.timeUpdateIntervalTicks);
+            config.tcpNoDelay = bool(properties, "tcp-no-delay", config.tcpNoDelay);
+            config.tcpKeepalive = bool(properties, "tcp-keepalive", config.tcpKeepalive);
             config.logStatsSeconds = nonNegativeInt(properties, "log-stats-seconds", config.logStatsSeconds);
         } catch (IOException | RuntimeException exception) {
             UltronNetworkOptimizer.logger().warn(
@@ -147,10 +209,17 @@ public final class OptimizerConfig {
     public String summary() {
         return "particles=" + (cullParticles ? maxParticleDistance + "m" : "off")
                 + ", sounds=" + (cullSounds ? maxSoundDistance + "m" : "off")
+                + ", entitySounds=" + (cullEntitySounds ? maxEntitySoundDistance + "m" : "off")
+                + ", entityVisuals=" + (cullEntityVisuals ? maxEntityVisualDistance + "m" : "off")
+                + ", blockDestruction=" + (cullBlockDestruction ? maxBlockDestructionDistance + "m" : "off")
+                + ", explosions=" + (cullExplosions ? maxExplosionDistance + "m" : "off")
                 + ", blockEntities=" + (cullBlockEntities ? maxBlockEntityDistance + "m" : "off")
                 + ", levelEvents=" + (cullLevelEvents ? maxLevelEventDistance + "m" : "off")
                 + ", blockEvents=" + (cullBlockEvents ? maxBlockEventDistance + "m" : "off")
                 + ", blockUpdateDedup=" + (deduplicateBlockUpdates ? blockUpdateDedupTicks + "t" : "off")
+                + ", entityDataDedup=" + (deduplicateEntityData ? entityDataDedupTicks + "t" : "off")
+                + ", timeUpdates=" + (throttleTimeUpdates ? timeUpdateIntervalTicks + "t" : "off")
+                + ", tcpNoDelay=" + tcpNoDelay
                 + ", stats=" + (logStatsSeconds > 0 ? logStatsSeconds + "s" : "off");
     }
 }

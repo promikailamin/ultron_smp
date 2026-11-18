@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "id": "ultron_network_optimizer",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "name": "Ultron Network Optimizer",
   "description": "Server-side packet culling and duplicate-update filtering for high-latency Ultron SMP connections.",
   "authors": [

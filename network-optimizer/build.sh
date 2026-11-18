@@ -11,7 +11,7 @@ RES_DIR="$MOD_DIR/src/main/resources"
 BUILD_DIR="$ROOT_DIR/.agent-work/tmp/ultron-network-optimizer-build"
 CLASSES_DIR="$BUILD_DIR/classes"
 MANIFEST="$BUILD_DIR/MANIFEST.MF"
-OUTPUT_JAR="$ROOT_DIR/mods/ultron-network-optimizer-1.0.0.jar"
+OUTPUT_JAR="$ROOT_DIR/mods/ultron-network-optimizer-1.1.0.jar"
 
 SERVER_JAR="$ROOT_DIR/versions/26.3/server-26.3.jar"
 

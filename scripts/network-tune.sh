@@ -40,8 +40,20 @@ set_sysctl net.ipv4.tcp_keepalive_time 60
 set_sysctl net.ipv4.tcp_keepalive_intvl 15
 set_sysctl net.ipv4.tcp_keepalive_probes 4
 set_sysctl net.ipv4.tcp_no_metrics_save 1
-set_sysctl net.ipv4.tcp_notsent_lowat 16384
-set_sysctl net.core.netdev_max_backlog 16384
+# Keep only a small amount of data queued in the kernel. On a long-haul
+# tunnel a deep send queue turns bandwidth bursts into hundreds of
+# milliseconds of extra latency (bufferbloat). 8 KiB is enough for
+# Minecraft's packet stream while keeping the queue short.
+set_sysctl net.ipv4.tcp_notsent_lowat 8192
+set_sysctl net.ipv4.tcp_low_latency 1
+set_sysctl net.ipv4.tcp_sack 1
+set_sysctl net.ipv4.tcp_dsack 1
+set_sysctl net.ipv4.tcp_timestamps 1
+set_sysctl net.ipv4.tcp_tw_reuse 1
+set_sysctl net.ipv4.tcp_max_syn_backlog 4096
+set_sysctl net.core.somaxconn 1024
+set_sysctl net.core.optmem_max 65536
+set_sysctl net.core.netdev_max_backlog 32768
 set_sysctl net.core.rmem_max 16777216
 set_sysctl net.core.wmem_max 16777216
 set_sysctl net.ipv4.tcp_rmem "4096 87380 16777216"

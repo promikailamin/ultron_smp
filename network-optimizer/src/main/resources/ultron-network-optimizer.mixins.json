@@ -4,6 +4,7 @@
   "package": "com.ultron.network.mixin",
   "compatibilityLevel": "JAVA_25",
   "mixins": [
+    "ConnectionMixin",
     "MinecraftServerMixin",
     "ServerCommonPacketListenerImplMixin"
   ],

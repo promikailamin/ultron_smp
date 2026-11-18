@@ -9,7 +9,7 @@ STATE_DIR="$ROOT_DIR/.agent-work/tmp/network-optimizer-state"
 LOG_FILE="$ROOT_DIR/.agent-work/logs/network-optimizer-test.log"
 TEST_PORT="${TEST_PORT:-25569}"
 CONTROL="$ROOT_DIR/scripts/server-control.sh"
-JAR="$ROOT_DIR/mods/ultron-network-optimizer-1.0.0.jar"
+JAR="$ROOT_DIR/mods/ultron-network-optimizer-1.1.0.jar"
 SERVER_JAR="$ROOT_DIR/versions/26.3/server-26.3.jar"
 
 strip_ansi() { sed -E $'s/\x1B\\[[0-9;]*[mK]//g'; }
@@ -25,8 +25,19 @@ bash "$ROOT_DIR/network-optimizer/build.sh" >/dev/null
 
 for entry in fabric.mod.json ultron-network-optimizer.mixins.json \
     com/ultron/network/UltronNetworkOptimizer.class \
+    com/ultron/network/mixin/ConnectionMixin.class \
     com/ultron/network/mixin/ServerCommonPacketListenerImplMixin.class; do
     unzip -Z1 "$JAR" | grep -qx "$entry" || fail "Missing $entry in $JAR"
+done
+
+unzip -p "$JAR" ultron-network-optimizer.mixins.json | grep -q 'ConnectionMixin' \
+    || fail "ConnectionMixin is not registered in the mixin config."
+
+for key in cull-entity-sounds cull-entity-visuals cull-block-destruction \
+    cull-explosions deduplicate-entity-data throttle-time-updates \
+    tcp-no-delay tcp-keepalive; do
+    grep -q "^${key}=" "$ROOT_DIR/config/ultron-network.properties" \
+        || fail "Missing ${key} in config/ultron-network.properties"
 done
 
 unzip -p "$JAR" META-INF/MANIFEST.MF | tr -d '\r' | grep -qx 'Fabric-Mapping-Namespace: official' \
@@ -41,6 +52,9 @@ javap -classpath "$SERVER_JAR" net.minecraft.server.network.ServerCommonPacketLi
 javap -classpath "$SERVER_JAR" net.minecraft.server.MinecraftServer \
     | grep -Fq 'void tickServer(java.util.function.BooleanSupplier)' \
     || fail "MinecraftServer.tickServer(BooleanSupplier) was not found in the server jar."
+javap -classpath "$SERVER_JAR" net.minecraft.network.Connection \
+    | grep -Fq 'void channelActive(io.netty.channel.ChannelHandlerContext)' \
+    || fail "Connection.channelActive(ChannelHandlerContext) was not found in the server jar."
 
 rm -rf "$TEST_DIR" "$STATE_DIR"
 mkdir -p "$TEST_DIR" "$STATE_DIR"
@@ -93,6 +107,10 @@ grep -q "Ultron Network Optimizer enabled" "$STATE_DIR/console.log" \
 
 grep -q "particles=32.0m" "$STATE_DIR/console.log" \
     || fail "The network optimizer did not load its config values."
+grep -q "entitySounds=48.0m" "$STATE_DIR/console.log" \
+    || fail "The network optimizer did not load the extended culling config."
+grep -q "tcpNoDelay=true" "$STATE_DIR/console.log" \
+    || fail "The network optimizer did not load the socket config."
 
 if grep -qE "Mixin apply failed|InjectionError|Critical injection failure|MixinApplyError" "$STATE_DIR/console.log"; then
     fail "A mixin failed to apply."
