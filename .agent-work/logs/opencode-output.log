@@ -3139,3 +3139,16 @@ M .agent-work/logs/opencode-output.log
 ?? .agent-work/logs/test-fallback-http.log
 ?? .agent-work/logs/tunnel-bore-fallback-test.log
 [0m
+[0m$ [0mcd /home/runner/work/ultron_smp/ultron_smp && rm -f .agent-work/logs/test-fallback-http.log .agent-work/tmp/fallback-tunnel.pid .agent-work/tmp/SERVER_ADDRESS.fallback-backup && git add -A && git commit -m "Record bore fallback validation log" && git push origin HEAD:main
+[main f9a3fba] Record bore fallback validation log
+ 2 files changed, 62 insertions(+)
+ create mode 100644 .agent-work/logs/tunnel-bore-fallback-test.log
+To https://github.com/promikailamin/ultron_smp
+   aaac987..f9a3fba  HEAD -> main
+[0m
+[0m$ [0mcd /home/runner/work/ultron_smp/ultron_smp && gh issue comment 4 --repo promikailamin/ultron_smp --body "Additional validation: the automatic bore fallback was also tested end-to-end with no LocalXpose token and passed (public endpoint returned HTTP 200). Log: \`.agent-work/logs/tunnel-bore-fallback-test.log\`. Final pushed commit: \`f9a3fba\`."
+https://github.com/promikailamin/ultron_smp/issues/4#issuecomment-6971607500
+[0m
+[0m$ [0mcd /home/runner/work/ultron_smp/ultron_smp && git status --short
+M .agent-work/logs/opencode-output.log
+[0m
