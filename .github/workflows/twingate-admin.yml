@@ -41,12 +41,13 @@ jobs:
             TWINGATE_RESOURCE_ADDRESS: ${{ vars.TWINGATE_RESOURCE_ADDRESS || '127.0.0.1' }}
             TWINGATE_RESOURCE_PORT: ${{ vars.TWINGATE_RESOURCE_PORT || '25565' }}
             TWINGATE_GENERATE_TOKENS: ${{ inputs.action == 'provision' && inputs.rotate_tokens && 'true' || 'false' }}
-            TWINGATE_TOKEN_ENV_FILE: ${{ runner.temp }}/twingate-connector.env
         steps:
             - name: checkout_repo
               uses: actions/checkout@v4
 
             - name: twingate_admin
+              env:
+                  TWINGATE_TOKEN_ENV_FILE: ${{ runner.temp }}/twingate-connector.env
               run: |
                   set -euo pipefail
                   mkdir -p .agent-work/logs
