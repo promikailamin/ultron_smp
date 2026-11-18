@@ -4992,3 +4992,58 @@ M .agent-work/logs/opencode-output.log
 9ce6889 Final Minecraft server backup
 3b956c2 Auto-save Minecraft server data (run stopping)
 [0m
+[0m$ [0mcd /home/runner/work/ultron_smp/ultron_smp && python3 - <<'PY'
+from pathlib import Path
+import re
+p = Path('.agent-work/logs/opencode-output.log')
+text = p.read_text(errors='replace')
+text = re.sub(r'T-[A-Za-z0-9]{20,}', '<redacted>', text)
+p.write_text(text)
+PY
+(grep -acE 'T-[A-Za-z0-9]{20,}' .agent-work/logs/opencode-output.log || true) && git add -A && git commit -m "chore: update agent logs" && git push origin HEAD:main
+0
+[main 09166e1] chore: update agent logs
+ 1 file changed, 79 insertions(+)
+To https://github.com/promikailamin/ultron_smp
+   4d71153..09166e1  HEAD -> main
+[0m
+[0m$ [0mcd /home/runner/work/ultron_smp/ultron_smp && git status --short && git log --oneline -3
+M .agent-work/logs/opencode-output.log
+09166e1 chore: update agent logs
+4d71153 Add Minekube Connect tunnel via Gate
+9ce6889 Final Minecraft server backup
+[0m
+[0m$ [0mcd /home/runner/work/ultron_smp/ultron_smp && git show --stat --oneline 4d71153 | sed -n '1,30p'
+4d71153 Add Minekube Connect tunnel via Gate
+ .agent-work/logs/minekube-auto-test.log            |     1 +
+ .agent-work/logs/minekube-minekube-test.log        |     1 +
+ .agent-work/logs/opencode-output.log               | 10654 +++++++------------
+ .agent-work/logs/run-test.log                      |    97 +-
+ .agent-work/logs/serveo-tunnel-test.log            |     2 +-
+ .agent-work/logs/test-serveo-http.log              |     2 +-
+ .../outputs/issue-8-minekube-implementation.md     |    66 +
+ .agent-work/tests/test_minekube_tunnel.sh          |   215 +
+ .agent-work/tests/test_tunnel.sh                   |     1 +
+ .github/workflows/run.yml                          |     5 +
+ .gitignore                                         |     4 +
+ README.md                                          |    60 +-
+ scripts/minekube-tunnel.sh                         |   382 +
+ scripts/tunnel.sh                                  |    19 +-
+ server.properties                                  |     2 +-
+ 15 files changed, 4732 insertions(+), 6779 deletions(-)
+[0m
+[0m# [0mTodos
+[✓] Implement Minekube Connect tunnel script using Gate connector
+[✓] Integrate minekube into tunnel.sh dispatcher and workflow inputs
+[✓] Add tests with fake Gate binary
+[✓] Update README and server offline chat settings
+[✓] Run tests, commit and push, comment on issue
+[0m
+Implemented and pushed Minekube Connect support for the Fabric server.
+
+- Added `scripts/minekube-tunnel.sh` using Minekube's Gate connector (the supported Fabric-compatible path; the Paper plugin cannot load on Fabric).
+- Added `TUNNEL_PROVIDER=minekube`; `auto` now tries Minekube first, then LocalXpose/bore.
+- Added workflow inputs/env for `MINEKUBE_ENDPOINT`, `MINEKUBE_CONNECT_TOKEN`, `MINEKUBE_GATE_VERSION`, `MINEKUBE_AUTO`.
+- Added fake-Gate tests, README docs, issue output notes, and disabled `enforce-secure-profile` for offline Connect chat.
+- Real public endpoint test succeeded (`connect=48ms`), and relevant tests passed.
+- Commits: `4d71153` (implementation), `09166e1` (agent logs). Issue #8 was commented with results.
