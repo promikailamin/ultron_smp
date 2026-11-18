@@ -165,3 +165,9 @@ java.lang.IllegalStateException: too many requests
 [32m[14:31:11] [Server thread/INFO]: Player MIKAILAMIN standing on air - force-sending blocks below[m
 [32m[14:31:18] [Server thread/INFO]: System chat: Saving the game (this may take a moment!)[m
 [32m[14:31:18] [Server thread/INFO]: System chat: Saved the game[m
+[32m[14:31:28] [Server thread/INFO]: Player MIKAILAMIN standing on air - force-sending blocks below[m
+[32m[14:31:39] [Server thread/INFO]: MIKAILAMIN lost connection: Disconnected[m
+[32m[14:31:39] [Server thread/INFO]: System chat: MIKAILAMIN left the game[m
+[32m[14:31:53] [Server thread/INFO]: Suppressed 10 packets in the last 300s (particles=0, sounds=0, blockEntities=0, levelEvents=1, blockEvents=0, duplicateBlocks=9, emptyEntityData=0)[m
+[32m[14:32:53] [Server thread/INFO]: System chat: Saving the game (this may take a moment!)[m
+[32m[14:32:53] [Server thread/INFO]: System chat: Saved the game[m
