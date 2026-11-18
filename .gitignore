@@ -29,3 +29,6 @@
 .agent-work/logs/test-tunnl-http.log
 .agent-work/logs/tunnl-provider-test.log
 .agent-work/logs/test-tunnl-provider-http.log
+
+__pycache__/
+*.pyc

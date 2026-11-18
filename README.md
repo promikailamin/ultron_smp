@@ -100,13 +100,37 @@ The server can run a Twingate Connector alongside the public tunnel:
 3. Optional: if your access token does not contain the tenant name in its
    `aud` claim, add the network slug as the repository variable or secret
    `TWINGATE_NETWORK`.
-4. Create a Resource in the Twingate Admin Console for the Minecraft port and
-   assign it to the users or groups that should have access.
+4. In the Twingate Admin Console, open **Settings > API**, generate an Admin
+   API token with **Read & Write**, and add it as the repository secret
+   `TWINGATE_API_TOKEN`. Connector access/refresh tokens cannot create
+   Resources; the Admin API token is only used to ensure the `minecraft`
+   Resource exists.
+5. Assign users or groups to the `minecraft` Resource in the Twingate Admin
+   Console after it is created.
 
 The connector starts automatically when both token secrets are present. Set
 the repository variable `TWINGATE_ENABLED=false` to disable it, or `true` to
 require both secrets. The default `auto` mode skips the connector when the
 secrets are not configured.
+
+`scripts/twingate-resource.py` runs after the connector and idempotently
+creates the `minecraft` Resource through the Twingate Admin API. The default
+Resource points at `127.0.0.1:25565` and restricts TCP to port `25565` with
+UDP and ICMP disabled. It is created in the only Remote Network in the
+account; if there are several, set the repository variable
+`TWINGATE_REMOTE_NETWORK` (name) or `TWINGATE_REMOTE_NETWORK_ID`. Resource
+settings can be overridden with the repository variables
+`TWINGATE_RESOURCE_NAME`, `TWINGATE_RESOURCE_ADDRESS` and
+`TWINGATE_RESOURCE_PORT`. The script never prints token values. If no API
+token is configured it skips cleanly; set `TWINGATE_RESOURCE_ENABLED=true` to
+make a missing Admin API token fatal instead.
+
+The standalone **Ensure Twingate Resource** workflow can also be run manually
+from the Actions tab. This is useful after adding or rotating
+`TWINGATE_API_TOKEN` without starting the Minecraft server. For backward
+compatibility the script falls back to `TWINGATE_ACCESS_TOKEN` when
+`TWINGATE_API_TOKEN` is absent, but that only works if the access token is
+actually an Admin API token rather than a Connector token.
 
 `scripts/twingate-connector.sh` runs the pinned
 `twingate/connector:1` container with host networking and reads the connector

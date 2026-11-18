@@ -1,0 +1,42 @@
+name: Ensure Twingate Resource
+
+on:
+    workflow_dispatch:
+
+permissions:
+    contents: read
+
+concurrency:
+    group: twingate-resource
+    cancel-in-progress: false
+
+jobs:
+    ensure:
+        runs-on: ubuntu-latest
+        timeout-minutes: 10
+        env:
+            TWINGATE_API_TOKEN: ${{ secrets.TWINGATE_API_TOKEN }}
+            TWINGATE_ACCESS_TOKEN: ${{ secrets.TWINGATE_ACCESS_TOKEN }}
+            TWINGATE_NETWORK: ${{ vars.TWINGATE_NETWORK || secrets.TWINGATE_NETWORK }}
+            TWINGATE_REMOTE_NETWORK: ${{ vars.TWINGATE_REMOTE_NETWORK }}
+            TWINGATE_REMOTE_NETWORK_ID: ${{ vars.TWINGATE_REMOTE_NETWORK_ID }}
+            TWINGATE_RESOURCE_NAME: ${{ vars.TWINGATE_RESOURCE_NAME || 'minecraft' }}
+            TWINGATE_RESOURCE_ADDRESS: ${{ vars.TWINGATE_RESOURCE_ADDRESS || '127.0.0.1' }}
+            TWINGATE_RESOURCE_PORT: ${{ vars.TWINGATE_RESOURCE_PORT || '25565' }}
+        steps:
+            - name: checkout_repo
+              uses: actions/checkout@v4
+
+            - name: ensure_minecraft_resource
+              run: |
+                  set -euo pipefail
+                  mkdir -p .agent-work/logs
+                  python3 scripts/twingate-resource.py ensure | tee .agent-work/logs/twingate-resource.log
+
+            - name: upload_resource_log
+              if: always()
+              uses: actions/upload-artifact@v4
+              with:
+                  name: twingate-resource-log
+                  path: .agent-work/logs/twingate-resource.log
+                  if-no-files-found: ignore
