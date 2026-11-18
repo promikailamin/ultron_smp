@@ -106,8 +106,10 @@ The server can run a Twingate Connector alongside the public tunnel:
    `TWINGATE_API_TOKEN`. Connector access/refresh tokens cannot create
    Resources; the Admin API token is only used to ensure the `minecraft`
    Resource exists.
-5. Assign users or groups to the `minecraft` Resource in the Twingate Admin
-   Console after it is created.
+5. The Resource is assigned to the `Everyone` group by default so authorized
+   users can reach it. Override this with the repository variable
+   `TWINGATE_RESOURCE_GROUP_NAMES` (comma-separated group names). You can also
+   assign users or groups manually in the Twingate Admin Console.
 
 The connector starts automatically when both token secrets are present. Set
 the repository variable `TWINGATE_ENABLED=false` to disable it, or `true` to
@@ -132,6 +134,15 @@ from the Actions tab. This is useful after adding or rotating
 compatibility the script falls back to `TWINGATE_ACCESS_TOKEN` when
 `TWINGATE_API_TOKEN` is absent, but that only works if the access token is
 actually an Admin API token rather than a Connector token.
+
+The **Twingate Admin** workflow inspects the account (`action=status`) or
+provisions the missing Remote Network and Connector (`action=provision`). Set
+`rotate_tokens=true` to generate a fresh Connector token pair and update the
+`TWINGATE_ACCESS_TOKEN` / `TWINGATE_REFRESH_TOKEN` repository secrets without
+printing the values. The **Verify Twingate Connector** workflow starts the
+connector on a runner, waits for it to become healthy, and prints the account
+and connector state. Run it after rotating tokens or changing the Twingate
+configuration.
 
 `scripts/twingate-connector.sh` runs the pinned
 `twingate/connector:1` container with the settings Twingate prints in its
@@ -315,6 +326,8 @@ bash .agent-work/tests/test_tunnl_tunnel.sh
 bash .agent-work/tests/test_tunnl_provider.sh
 bash .agent-work/tests/test_minekube_tunnel.sh
 bash .agent-work/tests/test_twingate_connector.sh
+bash .agent-work/tests/test_twingate_resource.sh
+bash .agent-work/tests/test_twingate_admin.sh
 bash .agent-work/tests/test_twingate_docker_host.sh
 bash .agent-work/tests/test_network_tune.sh
 bash .agent-work/tests/test_network_optimizer.sh

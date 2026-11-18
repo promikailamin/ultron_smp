@@ -312,12 +312,49 @@ def find_resource(client, name):
     resources = paginate(
         client,
         "resources",
-        "id name address { type value } remoteNetwork { id name }",
+        "id name address { type value } remoteNetwork { id name } "
+        "groups { edges { node { id name } } }",
     )
     for item in resources:
         if item.get("name") == name:
             return item
     return None
+
+
+def resource_group_names():
+    raw = env("TWINGATE_RESOURCE_GROUP_NAMES")
+    return [item.strip() for item in raw.split(",") if item.strip()]
+
+
+def resolve_group_ids(client):
+    names = resource_group_names()
+    if not names:
+        return []
+
+    groups = paginate(client, "groups", "id name")
+    by_name = {
+        item.get("name"): item.get("id")
+        for item in groups
+        if item.get("name") and item.get("id")
+    }
+    missing = [name for name in names if name not in by_name]
+    if missing:
+        raise TwingateError(
+            "No Twingate Group named {} was found.".format(
+                ", ".join("'{}'".format(name) for name in missing)
+            )
+        )
+    return [by_name[name] for name in names]
+
+
+def current_group_ids(resource):
+    ids = set()
+    groups = (resource.get("groups") or {}).get("edges") or []
+    for edge in groups:
+        node = edge.get("node") if isinstance(edge, dict) else None
+        if isinstance(node, dict) and node.get("id"):
+            ids.add(node["id"])
+    return ids
 
 
 def desired_protocols(port):
@@ -334,14 +371,15 @@ def desired_protocols(port):
     }
 
 
-def create_resource(client, name, address, network_id, port):
+def create_resource(client, name, address, network_id, port, group_ids=None):
     query = """
-    mutation($name: String!, $address: String!, $remoteNetworkId: ID!, $protocols: ProtocolsInput!) {
+    mutation($name: String!, $address: String!, $remoteNetworkId: ID!, $protocols: ProtocolsInput!, $groupIds: [ID]) {
       resourceCreate(
         name: $name,
         address: $address,
         remoteNetworkId: $remoteNetworkId,
-        protocols: $protocols
+        protocols: $protocols,
+        groupIds: $groupIds
       ) {
         ok
         error
@@ -356,6 +394,7 @@ def create_resource(client, name, address, network_id, port):
             "address": address,
             "remoteNetworkId": network_id,
             "protocols": desired_protocols(port),
+            "groupIds": group_ids or [],
         },
     )
     result = data.get("resourceCreate") or {}
@@ -368,14 +407,15 @@ def create_resource(client, name, address, network_id, port):
     return result.get("entity") or {}
 
 
-def update_resource(client, resource_id, address, network_id, port):
+def update_resource(client, resource_id, address, network_id, port, group_ids=None):
     query = """
-    mutation($id: ID!, $address: String!, $remoteNetworkId: ID!, $protocols: ProtocolsInput!) {
+    mutation($id: ID!, $address: String!, $remoteNetworkId: ID!, $protocols: ProtocolsInput!, $groupIds: [ID]) {
       resourceUpdate(
         id: $id,
         address: $address,
         remoteNetworkId: $remoteNetworkId,
-        protocols: $protocols
+        protocols: $protocols,
+        addedGroupIds: $groupIds
       ) {
         ok
         error
@@ -390,6 +430,7 @@ def update_resource(client, resource_id, address, network_id, port):
             "address": address,
             "remoteNetworkId": network_id,
             "protocols": desired_protocols(port),
+            "groupIds": group_ids or [],
         },
     )
     result = data.get("resourceUpdate") or {}
@@ -438,30 +479,59 @@ def ensure_resource():
         try:
             client = Client(token, tenant)
             network_id = select_remote_network(client)
+            group_ids = resolve_group_ids(client)
             existing = find_resource(client, name)
 
             if existing:
                 entity = existing
                 current_address = (existing.get("address") or {}).get("value")
                 current_network = (existing.get("remoteNetwork") or {}).get("id")
-                if current_address != address or current_network != network_id:
+                missing_groups = [
+                    group_id
+                    for group_id in group_ids
+                    if group_id not in current_group_ids(existing)
+                ]
+                if (
+                    current_address != address
+                    or current_network != network_id
+                    or missing_groups
+                ):
                     entity = update_resource(
-                        client, existing.get("id"), address, network_id, port
+                        client,
+                        existing.get("id"),
+                        address,
+                        network_id,
+                        port,
+                        missing_groups,
                     )
                     print(
                         "Twingate resource '{}' updated to {}:{}.".format(
                             name, address, port
                         )
                     )
+                    if missing_groups:
+                        print(
+                            "Added {} group assignment(s) to the resource.".format(
+                                len(missing_groups)
+                            )
+                        )
                 else:
                     print("Twingate resource '{}' already exists.".format(name))
             else:
-                entity = create_resource(client, name, address, network_id, port)
+                entity = create_resource(
+                    client, name, address, network_id, port, group_ids
+                )
                 print(
                     "Twingate resource '{}' created at {}:{}.".format(
                         name, address, port
                     )
                 )
+                if group_ids:
+                    print(
+                        "Assigned {} group(s) to the resource.".format(
+                            len(group_ids)
+                        )
+                    )
 
             print(
                 "Resource id: {}. Assign users or groups to it in the Twingate "

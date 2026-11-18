@@ -67,6 +67,9 @@ class Handler(BaseHTTPRequestHandler):
         elif "resources" in query:
             edges = [{"node": node} for node in state["resources"]]
             data = {"resources": {"edges": edges, "pageInfo": {"hasNextPage": False, "endCursor": None}}}
+        elif "groups" in query:
+            edges = [{"node": node} for node in state.get("groups", [])]
+            data = {"groups": {"edges": edges, "pageInfo": {"hasNextPage": False, "endCursor": None}}}
         elif "resourceCreate" in query:
             resource = {
                 "id": "resource-{}".format(len(state["resources"]) + 1),
@@ -74,6 +77,10 @@ class Handler(BaseHTTPRequestHandler):
                 "address": {"type": "IP", "value": variables["address"]},
                 "remoteNetwork": {"id": variables["remoteNetworkId"], "name": "selected"},
                 "protocols": variables.get("protocols"),
+                "groups": {"edges": [
+                    {"node": {"id": group_id, "name": "group"}}
+                    for group_id in variables.get("groupIds") or []
+                ]},
             }
             state["resources"].append(resource)
             save_state(state)
@@ -83,6 +90,14 @@ class Handler(BaseHTTPRequestHandler):
             resource["address"] = {"type": "IP", "value": variables["address"]}
             resource["remoteNetwork"] = {"id": variables["remoteNetworkId"], "name": "selected"}
             resource["protocols"] = variables.get("protocols")
+            existing_groups = {
+                edge["node"]["id"] for edge in (resource.get("groups") or {}).get("edges", [])
+            }
+            for group_id in variables.get("groupIds") or []:
+                if group_id not in existing_groups:
+                    resource.setdefault("groups", {"edges": []})["edges"].append(
+                        {"node": {"id": group_id, "name": "group"}}
+                    )
             save_state(state)
             data = {"resourceUpdate": {"ok": True, "error": None, "entity": resource}}
         else:
@@ -103,7 +118,7 @@ server.serve_forever()
 PY
 
 cat >"$STATE_DIR/state.json" <<'JSON'
-{"networks": [{"id": "network-1", "name": "Ultron"}], "resources": []}
+{"networks": [{"id": "network-1", "name": "Ultron"}], "resources": [], "groups": [{"id": "group-everyone", "name": "Everyone"}]}
 JSON
 
 cleanup() {
@@ -269,4 +284,43 @@ if state["resources"][0]["remoteNetwork"]["id"] != "network-2":
     raise SystemExit("resource was created in the wrong remote network")
 PY
 
-echo "Twingate resource test passed: create, idempotency, network selection, API token secrecy and workflow wiring validated."
+cat >"$STATE_DIR/state.json" <<'JSON'
+{"networks": [{"id": "network-1", "name": "Ultron"}], "resources": [], "groups": [{"id": "group-everyone", "name": "Everyone"}]}
+JSON
+rm -f "$STATE_DIR/requests.jsonl"
+
+GROUP_LOG="$LOG_DIR/test-twingate-resource-group.log"
+TWINGATE_API_TOKEN="$TOKEN" \
+    TWINGATE_NETWORK="testnet" \
+    TWINGATE_API_URL="$API_URL" \
+    TWINGATE_RESOURCE_NAME="minecraft" \
+    TWINGATE_RESOURCE_ADDRESS="127.0.0.1" \
+    TWINGATE_RESOURCE_PORT="25565" \
+    TWINGATE_RESOURCE_GROUP_NAMES="Everyone" \
+    python3 "$SCRIPT" ensure >"$GROUP_LOG" 2>&1
+grep -q "Assigned 1 group(s)" "$GROUP_LOG"
+
+python3 - "$STATE_DIR/requests.jsonl" <<'PYCHECK'
+import json
+import sys
+
+with open(sys.argv[1], encoding="utf-8") as handle:
+    requests = [json.loads(line) for line in handle if line.strip()]
+creates = [item for item in requests if "resourceCreate" in item["query"]]
+if len(creates) != 1:
+    raise SystemExit("expected one resource create request")
+if creates[0]["variables"].get("groupIds") != ["group-everyone"]:
+    raise SystemExit("Everyone group was not assigned during resource creation")
+PYCHECK
+
+TWINGATE_API_TOKEN="$TOKEN" \
+    TWINGATE_NETWORK="testnet" \
+    TWINGATE_API_URL="$API_URL" \
+    TWINGATE_RESOURCE_NAME="minecraft" \
+    TWINGATE_RESOURCE_ADDRESS="127.0.0.1" \
+    TWINGATE_RESOURCE_PORT="25565" \
+    TWINGATE_RESOURCE_GROUP_NAMES="Everyone" \
+    python3 "$SCRIPT" ensure >>"$GROUP_LOG" 2>&1
+grep -q "already exists" "$GROUP_LOG"
+
+echo "Twingate resource test passed: create, idempotency, group access, network selection, API token secrecy and workflow wiring validated."
