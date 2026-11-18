@@ -7627,3 +7627,29 @@ PY
 1519 3595 eyJtaW5l...m94In0
 1561 236 eyJtaW5l...VudCJ9
 [0m
+[0m$ [0mgit add -A && git commit -m "Verify Twingate endpoint and document token fallback" && git push origin HEAD:main && git log --oneline -3 && git status --short
+[main 35d5531] Verify Twingate endpoint and document token fallback
+ 4 files changed, 7457 insertions(+), 2222 deletions(-)
+ create mode 100644 .agent-work/logs/run-endpoint-fix.log
+To https://github.com/promikailamin/ultron_smp
+   838c318..35d5531  HEAD -> main
+35d5531 Verify Twingate endpoint and document token fallback
+838c318 Fix Twingate Admin API endpoint hostname
+9c39a7b Log hostname details during Twingate DNS failure
+[0m
+[0m← [0mWrite /tmp/opencode/issue-12-comment.md
+Wrote file successfully.
+[0m
+[0m$ [0mgh issue comment 12 --repo promikailamin/ultron_smp --body-file /tmp/opencode/issue-12-comment.md
+https://github.com/promikailamin/ultron_smp/issues/12#issuecomment-6978779072
+[0m
+[0m$ [0mgh api repos/promikailamin/ultron_smp/actions/secrets --jq '.secrets[].name' 2>&1 | sed -n '1,50p'
+LOCALXPOSE_ACCESS_TOKEN
+PAT_TOKEN
+TWINGATE_ACCESS_TOKEN
+TWINGATE_NETWORK
+TWINGATE_REFRESH_TOKEN
+[0m
+Implemented Twingate Resource automation and posted the status to issue #12. All tests pass, and the live run now reaches the API but returns HTTP 401 because only Connector credentials exist.
+
+Blocked: add a Twingate Admin API token (Read & Write, Settings > API) as the `TWINGATE_API_TOKEN` repository secret, then run the **Ensure Twingate Resource** workflow. I confirmed that secret name is currently absent.
