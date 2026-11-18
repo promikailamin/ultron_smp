@@ -1,0 +1,5 @@
+# Ultron SMP low-latency public server address
+# Updated: 2026-11-18 09:08:54 UTC
+# Relay: Pinggy ap.free.pinggy.io (free relay, reconnects about once an hour)
+# Add this server in Minecraft (host and port):
+atrxp-172-203-255-244.run.pinggy-free.link:33507

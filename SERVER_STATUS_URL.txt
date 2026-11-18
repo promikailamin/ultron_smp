@@ -1,0 +1,6 @@
+# Ultron SMP tunnl.gg status page
+# Updated: 2026-11-18 09:08:57 UTC
+# tunnl.gg carries HTTP/WebSocket only; connect to the address
+# in SERVER_ADDRESS.txt for Minecraft itself.
+# Provider: tunnl.gg SSH tunnel (proxy.tunnl.gg)
+https://swift-canyon-4a024c83.tunnl.gg
