@@ -1,0 +1,50 @@
+Server jar: /home/runner/work/ultron_smp/ultron_smp/versions/26.3/server-26.3.jar
+  entries:             18557
+  classes:             7762
+  Clientbound packets: 166
+  Serverbound packets: 69
+
+Largest game-packet classes (uncompressed class-file size):
+19340 net/minecraft/network/protocol/game/ClientboundCommandsPacket.class
+10815 net/minecraft/network/protocol/game/ClientboundPlayerInfoUpdatePacket.class
+10592 net/minecraft/network/protocol/game/ClientboundLevelChunkPacketData.class
+9914 net/minecraft/network/protocol/game/ClientboundPlayerInfoUpdatePacket$Action.class
+9276 net/minecraft/network/protocol/game/ClientboundLevelParticlesPacket.class
+9259 net/minecraft/network/protocol/game/ClientboundSetPlayerTeamPacket.class
+9193 net/minecraft/network/protocol/game/ClientboundMapItemDataPacket.class
+8970 net/minecraft/network/protocol/game/ClientboundLoginPacket.class
+8809 net/minecraft/network/protocol/game/ClientboundExplodePacket.class
+8764 net/minecraft/network/protocol/game/ClientboundDamageEventPacket.class
+8713 net/minecraft/network/protocol/game/ClientboundPlayerChatPacket.class
+8550 net/minecraft/network/protocol/game/ClientboundCommandSuggestionsPacket.class
+8533 net/minecraft/network/protocol/game/ServerboundSetStructureBlockPacket.class
+8499 net/minecraft/network/protocol/game/ServerboundContainerClickPacket.class
+7955 net/minecraft/network/protocol/game/ClientboundLightUpdatePacketData.class
+7815 net/minecraft/network/protocol/game/ClientboundTrackedWaypointPacket.class
+7792 net/minecraft/network/protocol/game/ClientboundUpdateAdvancementsPacket.class
+7770 net/minecraft/network/protocol/game/ClientboundBossEventPacket.class
+7570 net/minecraft/network/protocol/game/ClientboundAddEntityPacket.class
+7566 net/minecraft/network/protocol/game/ClientboundSetPlayerTeamPacket$Parameters.class
+7406 net/minecraft/network/protocol/game/ServerboundTestInstanceBlockActionPacket.class
+6909 net/minecraft/network/protocol/game/ClientboundLevelChunkWithLightPacket.class
+6841 net/minecraft/network/protocol/game/ClientboundBlockEntityDataPacket.class
+6800 net/minecraft/network/protocol/game/ClientboundLevelChunkPacketData$BlockEntityInfo.class
+6752 net/minecraft/network/protocol/game/ServerboundChatPacket.class
+
+Installed mods by size:
+     1797523  /home/runner/work/ultron_smp/ultron_smp/mods/fabric-api-0.166.2_26.3.jar
+     1665489  /home/runner/work/ultron_smp/ultron_smp/mods/collective-26.3.0-8.86.jar
+     1168784  /home/runner/work/ultron_smp/ultron_smp/mods/modernfix-5.27.20-build.2.jar
+     1135009  /home/runner/work/ultron_smp/ultron_smp/mods/cloth-config-fabric-26.3.159.jar
+      919892  /home/runner/work/ultron_smp/ultron_smp/mods/lithium-fabric-0.26.3_mc26.3.jar
+      901416  /home/runner/work/ultron_smp/ultron_smp/mods/servercore-fabric-1.5.20_26.3.jar
+      554933  /home/runner/work/ultron_smp/ultron_smp/mods/trade-cycling-fabric-1.0.23_26.3.jar
+      380139  /home/runner/work/ultron_smp/ultron_smp/mods/carryon-fabric-26.3-2.12.2.jar
+      286794  /home/runner/work/ultron_smp/ultron_smp/mods/skinrestorer-2.11.1_26.3-fabric.jar
+      268849  /home/runner/work/ultron_smp/ultron_smp/mods/krypton-0.3.2.jar
+      188357  /home/runner/work/ultron_smp/ultron_smp/mods/economy-1.0.0.jar
+      175726  /home/runner/work/ultron_smp/ultron_smp/mods/justmobheads-26.3.0-9.7.jar
+       75623  /home/runner/work/ultron_smp/ultron_smp/mods/simple-warp-tpa-home-back-26.2.3-1.4.jar
+       72677  /home/runner/work/ultron_smp/ultron_smp/mods/ferritecore-9.0.0-fabric.jar
+       54959  /home/runner/work/ultron_smp/ultron_smp/mods/transcendingtrident-26.3.0-6.0.jar
+       13633  /home/runner/work/ultron_smp/ultron_smp/mods/ultron-network-optimizer-1.0.0.jar

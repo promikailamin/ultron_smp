@@ -1,0 +1,25 @@
+{
+  "schemaVersion": 1,
+  "id": "ultron_network_optimizer",
+  "version": "1.0.0",
+  "name": "Ultron Network Optimizer",
+  "description": "Server-side packet culling and duplicate-update filtering for high-latency Ultron SMP connections.",
+  "authors": [
+    "Ultron SMP"
+  ],
+  "license": "MIT",
+  "environment": "server",
+  "entrypoints": {
+    "main": [
+      "com.ultron.network.UltronNetworkOptimizer"
+    ]
+  },
+  "mixins": [
+    "ultron-network-optimizer.mixins.json"
+  ],
+  "depends": {
+    "fabricloader": ">=0.20.1",
+    "minecraft": ">=26.3 <27",
+    "java": ">=25"
+  }
+}

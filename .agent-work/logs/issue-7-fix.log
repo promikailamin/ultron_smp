@@ -1,0 +1,54 @@
+Issue 7: high ping / large or unnecessary server packets
+
+What was inspected
+------------------
+- Unpacked versions/26.3/server-26.3.jar (7,762 classes, 166 clientbound
+  game packets, 69 serverbound game packets) into .agent-work/tmp/serverjarall
+  and inspected the packet classes with javap.
+- Reviewed the existing mod set: Krypton already optimizes the Netty pipeline,
+  and ServerCore optimizes server ticking. Neither culls unnecessary game
+  packets.
+- Saved a reproducible analysis at:
+  .agent-work/outputs/issue-7-server-jar-analysis.txt
+  .agent-work/outputs/issue-7-packet-analysis.md
+
+Implemented changes
+-------------------
+- Added server-side mod: mods/ultron-network-optimizer-1.0.0.jar
+  * Culls far-away particles, positional sounds, block-entity data,
+    non-global level events, and block events.
+  * Keeps music/UI/voice sounds and important particles
+    (overrideLimiter/alwaysShow).
+  * Deduplicates repeated block updates for the same position/state.
+  * Drops empty entity-data packets.
+  * Logs suppressed-packet totals every 300 seconds.
+- Added reproducible source and build script under network-optimizer/.
+- Added config/ultron-network.properties with per-filter toggles/distances.
+- server.properties:
+  * view-distance 10 -> 6
+  * simulation-distance 10 -> 6
+  * entity-broadcast-range-percentage 100 -> 60
+  * network-compression-threshold 256 -> 128
+- scripts/network-tune.sh:
+  * tcp_notsent_lowat=16384
+  * net.core.netdev_max_backlog=16384
+- README.md documents the mod, config and tuning.
+- Added .agent-work/tests/test_network_optimizer.sh and
+  .agent-work/tools/analyze-server-jar.sh.
+
+Validation performed
+--------------------
+- bash network-optimizer/build.sh succeeded.
+- .agent-work/tests/test_network_optimizer.sh passed: jar contents, manifest
+  mapping namespace, mixin target methods, and a real disposable server start
+  with no mixin injection errors.
+- .agent-work/tests/test_run.sh passed (server listening after 14s).
+- .agent-work/tests/test_network_tune.sh passed; BBR/fq and all TCP settings
+  applied successfully.
+- bash -n and shellcheck pass for the new/changed shell scripts.
+
+Remaining notes
+---------------
+- This reduces bandwidth, burst size, and server-side packet work. It cannot
+  remove the physical RTT between the US GitHub Actions runner and Bangladesh.
+- If stutter remains, the next step is hosting closer to the players.

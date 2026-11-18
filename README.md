@@ -109,6 +109,42 @@ The old behaviour (plain `nohup`, no `stop` command, saving only every five
 minutes, and no re-sync at startup) is why a cancelled run could lose the
 most recent changes even though the workflow "saved" the world.
 
+## Server network optimizer
+
+The server jar was unpacked and inspected (see
+`.agent-work/outputs/issue-7-server-jar-analysis.txt`). The main sources of
+network traffic are chunk data, entity tracking, particles, sounds, block
+entities, and block/level events. Krypton and ServerCore already optimize the
+pipeline and server ticking, so this repository adds a small server-side mod
+for the remaining avoidable packets:
+
+- `mods/ultron-network-optimizer-1.0.0.jar` culls particles, positional
+  sounds, block-entity data, non-global level events, and block events that
+  are beyond a configurable distance from the player.
+- It also skips repeated block updates for the same position/state and empty
+  entity-data packets.
+- Suppressed-packet totals are written to the server log every five minutes.
+
+Source and a reproducible build script live in `network-optimizer/`:
+
+```bash
+bash network-optimizer/build.sh
+```
+
+Settings are read from `config/ultron-network.properties`. Disable an
+individual filter there if a gameplay feature depends on that packet.
+
+The vanilla settings are also tuned for lower packet volume:
+
+- `view-distance=6` and `simulation-distance=6` instead of `10`.
+- `entity-broadcast-range-percentage=60` so entities are tracked over a
+  smaller area.
+- `network-compression-threshold=128` so more medium-sized packets are
+  compressed before they cross the tunnel.
+
+These changes reduce bandwidth and burst size. They cannot remove the
+physical round-trip time between the runner and South Asia.
+
 ## Why the ping is high
 
 The Minecraft server runs on a GitHub Actions runner in the United States.
@@ -118,7 +154,8 @@ on the ISP route. No server setting can remove that distance.
 
 The workflow makes the best of the available infrastructure:
 
-- `scripts/network-tune.sh` enables BBR and larger TCP buffers so long-haul
+- `scripts/network-tune.sh` enables BBR, larger TCP buffers, a lower
+  unsent-byte watermark, and a larger network backlog so long-haul
   connections recover better from packet loss.
 - `scripts/tunnel.sh` selects the tunnel provider and uses a LocalXpose TCP
   tunnel, with the region selectable through `LOCALXPOSE_REGION`.
@@ -145,6 +182,7 @@ bash .agent-work/tests/test_serveo_tunnel.sh
 bash .agent-work/tests/test_tunnl_tunnel.sh
 bash .agent-work/tests/test_tunnl_provider.sh
 bash .agent-work/tests/test_network_tune.sh
+bash .agent-work/tests/test_network_optimizer.sh
 ```
 
 `test_tunnel.sh` uses a fake `loclx` client so it can validate the address
@@ -154,3 +192,6 @@ parsing, forwarding and process handling without spending LocalXpose quota.
 tunnl.gg URL serves the status page and its `/healthz` endpoint.
 `test_tunnl_provider.sh` validates the full `TUNNEL_PROVIDER=tunnl` path:
 a TCP game relay plus the tunnl.gg status page.
+`test_network_optimizer.sh` builds the mod, checks its mixin targets against
+`server-26.3.jar`, and starts a disposable server to confirm the mod loads
+without injection errors.

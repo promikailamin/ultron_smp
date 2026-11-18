@@ -40,6 +40,8 @@ set_sysctl net.ipv4.tcp_keepalive_time 60
 set_sysctl net.ipv4.tcp_keepalive_intvl 15
 set_sysctl net.ipv4.tcp_keepalive_probes 4
 set_sysctl net.ipv4.tcp_no_metrics_save 1
+set_sysctl net.ipv4.tcp_notsent_lowat 16384
+set_sysctl net.core.netdev_max_backlog 16384
 set_sysctl net.core.rmem_max 16777216
 set_sysctl net.core.wmem_max 16777216
 set_sysctl net.ipv4.tcp_rmem "4096 87380 16777216"
