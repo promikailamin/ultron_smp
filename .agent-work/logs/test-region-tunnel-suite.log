@@ -1,0 +1,9 @@
+Tunnel is live at 127.0.0.1:25601
+HTTP/1.0 200 OK
+Tunnel end-to-end test passed: public TCP endpoint is reachable
+Serveo tunnel is live at 127.0.0.1:41703 (pid 3428)
+HTTP/1.0 200 OK
+Serveo tunnel test passed: public TCP endpoint is reachable
+Low-latency tunnel is live at 127.0.0.1:34337 (pid 3497)
+tunnl.gg status page is live at http://127.0.0.1:36207 (pid 3546)
+tunnl provider test passed: game TCP relay and tunnl.gg status page are reachable

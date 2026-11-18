@@ -16,6 +16,17 @@ on:
                     - pinggy
                     - tunnl
                     - minekube
+            tunnel_region:
+                description: 'Free relay region (Pinggy); auto measures all regions'
+                required: true
+                default: auto
+                type: choice
+                options:
+                    - auto
+                    - bangladesh
+                    - asia-pacific
+                    - united-states
+                    - europe
 
 permissions:
     contents: write
@@ -33,6 +44,7 @@ jobs:
             MINECRAFT_PORT: '25565'
             SERVER_ISSUE_NUMBER: '1'
             TUNNEL_PROVIDER: ${{ inputs.tunnel || 'auto' }}
+            TUNNEL_REGION: ${{ inputs.tunnel_region || 'auto' }}
             LOCALXPOSE_ACCESS_TOKEN: ${{ secrets.LOCALXPOSE_ACCESS_TOKEN }}
             LOCALXPOSE_REGION: ${{ vars.LOCALXPOSE_REGION || 'ap' }}
             LOCALXPOSE_BORE_FALLBACK: ${{ vars.LOCALXPOSE_BORE_FALLBACK }}

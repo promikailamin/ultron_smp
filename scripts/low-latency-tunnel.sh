@@ -23,6 +23,9 @@
 #                             (default: 3300)
 #   PINGGY_KNOWN_HOSTS        known_hosts file used for the relay
 #   PINGGY_SSH_BIN            SSH executable (default: ssh; used by tests)
+#   TUNNEL_REGION             Force a free relay region: bangladesh/asia-pacific
+#                             (Singapore), united-states, europe, or auto to
+#                             measure and pick (default: auto)
 #   PLAYER_REGION             "bangladesh"/"bd" gives the Asia-Pacific relay a
 #                             preference margin, "auto" picks the lowest total
 #                             (default: auto)
@@ -47,6 +50,7 @@ RELAY_USER="${PINGGY_USER:-tcp}"
 RECONNECT_SECONDS="${PINGGY_RECONNECT_SECONDS:-3300}"
 KNOWN_HOSTS="${PINGGY_KNOWN_HOSTS:-$ROOT_DIR/.agent-work/tmp/pinggy_known_hosts}"
 SSH_BIN="${PINGGY_SSH_BIN:-ssh}"
+TUNNEL_REGION="${TUNNEL_REGION:-auto}"
 PLAYER_REGION="${PLAYER_REGION:-auto}"
 BANGLADESH_RELAY_MARGIN_MS="${BANGLADESH_RELAY_MARGIN_MS:-75}"
 
@@ -81,10 +85,42 @@ print(int(best) if best is not None else 9999)
 PY
 }
 
+relay_for_region() {
+    case "$1" in
+        bangladesh | bd | south-asia | southasia | asia | asia-pacific | apac | ap | singapore | sg | india | in)
+            echo "ap.free.pinggy.io"
+            ;;
+        us | usa | united-states | america | north-america | na)
+            echo "us.free.pinggy.io"
+            ;;
+        eu | europe | uk | united-kingdom | germany | de)
+            echo "eu.free.pinggy.io"
+            ;;
+        *.*)
+            # Allow a literal relay hostname for advanced users.
+            echo "$1"
+            ;;
+        *)
+            return 1
+            ;;
+    esac
+}
+
 select_relay() {
     if [ "$PINGGY_SERVER" != "auto" ]; then
         RELAY_HOST="$PINGGY_SERVER"
         return 0
+    fi
+
+    local region forced_relay
+    region="$(printf '%s' "$TUNNEL_REGION" | tr '[:upper:]' '[:lower:]' | tr '_' '-')"
+    if forced_relay="$(relay_for_region "$region")"; then
+        RELAY_HOST="$forced_relay"
+        echo "Using the ${region} relay from TUNNEL_REGION: ${RELAY_HOST}" >&2
+        return 0
+    fi
+    if [ "$region" != "auto" ]; then
+        echo "WARNING: unknown TUNNEL_REGION '${TUNNEL_REGION}'; measuring relays instead." >&2
     fi
 
     # Approximate one-way network cost from Bangladesh/South Asia to each
@@ -145,7 +181,7 @@ write_address() {
     {
         echo "# Ultron SMP low-latency public server address"
         echo "# Updated: $(date -u '+%Y-%m-%d %H:%M:%S UTC')"
-        echo "# Relay: Pinggy ${RELAY_HOST} (free relay, reconnects about once an hour)"
+        echo "# Relay: Pinggy ${RELAY_HOST} (free relay, region ${TUNNEL_REGION}, reconnects about once an hour)"
         if [ "$ADDRESS_FILE" != "$ROOT_DIR/SERVER_ADDRESS.txt" ]; then
             echo "# Stable fallback: see SERVER_ADDRESS.txt"
         fi

@@ -9,7 +9,8 @@ After a server run starts, the workflow publishes the current address in
 `SERVER_ADDRESS.txt`.
 
 When starting the run with **Run workflow**, choose the **Public tunnel
-provider** input:
+provider** input. The **Free relay region** input selects Pinggy's free relay
+for the `pinggy` and `tunnl` providers:
 
 | Provider | Script | Notes |
 | --- | --- | --- |
@@ -29,10 +30,25 @@ provider therefore keeps the game on the lowest-latency TCP relay
 current Minecraft address. That gives the project a `tunnl.gg` tunnel without
 breaking gameplay or sending Bangladeshi players through a distant relay.
 
-The selection is passed to the workflow as `TUNNEL_PROVIDER`. The same
-provider is used for automatic tunnel restarts during the run. `pinggy` and
-`tunnl` also use the repository variable `PLAYER_REGION` (default:
-`bangladesh`) so the Asia-Pacific relay is preferred for South Asian players.
+The provider selection is passed to the workflow as `TUNNEL_PROVIDER`. The
+same provider is used for automatic tunnel restarts during the run. `pinggy`
+and `tunnl` use the **Free relay region** input (`TUNNEL_REGION`) and the
+repository variable `PLAYER_REGION` (default: `bangladesh`) so the
+Asia-Pacific relay is preferred for South Asian players.
+
+| Free relay region | Pinggy relay | Notes |
+| --- | --- | --- |
+| `auto` | measured | Default. Measures all free relays and applies the `PLAYER_REGION` preference. |
+| `bangladesh` | `ap.free.pinggy.io` | Forces the Singapore (Asia-Pacific) relay for players in Bangladesh. |
+| `asia-pacific` | `ap.free.pinggy.io` | Same relay as `bangladesh`, useful for other South/South-East Asian players. |
+| `united-states` | `us.free.pinggy.io` | Forces the US relay. Often fastest when GitHub runs the server in the US. |
+| `europe` | `eu.free.pinggy.io` | Forces the European relay. |
+
+The free relays are shared by Pinggy's free tier and do not guarantee a
+Bangladesh-specific location. Because the Minecraft server runs on a GitHub
+Actions runner in the United States, `asia-pacific` is not always faster than
+`united-states`: the player-to-relay hop is shorter, but the relay-to-runner
+hop is longer. `auto` measures both legs and chooses the best total.
 
 ## Minekube Connect
 
@@ -204,9 +220,14 @@ by this repository.
   after this many seconds; `0` only reconnects when the SSH session drops.
   Default: `0`.
 
+- `TUNNEL_REGION` (workflow input **Free relay region**, or environment
+  variable when running `scripts/low-latency-tunnel.sh` directly) - force the
+  free Pinggy relay: `bangladesh`/`asia-pacific`, `united-states`, `europe`,
+  or `auto` to measure all of them. Default: `auto`.
 - `PLAYER_REGION` (repository variable) - set to `bangladesh` (or `bd`) to
-  prefer Pinggy's Asia-Pacific relay for South Asian players, or `auto` to
-  always pick the lowest measured total. Default: `bangladesh`.
+  prefer Pinggy's Asia-Pacific relay for South Asian players when
+  `TUNNEL_REGION=auto`, or `auto` to always pick the lowest measured total.
+  Default: `bangladesh`.
 - `BANGLADESH_RELAY_MARGIN_MS` (optional environment variable) - how many
   milliseconds worse the Asia-Pacific relay may be before another relay is
   chosen. Default: `75`.
@@ -318,8 +339,10 @@ The workflow makes the best of the available infrastructure:
   available.
 - `scripts/serveo-tunnel.sh` provides an alternative free SSH relay with
   automatic reconnects.
-- `scripts/low-latency-tunnel.sh` prefers Pinggy's Asia-Pacific relay for
-  Bangladeshi players and reconnects when the free hourly tunnel expires.
+- `scripts/low-latency-tunnel.sh` selects the Pinggy free relay from
+  `TUNNEL_REGION` (or measures all relays with `auto`), prefers the
+  Asia-Pacific relay for Bangladeshi players, and reconnects when the free
+  hourly tunnel expires.
 - `scripts/tunnl-tunnel.sh` adds a `tunnl.gg` HTTP status page. tunnl.gg does
   not carry raw TCP, so the game stays on a TCP relay.
 
@@ -336,6 +359,7 @@ bash .agent-work/tests/test_tunnel.sh
 bash .agent-work/tests/test_serveo_tunnel.sh
 bash .agent-work/tests/test_tunnl_tunnel.sh
 bash .agent-work/tests/test_tunnl_provider.sh
+bash .agent-work/tests/test_low_latency_region.sh
 bash .agent-work/tests/test_minekube_tunnel.sh
 bash .agent-work/tests/test_twingate_connector.sh
 bash .agent-work/tests/test_twingate_resource.sh
@@ -352,6 +376,9 @@ parsing, forwarding and process handling without spending LocalXpose quota.
 tunnl.gg URL serves the status page and its `/healthz` endpoint.
 `test_tunnl_provider.sh` validates the full `TUNNEL_PROVIDER=tunnl` path:
 a TCP game relay plus the tunnl.gg status page.
+`test_low_latency_region.sh` uses a fake SSH client to check that the
+`TUNNEL_REGION` workflow input maps to the correct Pinggy free relay without
+contacting the public relays.
 `test_minekube_tunnel.sh` uses a fake Gate connector to validate the
 `TUNNEL_PROVIDER=minekube` path, generated Gate config, address file and
 local forwarding without registering a real endpoint.

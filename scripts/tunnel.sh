@@ -29,6 +29,10 @@
 #   MINEKUBE_AUTO               Set to false to skip Minekube for auto
 #   MINEKUBE_ENDPOINT           Stable Minekube endpoint name
 #   MINEKUBE_CONNECT_TOKEN      Minekube connector token (repository secret)
+#   TUNNEL_REGION               Force a free Pinggy relay region:
+#                               bangladesh/asia-pacific, united-states,
+#                               europe, or auto to measure all of them
+#                               (default: auto)
 #   PLAYER_REGION               bangladesh/bd prioritises the Asia-Pacific
 #                               Pinggy relay (default: bangladesh for
 #                               pinggy/tunnl, auto for the standalone script)
