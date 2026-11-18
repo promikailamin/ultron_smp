@@ -1,0 +1,89 @@
+name: Twingate Admin
+
+on:
+    workflow_dispatch:
+        inputs:
+            action:
+                description: 'Inspect the account or provision the missing Remote Network/Connector'
+                required: true
+                default: status
+                type: choice
+                options:
+                    - status
+                    - provision
+            rotate_tokens:
+                description: 'Generate a new Connector token pair and update the repository secrets'
+                required: true
+                default: false
+                type: boolean
+
+permissions:
+    contents: read
+
+concurrency:
+    group: twingate-admin
+    cancel-in-progress: false
+
+jobs:
+    admin:
+        runs-on: ubuntu-latest
+        timeout-minutes: 10
+        env:
+            TWINGATE_API_TOKEN: ${{ secrets.TWINGATE_API_TOKEN }}
+            TWINGATE_ACCESS_TOKEN: ${{ secrets.TWINGATE_ACCESS_TOKEN }}
+            TWINGATE_REFRESH_TOKEN: ${{ secrets.TWINGATE_REFRESH_TOKEN }}
+            TWINGATE_NETWORK: ${{ vars.TWINGATE_NETWORK || secrets.TWINGATE_NETWORK || 'mikailamin' }}
+            TWINGATE_REMOTE_NETWORK: ${{ vars.TWINGATE_REMOTE_NETWORK }}
+            TWINGATE_REMOTE_NETWORK_ID: ${{ vars.TWINGATE_REMOTE_NETWORK_ID }}
+            TWINGATE_NEW_REMOTE_NETWORK: ${{ vars.TWINGATE_NEW_REMOTE_NETWORK || 'Ultron SMP' }}
+            TWINGATE_CONNECTOR_NAME: ${{ vars.TWINGATE_CONNECTOR_NAME || 'twingate-mccon' }}
+            TWINGATE_RESOURCE_NAME: ${{ vars.TWINGATE_RESOURCE_NAME || 'minecraft' }}
+            TWINGATE_RESOURCE_ADDRESS: ${{ vars.TWINGATE_RESOURCE_ADDRESS || '127.0.0.1' }}
+            TWINGATE_RESOURCE_PORT: ${{ vars.TWINGATE_RESOURCE_PORT || '25565' }}
+            TWINGATE_GENERATE_TOKENS: ${{ inputs.action == 'provision' && inputs.rotate_tokens && 'true' || 'false' }}
+            TWINGATE_TOKEN_ENV_FILE: ${{ runner.temp }}/twingate-connector.env
+        steps:
+            - name: checkout_repo
+              uses: actions/checkout@v4
+
+            - name: twingate_admin
+              run: |
+                  set -euo pipefail
+                  mkdir -p .agent-work/logs
+                  python3 scripts/twingate-admin.py "${{ inputs.action }}" \
+                      | tee ".agent-work/logs/twingate-admin-${{ inputs.action }}.log"
+
+            - name: update_connector_secrets
+              if: ${{ inputs.action == 'provision' && inputs.rotate_tokens }}
+              env:
+                  GH_TOKEN: ${{ secrets.PAT_TOKEN }}
+              run: |
+                  set -euo pipefail
+                  token_file="${RUNNER_TEMP}/twingate-connector.env"
+                  if [ ! -s "$token_file" ]; then
+                      echo "ERROR: the token file is missing."
+                      exit 1
+                  fi
+                  network="$(sed -n 's/^TWINGATE_NETWORK=//p' "$token_file")"
+                  access="$(sed -n 's/^TWINGATE_ACCESS_TOKEN=//p' "$token_file")"
+                  refresh="$(sed -n 's/^TWINGATE_REFRESH_TOKEN=//p' "$token_file")"
+                  if [ -z "$network" ] || [ -z "$access" ] || [ -z "$refresh" ]; then
+                      echo "ERROR: the token file is incomplete."
+                      exit 1
+                  fi
+                  printf '%s' "$network" | gh secret set TWINGATE_NETWORK --repo "${{ github.repository }}"
+                  printf '%s' "$access" | gh secret set TWINGATE_ACCESS_TOKEN --repo "${{ github.repository }}"
+                  printf '%s' "$refresh" | gh secret set TWINGATE_REFRESH_TOKEN --repo "${{ github.repository }}"
+                  echo "Connector secrets updated."
+
+            - name: remove_token_file
+              if: always()
+              run: rm -f "${RUNNER_TEMP}/twingate-connector.env"
+
+            - name: upload_admin_log
+              if: always()
+              uses: actions/upload-artifact@v4
+              with:
+                  name: twingate-admin-log
+                  path: .agent-work/logs/twingate-admin-*.log
+                  if-no-files-found: ignore
