@@ -1,6 +1,10 @@
 [0m
 > build · deepseek-v4.1-flash-free
 [0m
+[0m$ [0mfind .github -type f | sort
+.github/workflows/opencode.yml
+.github/workflows/run.yml
+[0m
 [0m$ [0mgit status && git log --oneline -10 && ls -la
 On branch main
 Your branch is up to date with 'origin/main'.
@@ -11,622 +15,496 @@ Changes not staged for commit:
 	modified:   .agent-work/logs/opencode-output.log
 
 no changes added to commit (use "git add" and/or "git commit -a")
+f7e0711 Final Minecraft server backup
+8daffd6 Auto-save Minecraft server data
+8f73a57 Auto-save Minecraft server data
+9457583 Auto-save Minecraft server data
+9a665b1 Update public server address: ultron-916fda84.play.minekube.net:25565
+c126e6b chore: recover OpenCode workspace [skip ci]
+cfc212d chore: final agent log update for issue 10
+928bd18 chore: update agent log for issue 10
+944205b Enable Twingate automatically from connector secrets
 f24ae29 chore: recover OpenCode workspace [skip ci]
-68b928d Add optional Twingate connector with env-only secrets
-9ad6530 Final Minecraft server backup
-53b6635 Auto-save Minecraft server data
-8dfcea9 Auto-save Minecraft server data
-3c2e457 Update public server address: ultron-5f13767e.play.minekube.net:25565
-479048e chore: recover OpenCode workspace [skip ci]
-09166e1 chore: update agent logs
-4d71153 Add Minekube Connect tunnel via Gate
-9ce6889 Final Minecraft server backup
 total 320
-drwxr-xr-x 16 runner runner   4096 Nov 18 11:39 .
-drwxr-xr-x  3 runner runner   4096 Nov 18 11:38 ..
-drwxr-xr-x  7 runner runner   4096 Nov 18 11:39 .agent-work
-drwxr-xr-x  4 runner runner   4096 Nov 18 11:39 .fabric
-drwxr-xr-x  7 runner runner   4096 Nov 18 11:39 .git
-drwxr-xr-x  3 runner runner   4096 Nov 18 11:39 .github
--rw-r--r--  1 runner runner   1101 Nov 18 11:39 .gitignore
--rw-r--r--  1 runner runner  14488 Nov 18 11:39 README.md
--rw-r--r--  1 runner runner    285 Nov 18 11:39 SERVER_ADDRESS.txt
--rw-r--r--  1 runner runner    266 Nov 18 11:39 SERVER_STATUS_URL.txt
--rw-r--r--  1 runner runner      2 Nov 18 11:39 banned-ips.json
--rw-r--r--  1 runner runner      2 Nov 18 11:39 banned-players.json
-drwxr-xr-x  6 runner runner   4096 Nov 18 11:39 config
-drwxr-xr-x  3 runner runner   4096 Nov 18 11:39 data
--rw-r--r--  1 runner runner    157 Nov 18 11:39 eula.txt
-drwxr-xr-x  9 runner runner   4096 Nov 18 11:39 libraries
--rw-r--r--  1 runner runner 181838 Nov 18 11:39 loader.jar
--rw-r--r--  1 runner runner   1555 Nov 18 11:39 log4j2.xml
-drwxr-xr-x  2 runner runner   4096 Nov 18 11:39 logs
-drwxr-xr-x  2 runner runner   4096 Nov 18 11:39 mods
-drwxr-xr-x  2 runner runner   4096 Nov 18 11:39 native
-drwxr-xr-x  3 runner runner   4096 Nov 18 11:39 network-optimizer
--rw-r--r--  1 runner runner    138 Nov 18 11:39 ops.json
--rwxr-xr-x  1 runner runner   1809 Nov 18 11:39 run.sh
-drwxr-xr-x  2 runner runner   4096 Nov 18 11:39 scripts
--rw-r--r--  1 runner runner  11363 Nov 18 11:39 server.log
--rw-r--r--  1 runner runner   1751 Nov 18 11:39 server.properties
--rw-r--r--  1 runner runner    215 Nov 18 11:39 usercache.json
-drwxr-xr-x  3 runner runner   4096 Nov 18 11:39 versions
--rw-r--r--  1 runner runner      2 Nov 18 11:39 whitelist.json
-drwxr-xr-x  6 runner runner   4096 Nov 18 11:39 world
+drwxr-xr-x 16 runner runner   4096 Nov 18 11:58 .
+drwxr-xr-x  3 runner runner   4096 Nov 18 11:58 ..
+drwxr-xr-x  7 runner runner   4096 Nov 18 11:58 .agent-work
+drwxr-xr-x  4 runner runner   4096 Nov 18 11:58 .fabric
+drwxr-xr-x  7 runner runner   4096 Nov 18 11:58 .git
+drwxr-xr-x  3 runner runner   4096 Nov 18 11:58 .github
+-rw-r--r--  1 runner runner   1101 Nov 18 11:58 .gitignore
+-rw-r--r--  1 runner runner  14896 Nov 18 11:58 README.md
+-rw-r--r--  1 runner runner    285 Nov 18 11:58 SERVER_ADDRESS.txt
+-rw-r--r--  1 runner runner    266 Nov 18 11:58 SERVER_STATUS_URL.txt
+-rw-r--r--  1 runner runner      2 Nov 18 11:58 banned-ips.json
+-rw-r--r--  1 runner runner      2 Nov 18 11:58 banned-players.json
+drwxr-xr-x  6 runner runner   4096 Nov 18 11:58 config
+drwxr-xr-x  3 runner runner   4096 Nov 18 11:58 data
+-rw-r--r--  1 runner runner    157 Nov 18 11:58 eula.txt
+drwxr-xr-x  9 runner runner   4096 Nov 18 11:58 libraries
+-rw-r--r--  1 runner runner 181838 Nov 18 11:58 loader.jar
+-rw-r--r--  1 runner runner   1555 Nov 18 11:58 log4j2.xml
+drwxr-xr-x  2 runner runner   4096 Nov 18 11:58 logs
+drwxr-xr-x  2 runner runner   4096 Nov 18 11:58 mods
+drwxr-xr-x  2 runner runner   4096 Nov 18 11:58 native
+drwxr-xr-x  3 runner runner   4096 Nov 18 11:58 network-optimizer
+-rw-r--r--  1 runner runner    138 Nov 18 11:58 ops.json
+-rwxr-xr-x  1 runner runner   1809 Nov 18 11:58 run.sh
+drwxr-xr-x  2 runner runner   4096 Nov 18 11:58 scripts
+-rw-r--r--  1 runner runner  10123 Nov 18 11:58 server.log
+-rw-r--r--  1 runner runner   1751 Nov 18 11:58 server.properties
+-rw-r--r--  1 runner runner    215 Nov 18 11:58 usercache.json
+drwxr-xr-x  3 runner runner   4096 Nov 18 11:58 versions
+-rw-r--r--  1 runner runner      2 Nov 18 11:58 whitelist.json
+drwxr-xr-x  6 runner runner   4096 Nov 18 11:58 world
 [0m
-[0m✱ [0mGlob "**/run.yml"[90m 0 matches[0m
-[0m✱ [0mGlob ".github/workflows/*"[90m 0 matches[0m
+[0m$ [0mcat .github/workflows/run.yml
+name: Run UltronSMP
+
+on:
+    workflow_dispatch:
+        inputs:
+            tunnel:
+                description: 'Public tunnel provider'
+                required: true
+                default: auto
+                type: choice
+                options:
+                    - auto
+                    - localxpose
+                    - bore
+                    - serveo
+                    - pinggy
+                    - tunnl
+                    - minekube
+
+permissions:
+    contents: write
+    issues: write
+
+concurrency:
+    group: minecraft-server
+    cancel-in-progress: false
+
+jobs:
+    server:
+        runs-on: ubuntu-latest
+        timeout-minutes: 360
+        env:
+            MINECRAFT_PORT: '25565'
+            SERVER_ISSUE_NUMBER: '1'
+            TUNNEL_PROVIDER: ${{ inputs.tunnel || 'auto' }}
+            LOCALXPOSE_ACCESS_TOKEN: ${{ secrets.LOCALXPOSE_ACCESS_TOKEN }}
+            LOCALXPOSE_REGION: ${{ vars.LOCALXPOSE_REGION || 'ap' }}
+            LOCALXPOSE_BORE_FALLBACK: ${{ vars.LOCALXPOSE_BORE_FALLBACK }}
+            PLAYER_REGION: ${{ vars.PLAYER_REGION || 'bangladesh' }}
+            MINEKUBE_ENDPOINT: ${{ vars.MINEKUBE_ENDPOINT }}
+            MINEKUBE_CONNECT_TOKEN: ${{ secrets.MINEKUBE_CONNECT_TOKEN }}
+            MINEKUBE_GATE_VERSION: ${{ vars.MINEKUBE_GATE_VERSION || '0.81.1' }}
+            MINEKUBE_AUTO: ${{ vars.MINEKUBE_AUTO || 'true' }}
+            TWINGATE_ENABLED: ${{ vars.TWINGATE_ENABLED || 'auto' }}
+            TWINGATE_NETWORK: ${{ vars.TWINGATE_NETWORK || secrets.TWINGATE_NETWORK }}
+            TWINGATE_CONNECTOR_NAME: ${{ vars.TWINGATE_CONNECTOR_NAME || 'ultron-twingate' }}
+            TWINGATE_ACCESS_TOKEN: ${{ secrets.TWINGATE_ACCESS_TOKEN }}
+            TWINGATE_REFRESH_TOKEN: ${{ secrets.TWINGATE_REFRESH_TOKEN }}
+
+        steps:
+            - name: checkout_repo
+              uses: actions/checkout@v4
+              with:
+                  fetch-depth: 0
+                  ref: ${{ github.ref_name }}
+
+            - name: setup_java_25
+              uses: actions/setup-java@v4
+              with:
+                  distribution: temurin
+                  java-version: '25'
+
+            - name: configure_git
+              env:
+                  GH_TOKEN: ${{ secrets.PAT_TOKEN }}
+              run: |
+                  git config user.name "ultron"
+                  git config user.email "ultron@users.noreply.github.com"
+                  gh auth setup-git
+
+            - name: tune_network
+              continue-on-error: true
+              run: |
+                  set -euo pipefail
+                  sudo bash scripts/network-tune.sh
+
+            - name: refresh_world_from_backup
+              run: |
+                  set -euo pipefail
+                  # A cancelled run may finish its final backup just after this
+                  # run checks out the repository. Re-sync a few times so the
+                  # server never starts from a stale world and later overwrites
+                  # the previous run's saved changes.
+                  stable=0
+                  for _ in $(seq 1 15); do
+                      git fetch origin "$GITHUB_REF_NAME"
+                      git reset --hard "origin/$GITHUB_REF_NAME"
+                      before="$(git rev-parse HEAD)"
+                      sleep 3
+                      git fetch origin "$GITHUB_REF_NAME"
+                      after="$(git rev-parse "origin/$GITHUB_REF_NAME")"
+                      if [ "$before" = "$after" ]; then
+                          stable=$((stable + 1))
+                          if [ "$stable" -ge 2 ]; then
+                              echo "World is up to date at ${after}."
+                              break
+                          fi
+                      else
+                          stable=0
+                          echo "Previous run pushed newer data; syncing again..."
+                      fi
+                  done
+
+            - name: run_server
+              run: |
+                  set -euo pipefail
+                  bash scripts/server-control.sh start
+
+                  echo "Waiting for Minecraft server on port ${MINECRAFT_PORT}..."
+
+                  ready=0
+                  for _ in $(seq 1 120); do
+                      if (echo > "/dev/tcp/127.0.0.1/${MINECRAFT_PORT}") 2>/dev/null; then
+                          ready=1
+                          break
+                      fi
+                      if ! bash scripts/server-control.sh status >/dev/null 2>&1; then
+                          echo "Minecraft server exited while starting."
+                          break
+                      fi
+                      sleep 1
+                  done
+
+                  if [ "$ready" -ne 1 ]; then
+                      echo "Server did not start within 120 seconds."
+                      tail -n 200 server.log || true
+                      exit 1
+                  fi
+
+                  echo "Minecraft server is ready!"
+
+            - name: verify_minecraft_port
+              run: |
+                  set -euo pipefail
+                  echo "Checking Minecraft port..."
+
+                  ss -lntp | grep ":${MINECRAFT_PORT}" || {
+                      echo "ERROR: Nothing is listening on port ${MINECRAFT_PORT}"
+                      tail -100 server.log
+                      exit 1
+                  }
+
+                  python3 - <<'PY'
+                  import os
+                  import socket
+
+                  port = int(os.environ.get("MINECRAFT_PORT", "25565"))
+                  with socket.create_connection(("127.0.0.1", port), timeout=5):
+                      pass
+                  print(f"Minecraft TCP port {port} is reachable locally!")
+                  PY
+
+            - name: start_twingate_connector
+              # Secrets cannot be tested directly in an `if:` expression. The
+              # script starts the connector automatically when both tokens are
+              # present, skips when they are absent, and honours
+              # TWINGATE_ENABLED=false/true as an override.
+              continue-on-error: true
+              run: |
+                  set -euo pipefail
+                  bash scripts/twingate-connector.sh start | tee .agent-work/logs/twingate-connector.log
+
+            - name: expose_server
+              id: expose-tunnel
+              run: |
+                  set -euo pipefail
+                  bash scripts/tunnel.sh | tee .agent-work/logs/tunnel-start.log
+
+                  address="$(grep -v '^#' SERVER_ADDRESS.txt | grep -E ':[0-9]+$' | tail -n 1)"
+                  if [ -z "$address" ]; then
+                      echo "ERROR: no public server address was generated."
+                      exit 1
+                  fi
+
+                  echo "Tunnel has been started at ${address}"
+                  echo "SERVER_ADDRESS=${address}" >> "$GITHUB_ENV"
+
+                  status_url="$(grep -v '^#' SERVER_STATUS_URL.txt 2>/dev/null | tail -n 1 || true)"
+                  if [ -n "$status_url" ]; then
+                      echo "Status page is available at ${status_url}"
+                      echo "SERVER_STATUS_URL=${status_url}" >> "$GITHUB_ENV"
+                  fi
+
+                  {
+                      echo "## Ultron SMP is online"
+                      echo ""
+                      echo "**Minecraft address:** \`${address}\`"
+                      if [ -n "$status_url" ]; then
+                          echo ""
+                          echo "**Status page:** ${status_url}"
+                      fi
+                      echo ""
+                      echo "The address is also kept in \`SERVER_ADDRESS.txt\`."
+                  } >> "$GITHUB_STEP_SUMMARY"
+
+            - name: verify_public_tunnel
+              run: |
+                  set -euo pipefail
+                  address="${SERVER_ADDRESS:-$(grep -v '^#' SERVER_ADDRESS.txt | grep -E ':[0-9]+$' | tail -n 1)}"
+                  host="${address%:*}"
+                  port="${address##*:}"
+
+                  echo "Checking public endpoint ${host}:${port}..."
+
+                  for attempt in $(seq 1 20); do
+                      if python3 - "$host" "$port" <<'PY'
+                  import socket
+                  import sys
+
+                  host = sys.argv[1]
+                  port = int(sys.argv[2])
+                  with socket.create_connection((host, port), timeout=10):
+                      pass
+                  print(f"{host}:{port} is reachable")
+                  PY
+                      then
+                          echo "Public tunnel is reachable."
+                          exit 0
+                      fi
+                      echo "Attempt ${attempt}/20 failed; retrying..."
+                      sleep 3
+                  done
+
+                  echo "ERROR: the public tunnel is not reachable."
+                  tail -100 .agent-work/logs/localxpose-tunnel.log \
+                      .agent-work/logs/serveo-tunnel.log \
+                      .agent-work/logs/tunnl-tunnel.log \
+                      .agent-work/logs/tunnl-status.log \
+                      .agent-work/logs/pinggy-tunnel.log \
+                      .agent-work/logs/tunnel.log 2>/dev/null || true
+                  exit 1
+
+            - name: publish_server_address
+              env:
+                  GH_TOKEN: ${{ secrets.PAT_TOKEN }}
+              run: |
+                  set -euo pipefail
+                  address="${SERVER_ADDRESS:-$(grep -v '^#' SERVER_ADDRESS.txt | grep -E ':[0-9]+$' | tail -n 1)}"
+                  host="${address%:*}"
+                  port="${address##*:}"
+
+                  echo "Publishing ${address}..."
+
+                  address_files=(SERVER_ADDRESS.txt)
+                  if [ -f SERVER_STATUS_URL.txt ]; then
+                      address_files+=(SERVER_STATUS_URL.txt)
+                  fi
+                  git add "${address_files[@]}"
+                  if ! git diff --cached --quiet; then
+                      git commit -m "Update public server address: ${address}"
+                      git fetch origin "$GITHUB_REF_NAME" || true
+                      git rebase "origin/$GITHUB_REF_NAME" || git rebase --abort || true
+                      git push origin "HEAD:$GITHUB_REF_NAME" \
+                          || echo "Address push failed; the keep-alive loop will retry."
+                  fi
+
+                  if [ -n "${SERVER_ISSUE_NUMBER:-}" ] && [ -n "${address}" ]; then
+                      body="Ultron SMP is online. Address: \`${address}\` (host \`${host}\`, port \`${port}\`). The current address is kept in \`SERVER_ADDRESS.txt\`."
+                      if [ -n "${SERVER_STATUS_URL:-}" ]; then
+                          body="${body} Status page: ${SERVER_STATUS_URL}"
+                      fi
+                      gh issue comment "$SERVER_ISSUE_NUMBER" \
+                          --repo "${{ github.repository }}" \
+                          --body "$body" \
+                          || echo "Could not comment on the issue (continuing)."
+                  fi
+
+            - name: keep_server_alive
+              timeout-minutes: 350
+              env:
+                  GH_TOKEN: ${{ secrets.PAT_TOKEN }}
+                  AUTOSAVE_SECONDS: '90'
+              run: |
+                  set -euo pipefail
+
+                  CONTROL="scripts/server-control.sh"
+                  tunnel_pid_file="$RUNNER_TEMP/ultron-tunnel.pid"
+                  tunnel_pid="$(cat "$tunnel_pid_file" 2>/dev/null || true)"
+
+                  save_and_push() {
+                      local message="$1"
+                      local saved=0
+
+                      # Flush in-memory chunks to disk before Git snapshots them.
+                      if ! bash "$CONTROL" save >/dev/null 2>&1; then
+                          echo "WARNING: could not send save-all flush."
+                      fi
+                      sleep 1
+
+                      git add -A
+                      if git diff --cached --quiet; then
+                          echo "No changes to save."
+                          return 0
+                      fi
+
+                      git commit -m "$message"
+                      for _ in 1 2 3; do
+                          if ! git fetch origin "$GITHUB_REF_NAME"; then
+                              sleep 5
+                              continue
+                          fi
+
+                          if git rebase "origin/$GITHUB_REF_NAME"; then
+                              if git push origin "HEAD:$GITHUB_REF_NAME"; then
+                                  saved=1
+                                  echo "Saved and pushed: ${message}"
+                                  break
+                              fi
+                          else
+                              git rebase --abort || true
+                          fi
+                          sleep 5
+                      done
+
+                      if [ "$saved" -ne 1 ]; then
+                          echo "WARNING: could not push the save; will retry next cycle."
+                          return 1
+                      fi
+                  }
+
+                  stopping=0
+                  # shellcheck disable=SC2329
+                  shutdown_handler() {
+                      if [ "$stopping" -eq 1 ]; then
+                          exit 0
+                      fi
+                      stopping=1
+                      trap - TERM INT
+                      echo "Cancellation/termination requested; flushing the world before exit..."
+
+                      # The runner only gives a cancelled step about ten
+                      # seconds before killing it, so keep this fast: flush,
+                      # make a local commit, and ask the server to stop. The
+                      # always() final backup step pushes the commit.
+                      bash "$CONTROL" save >/dev/null 2>&1 || true
+                      sleep 1
+                      git add -A || true
+                      if ! git diff --cached --quiet; then
+                          git commit -m "Auto-save Minecraft server data (run stopping)" || true
+                      fi
+                      bash "$CONTROL" stop 20 || true
+                      exit 0
+                  }
+                  trap shutdown_handler TERM INT
+
+                  # Check the tunnel every 30 seconds, but only snapshot the
+                  # world every AUTOSAVE_SECONDS so the repository does not grow
+                  # too quickly. A cancelled run therefore loses at most one
+                  # autosave interval even if the final backup cannot run.
+                  autosave_seconds="${AUTOSAVE_SECONDS:-90}"
+                  cycles_between_saves=$((autosave_seconds / 30))
+                  if [ "$cycles_between_saves" -lt 1 ]; then
+                      cycles_between_saves=1
+                  fi
+                  cycle=0
+
+                  while bash "$CONTROL" status >/dev/null 2>&1; do
+                      sleep 30
+
+                      if ! bash "$CONTROL" status >/dev/null 2>&1; then
+                          break
+                      fi
+
+                      if [ -z "${tunnel_pid:-}" ] || ! kill -0 "$tunnel_pid" 2>/dev/null; then
+                          echo "Tunnel process stopped; restarting it..."
+                          if bash scripts/tunnel.sh | tee -a .agent-work/logs/tunnel-restarts.log; then
+                              tunnel_pid="$(cat "$tunnel_pid_file")"
+                              address="$(grep -v '^#' SERVER_ADDRESS.txt | grep -E ':[0-9]+$' | tail -n 1)"
+                              echo "Tunnel restarted at ${address}"
+                              if [ -n "${SERVER_ISSUE_NUMBER:-}" ] && [ -n "${address}" ]; then
+                                  gh issue comment "$SERVER_ISSUE_NUMBER" \
+                                      --repo "${{ github.repository }}" \
+                                      --body "Ultron SMP is online. Address: \`${address}\`. The tunnel was restarted and the address in \`SERVER_ADDRESS.txt\` is current." \
+                                      || true
+                              fi
+                          else
+                              echo "Tunnel restart failed; will retry shortly."
+                              sleep 15
+                          fi
+                      fi
+
+                      cycle=$((cycle + 1))
+                      if [ "$cycle" -ge "$cycles_between_saves" ]; then
+                          cycle=0
+                          echo "Saving Minecraft server data..."
+                          save_and_push "Auto-save Minecraft server data" || true
+                      fi
+                  done
+
+                  echo "Minecraft server stopped; performing final save..."
+                  save_and_push "Final Minecraft server backup" || true
+                  exit 0
+
+            - name: restore_final_server
+              if: always()
+              env:
+                  GH_TOKEN: ${{ secrets.PAT_TOKEN }}
+              run: |
+                  set -euo pipefail
+                  echo "Stopping the server and flushing the world before the final backup..."
+                  bash scripts/twingate-connector.sh stop >/dev/null 2>&1 || true
+                  bash scripts/server-control.sh save >/dev/null 2>&1 || true
+                  bash scripts/server-control.sh stop 45 || true
+
+                  # A previous step may have been killed in the middle of a
+                  # git operation. Clear any leftover state before retrying.
+                  git rebase --abort 2>/dev/null || true
+                  git merge --abort 2>/dev/null || true
+                  rm -f .git/index.lock
+
+                  echo "Performing final save..."
+
+                  git add -A
+
+                  if ! git diff --cached --quiet; then
+                      git commit -m "Final Minecraft server backup"
+                  else
+                      echo "No new changes."
+                  fi
+
+                  pushed=0
+                  for _ in 1 2 3 4 5; do
+                      if ! git fetch origin "$GITHUB_REF_NAME"; then
+                          sleep 5
+                          continue
+                      fi
+
+                      if git rebase "origin/$GITHUB_REF_NAME"; then
+                          if git push origin "HEAD:$GITHUB_REF_NAME"; then
+                              pushed=1
+                              break
+                          fi
+                      else
+                          git rebase --abort || true
+                      fi
+                      sleep 5
+                  done
+
+                  if [ "$pushed" -ne 1 ]; then
+                      echo "ERROR: final backup could not be pushed."
+                      exit 1
+                  fi
+
+                  echo "Backup completed."
 [0m
-[0m$ [0mfind .github -type f -maxdepth 4; echo "---"; ls -la .agent-work; echo "---"; find . -maxdepth 2 -iname '*run*' -type f
-.github/workflows/opencode.yml
-.github/workflows/run.yml
----
-total 28
-drwxr-xr-x  7 runner runner 4096 Nov 18 11:39 .
-drwxr-xr-x 16 runner runner 4096 Nov 18 11:39 ..
-drwxr-xr-x  2 runner runner 4096 Nov 18 11:39 logs
-drwxr-xr-x  2 runner runner 4096 Nov 18 11:39 outputs
-drwxr-xr-x  2 runner runner 4096 Nov 18 11:39 tests
-drwxr-xr-x  2 runner runner 4096 Nov 18 11:39 tmp
-drwxr-xr-x  2 runner runner 4096 Nov 18 11:39 tools
----
-./run.sh
-[0m
-[0m$ [0mgit show --stat 68b928d; echo "==="; git show --stat f24ae29
-commit 68b928d40e6aad755d0cf8ff66a538156dc1d511
-Author: ultron <ultron@users.noreply.github.com>
-Date:   Wed Nov 18 11:28:45 2026 +0000
-
-    Add optional Twingate connector with env-only secrets
-
- .agent-work/logs/opencode-output.log               | 7354 ++++++++------------
- .agent-work/logs/test-tunnel-after-twingate.log    |    3 +
- .../logs/test-twingate-connector-missing.log       |    1 +
- .../logs/test-twingate-connector-result.log        |    1 +
- .agent-work/logs/test-twingate-connector-start.log |    4 +
- .agent-work/outputs/issue-9-twingate.md            |   46 +
- .agent-work/tests/test_twingate_connector.sh       |  157 +
- .github/workflows/run.yml                          |   13 +
- README.md                                          |   30 +
- scripts/twingate-connector.sh                      |  169 +
- 10 files changed, 3379 insertions(+), 4399 deletions(-)
-===
-commit f24ae293e097e7a7762c9882cc06612c25e09e27
-Author: github-actions[bot] <41898282+github-actions[bot]@users.noreply.github.com>
-Date:   Wed Nov 18 11:29:43 2026 +0000
-
-    chore: recover OpenCode workspace [skip ci]
-
- .agent-work/logs/opencode-output.log | 83 ++++++++++++++++++++++++++++++++++++
- 1 file changed, 83 insertions(+)
-[0m
-[0m→ [0mRead .github/workflows/run.yml
-[0m→ [0mRead scripts/twingate-connector.sh
-[0m→ [0mRead .agent-work/outputs/issue-9-twingate.md
-[0m→ [0mRead .agent-work/tests/test_twingate_connector.sh
-[0m
-[0m$ [0mgrep -n -i -C 8 'twingate' README.md
-79-Set the repository variable `LOCALXPOSE_BORE_FALLBACK=true` to allow the
-80-fallback for an explicit `localxpose` run, or `false` to disable it for
-81-`auto`.
-82-
-83-The token is never stored in the repository. Add or rotate it under
-84-**Settings > Secrets and variables > Actions > Secrets** as
-85-`LOCALXPOSE_ACCESS_TOKEN`.
-86-
-87:## Twingate private access (optional)
-88-
-89:Twingate is not a public tunnel and does not replace the addresses above. It
-90-is a zero-trust access service, so the Minecraft server stays private and only
-91:authorized Twingate users can reach it. Public players should keep using
-92-Minekube, LocalXpose, bore, Serveo, Pinggy or tunnl.
-93-
-94:The server can run a Twingate Connector alongside the public tunnel:
-95-
-96:1. In the Twingate Admin Console, add a Connector to the remote network and
-97-   generate its **Access Token** and **Refresh Token**.
-98:2. Add the network slug as the repository variable `TWINGATE_NETWORK`, and the
-99:   two connector tokens as repository secrets `TWINGATE_ACCESS_TOKEN` and
-100:   `TWINGATE_REFRESH_TOKEN`.
-101:3. Set the repository variable `TWINGATE_ENABLED=true`.
-102:4. Create a Resource in the Twingate Admin Console for the Minecraft port and
-103-   assign it to the users or groups that should have access.
-104-
-105:`scripts/twingate-connector.sh` runs the pinned
-106:`twingate/connector:1` container with host networking and reads the connector
-107-tokens only from the environment. It never writes token values to the
-108-repository or logs. The connector is optional and a connector failure does
-109-not stop the public tunnel.
-110-
-111:Do not paste Twingate tokens into issues, pull requests, chat or commits. A
-112-token that has been posted publicly must be revoked and regenerated in the
-113:Twingate Admin Console. The value pasted into issue 9 was not used or stored
-114-by this repository.
-115-
-116-## Tunnel settings
-117-
-118-- `LOCALXPOSE_REGION` (repository variable) - relay region: `ap`, `us`, `eu`,
-119-  or `auto` to let LocalXpose choose. Default: `ap`.
-120-- `LOCALXPOSE_BORE_FALLBACK` (repository variable) - set to `false` to make an
-121-  `auto` LocalXpose failure fatal instead of falling back to `bore.pub`, or
---
-260-```bash
-261-bash .agent-work/tests/test_run.sh
-262-bash .agent-work/tests/test_server_control.sh
-263-bash .agent-work/tests/test_tunnel.sh
-264-bash .agent-work/tests/test_serveo_tunnel.sh
-265-bash .agent-work/tests/test_tunnl_tunnel.sh
-266-bash .agent-work/tests/test_tunnl_provider.sh
-267-bash .agent-work/tests/test_minekube_tunnel.sh
-268:bash .agent-work/tests/test_twingate_connector.sh
-269-bash .agent-work/tests/test_network_tune.sh
-270-bash .agent-work/tests/test_network_optimizer.sh
-271-```
-272-
-273-`test_tunnel.sh` uses a fake `loclx` client so it can validate the address
-274-parsing, forwarding and process handling without spending LocalXpose quota.
-275-`test_serveo_tunnel.sh` uses a fake `ssh` client for the same reason.
-276-`test_tunnl_tunnel.sh` also uses a fake `ssh` client and checks that the
-[0m
-[0m$ [0mgit show 68b928d -- .github/workflows/run.yml README.md | sed -n '1,220p'
-commit 68b928d40e6aad755d0cf8ff66a538156dc1d511
-Author: ultron <ultron@users.noreply.github.com>
-Date:   Wed Nov 18 11:28:45 2026 +0000
-
-    Add optional Twingate connector with env-only secrets
-
-diff --git a/.github/workflows/run.yml b/.github/workflows/run.yml
-index d51648a..afe3c30 100644
---- a/.github/workflows/run.yml
-+++ b/.github/workflows/run.yml
-@@ -41,6 +41,11 @@ jobs:
-             MINEKUBE_CONNECT_TOKEN: ${{ secrets.MINEKUBE_CONNECT_TOKEN }}
-             MINEKUBE_GATE_VERSION: ${{ vars.MINEKUBE_GATE_VERSION || '0.81.1' }}
-             MINEKUBE_AUTO: ${{ vars.MINEKUBE_AUTO || 'true' }}
-+            TWINGATE_ENABLED: ${{ vars.TWINGATE_ENABLED || 'false' }}
-+            TWINGATE_NETWORK: ${{ vars.TWINGATE_NETWORK }}
-+            TWINGATE_CONNECTOR_NAME: ${{ vars.TWINGATE_CONNECTOR_NAME || 'ultron-twingate' }}
-+            TWINGATE_ACCESS_TOKEN: ${{ secrets.TWINGATE_ACCESS_TOKEN }}
-+            TWINGATE_REFRESH_TOKEN: ${{ secrets.TWINGATE_REFRESH_TOKEN }}
- 
-         steps:
-             - name: checkout_repo
-@@ -145,6 +150,13 @@ jobs:
-                   print(f"Minecraft TCP port {port} is reachable locally!")
-                   PY
- 
-+            - name: start_twingate_connector
-+              if: ${{ vars.TWINGATE_ENABLED == 'true' }}
-+              continue-on-error: true
-+              run: |
-+                  set -euo pipefail
-+                  bash scripts/twingate-connector.sh start
-+
-             - name: expose_server
-               id: expose-tunnel
-               run: |
-@@ -383,6 +395,7 @@ jobs:
-               run: |
-                   set -euo pipefail
-                   echo "Stopping the server and flushing the world before the final backup..."
-+                  bash scripts/twingate-connector.sh stop >/dev/null 2>&1 || true
-                   bash scripts/server-control.sh save >/dev/null 2>&1 || true
-                   bash scripts/server-control.sh stop 45 || true
- 
-diff --git a/README.md b/README.md
-index c255ab1..9e3a361 100644
---- a/README.md
-+++ b/README.md
-@@ -84,6 +84,35 @@ The token is never stored in the repository. Add or rotate it under
- **Settings > Secrets and variables > Actions > Secrets** as
- `LOCALXPOSE_ACCESS_TOKEN`.
- 
-+## Twingate private access (optional)
-+
-+Twingate is not a public tunnel and does not replace the addresses above. It
-+is a zero-trust access service, so the Minecraft server stays private and only
-+authorized Twingate users can reach it. Public players should keep using
-+Minekube, LocalXpose, bore, Serveo, Pinggy or tunnl.
-+
-+The server can run a Twingate Connector alongside the public tunnel:
-+
-+1. In the Twingate Admin Console, add a Connector to the remote network and
-+   generate its **Access Token** and **Refresh Token**.
-+2. Add the network slug as the repository variable `TWINGATE_NETWORK`, and the
-+   two connector tokens as repository secrets `TWINGATE_ACCESS_TOKEN` and
-+   `TWINGATE_REFRESH_TOKEN`.
-+3. Set the repository variable `TWINGATE_ENABLED=true`.
-+4. Create a Resource in the Twingate Admin Console for the Minecraft port and
-+   assign it to the users or groups that should have access.
-+
-+`scripts/twingate-connector.sh` runs the pinned
-+`twingate/connector:1` container with host networking and reads the connector
-+tokens only from the environment. It never writes token values to the
-+repository or logs. The connector is optional and a connector failure does
-+not stop the public tunnel.
-+
-+Do not paste Twingate tokens into issues, pull requests, chat or commits. A
-+token that has been posted publicly must be revoked and regenerated in the
-+Twingate Admin Console. The value pasted into issue 9 was not used or stored
-+by this repository.
-+
- ## Tunnel settings
- 
- - `LOCALXPOSE_REGION` (repository variable) - relay region: `ap`, `us`, `eu`,
-@@ -236,6 +265,7 @@ bash .agent-work/tests/test_serveo_tunnel.sh
- bash .agent-work/tests/test_tunnl_tunnel.sh
- bash .agent-work/tests/test_tunnl_provider.sh
- bash .agent-work/tests/test_minekube_tunnel.sh
-+bash .agent-work/tests/test_twingate_connector.sh
- bash .agent-work/tests/test_network_tune.sh
- bash .agent-work/tests/test_network_optimizer.sh
- ```
-[0m
-[0m$ [0mgh issue view 10 --repo promikailamin/ultron_smp --comments 2>&1 | sed -n '1,160p'; echo "---auth---"; gh auth status 2>&1 | sed -n '1,60p'
----auth---
-github.com
-  ✓ Logged in to github.com account promikailamin (GH_TOKEN)
-  - Active account: true
-  - Git operations protocol: https
-  - Token: ghp_************************************
-  - Token scopes: 'admin:enterprise', 'admin:gpg_key', 'admin:org', 'admin:org_hook', 'admin:public_key', 'admin:repo_hook', 'admin:ssh_signing_key', 'audit_log', 'codespace', 'copilot', 'delete:packages', 'delete_repo', 'gist', 'notifications', 'project', 'repo', 'user', 'workflow', 'write:discussion', 'write:network_configurations', 'write:packages'
-[0m
-[0m$ [0mgh issue view 10 --repo promikailamin/ultron_smp --json number,title,body,state,comments 2>&1 | head -c 4000
-{"body":"now use them and impliment the twingate in run.yml","comments":[],"number":10,"state":"OPEN","title":"i added GitHub action secrets TWINGATE_ACCESS_TOKEN and TWINGATE_REFRESH_TOKEN"}
-[0m
-[0m$ [0mgit branch -a; echo '---'; git remote -v; echo '---'; ls -la .agent-work/logs .agent-work/tools .agent-work/tests; echo '---'; cat .gitignore
-* main
-  remotes/origin/main
----
-origin	https://github.com/promikailamin/ultron_smp (fetch)
-origin	https://github.com/promikailamin/ultron_smp (push)
----
-.agent-work/logs:
-total 172
-drwxr-xr-x 2 runner runner  4096 Nov 18 11:39 .
-drwxr-xr-x 7 runner runner  4096 Nov 18 11:39 ..
--rw-r--r-- 1 runner runner  2231 Nov 18 11:39 issue-3-fix.log
--rw-r--r-- 1 runner runner  3276 Nov 18 11:39 issue-6-fix.log
--rw-r--r-- 1 runner runner  2400 Nov 18 11:39 issue-7-fix.log
--rw-r--r-- 1 runner runner   261 Nov 18 11:39 localxpose-free-account-test.log
--rw-r--r-- 1 runner runner   169 Nov 18 11:39 low-latency-tunnel-test-ap.log
--rw-r--r-- 1 runner runner   447 Nov 18 11:39 low-latency-tunnel-test-run.log
--rw-r--r-- 1 runner runner   445 Nov 18 11:39 low-latency-tunnel-test.log
--rw-r--r-- 1 runner runner    58 Nov 18 11:39 minekube-auto-test.log
--rw-r--r-- 1 runner runner    58 Nov 18 11:39 minekube-minekube-test.log
--rw-r--r-- 1 runner runner  9501 Nov 18 11:39 network-optimizer-test.log
--rw-r--r-- 1 runner runner   597 Nov 18 11:39 network-tune-test.log
--rw-r--r-- 1 runner runner 13283 Nov 18 11:39 opencode-output.log
--rw-r--r-- 1 runner runner    64 Nov 18 11:39 run-test-run2.log
--rw-r--r-- 1 runner runner  7798 Nov 18 11:39 run-test.log
--rw-r--r-- 1 runner runner    52 Nov 18 11:39 serveo-tunnel-test.log
--rw-r--r-- 1 runner runner  9467 Nov 18 11:39 server-control-test.log
--rw-r--r-- 1 runner runner    54 Nov 18 11:39 status-low-latency.log
--rw-r--r-- 1 runner runner    55 Nov 18 11:39 status-stable.log
--rw-r--r-- 1 runner runner    60 Nov 18 11:39 test-serveo-http.log
--rw-r--r-- 1 runner runner   128 Nov 18 11:39 test-serveo-tunnel-result.log
--rw-r--r-- 1 runner runner   114 Nov 18 11:39 test-tunnel-after-twingate.log
--rw-r--r-- 1 runner runner   114 Nov 18 11:39 test-tunnel-dispatch-result.log
--rw-r--r-- 1 runner runner   205 Nov 18 11:39 test-tunnl-provider-result.log
--rw-r--r-- 1 runner runner   120 Nov 18 11:39 test-tunnl-tunnel-result.log
--rw-r--r-- 1 runner runner   166 Nov 18 11:39 test-twingate-connector-missing.log
--rw-r--r-- 1 runner runner    88 Nov 18 11:39 test-twingate-connector-result.log
--rw-r--r-- 1 runner runner   288 Nov 18 11:39 test-twingate-connector-start.log
--rw-r--r-- 1 runner runner   331 Nov 18 11:39 tunnel-bore-fallback-test.log
--rw-r--r-- 1 runner runner   114 Nov 18 11:39 tunnel-test-run.log
--rw-r--r-- 1 runner runner   320 Nov 18 11:39 tunnel-test-run2.log
--rw-r--r-- 1 runner runner   283 Nov 18 11:39 tunnel-test-run3.log
--rw-r--r-- 1 runner runner    34 Nov 18 11:39 tunnel-test.log
--rw-r--r-- 1 runner runner    81 Nov 18 11:39 tunnl-real-test.log
-
-.agent-work/tests:
-total 80
-drwxr-xr-x 2 runner runner 4096 Nov 18 11:39 .
-drwxr-xr-x 7 runner runner 4096 Nov 18 11:39 ..
--rwxr-xr-x 1 runner runner 2340 Nov 18 11:39 mc_status.py
--rwxr-xr-x 1 runner runner 2134 Nov 18 11:39 test_low_latency_tunnel.sh
--rwxr-xr-x 1 runner runner 5978 Nov 18 11:39 test_minekube_tunnel.sh
--rwxr-xr-x 1 runner runner 3871 Nov 18 11:39 test_network_optimizer.sh
--rwxr-xr-x 1 runner runner  825 Nov 18 11:39 test_network_tune.sh
--rwxr-xr-x 1 runner runner 1523 Nov 18 11:39 test_run.sh
--rwxr-xr-x 1 runner runner 4735 Nov 18 11:39 test_serveo_tunnel.sh
--rwxr-xr-x 1 runner runner 3913 Nov 18 11:39 test_server_control.sh
--rwxr-xr-x 1 runner runner 4459 Nov 18 11:39 test_tunnel.sh
--rwxr-xr-x 1 runner runner 5875 Nov 18 11:39 test_tunnl_provider.sh
--rwxr-xr-x 1 runner runner 4414 Nov 18 11:39 test_tunnl_tunnel.sh
--rwxr-xr-x 1 runner runner 4597 Nov 18 11:39 test_twingate_connector.sh
-
-.agent-work/tools:
-total 12
-drwxr-xr-x 2 runner runner 4096 Nov 18 11:39 .
-drwxr-xr-x 7 runner runner 4096 Nov 18 11:39 ..
--rwxr-xr-x 1 runner runner 1224 Nov 18 11:39 analyze-server-jar.sh
----
-.agent-work/tools/bore-*
-.agent-work/tools/loclx-*
-.agent-work/tools/gate-*
-.agent-work/tools/.gate-download-*
-.agent-work/tmp/*
-!.agent-work/tmp/.gitkeep
-.agent-work/logs/tunnel.log
-.agent-work/logs/tunnel-start.log
-.agent-work/logs/tunnel-restarts.log
-.agent-work/logs/localxpose-tunnel.log
-.agent-work/logs/localxpose-attempt.log
-.agent-work/logs/localxpose-tunnel-restarts.log
-.agent-work/logs/test-http.log
-.agent-work/logs/pinggy-tunnel.log
-.agent-work/logs/pinggy-attempt.log
-.agent-work/logs/serveo-tunnel.log
-.agent-work/logs/serveo-attempt.log
-.agent-work/logs/low-latency-tunnel-start.log
-.agent-work/logs/low-latency-tunnel-restarts.log
-.agent-work/logs/test-latency-http.log
-.agent-work/tmp/pinggy_known_hosts
-.agent-work/tmp/serveo_known_hosts
-.agent-work/logs/tunnl-tunnel.log
-.agent-work/logs/tunnl-attempt.log
-.agent-work/logs/minekube-tunnel.log
-.agent-work/logs/test-minekube-http.log
-.agent-work/logs/tunnl-status.log
-.agent-work/logs/tunnl-tunnel-test.log
-.agent-work/logs/test-tunnl-http.log
-.agent-work/logs/tunnl-provider-test.log
-.agent-work/logs/test-tunnl-provider-http.log
-[0m
-[0m$ [0mcommand -v docker || true; docker version 2>&1 | head -20 || true; uname -a; echo '---'; sed -n '180,300p' README.md
-/usr/bin/docker
-Client: Docker Engine - Community
- Version:           29.4.2
- API version:       1.54
- Go version:        go1.26.2
- Git commit:        055a478
- Built:             Fri May  1 10:24:04 2026
- OS/Arch:           linux/amd64
- Context:           default
-
-Server: Docker Engine - Community
- Engine:
-  Version:          29.4.2
-  API version:      1.54 (minimum version 1.40)
-  Go version:       go1.26.2
-  Git commit:       d329809
-  Built:            Fri May  1 10:24:04 2026
-  OS/Arch:          linux/amd64
-  Experimental:     false
- containerd:
-  Version:          v2.4.2
-Linux runnervmccnms 7.0.0-1019-azure #20-Ubuntu SMP PREEMPT Mon Oct 19 22:41:16 UTC 2026 x86_64 GNU/Linux
----
-  cancelled, stops the server, and pushes a final backup.
-- A new run re-syncs from `origin/main` before starting the server, so it
-  cannot start from a stale world and overwrite the previous run's changes.
-- `sync-chunk-writes` is disabled because the workflow now flushes explicitly
-  every 90 seconds and on shutdown. This avoids disk-write stalls on the
-  runner while still keeping the backed-up world fresh.
-- `pause-when-empty-seconds=0` keeps the server ticking, so the first player
-  to join does not wait for the server to resume from a pause.
-
-The old behaviour (plain `nohup`, no `stop` command, saving only every five
-minutes, and no re-sync at startup) is why a cancelled run could lose the
-most recent changes even though the workflow "saved" the world.
-
-## Server network optimizer
-
-The server jar was unpacked and inspected (see
-`.agent-work/outputs/issue-7-server-jar-analysis.txt`). The main sources of
-network traffic are chunk data, entity tracking, particles, sounds, block
-entities, and block/level events. Krypton and ServerCore already optimize the
-pipeline and server ticking, so this repository adds a small server-side mod
-for the remaining avoidable packets:
-
-- `mods/ultron-network-optimizer-1.0.0.jar` culls particles, positional
-  sounds, block-entity data, non-global level events, and block events that
-  are beyond a configurable distance from the player.
-- It also skips repeated block updates for the same position/state and empty
-  entity-data packets.
-- Suppressed-packet totals are written to the server log every five minutes.
-
-Source and a reproducible build script live in `network-optimizer/`:
-
-```bash
-bash network-optimizer/build.sh
-```
-
-Settings are read from `config/ultron-network.properties`. Disable an
-individual filter there if a gameplay feature depends on that packet.
-
-The vanilla settings are also tuned for lower packet volume:
-
-- `view-distance=6` and `simulation-distance=6` instead of `10`.
-- `entity-broadcast-range-percentage=60` so entities are tracked over a
-  smaller area.
-- `network-compression-threshold=128` so more medium-sized packets are
-  compressed before they cross the tunnel.
-
-These changes reduce bandwidth and burst size. They cannot remove the
-physical round-trip time between the runner and South Asia.
-
-## Why the ping is high
-
-The Minecraft server runs on a GitHub Actions runner in the United States.
-A player in Bangladesh is physically thousands of kilometres away, so the
-round-trip time (RTT) has a hard lower bound of roughly 150-250 ms depending
-on the ISP route. No server setting can remove that distance.
-
-The workflow makes the best of the available infrastructure:
-
-- `scripts/network-tune.sh` enables BBR, larger TCP buffers, a lower
-  unsent-byte watermark, and a larger network backlog so long-haul
-  connections recover better from packet loss.
-- `scripts/minekube-tunnel.sh` uses Minekube Connect through Gate, which gives
-  players a nearby Connect edge and avoids exposing the runner directly.
-- `scripts/tunnel.sh` selects the tunnel provider and uses a LocalXpose TCP
-  tunnel, with the region selectable through `LOCALXPOSE_REGION`.
-- `scripts/bore-tunnel.sh` keeps the stable `bore.pub` option and fallback
-  available.
-- `scripts/serveo-tunnel.sh` provides an alternative free SSH relay with
-  automatic reconnects.
-- `scripts/low-latency-tunnel.sh` prefers Pinggy's Asia-Pacific relay for
-  Bangladeshi players and reconnects when the free hourly tunnel expires.
-- `scripts/tunnl-tunnel.sh` adds a `tunnl.gg` HTTP status page. tunnl.gg does
-  not carry raw TCP, so the game stays on a TCP relay.
-
-If the game is still unplayable, the only real fix is to host the server on
-hardware with a better network path to South Asia (for example a VPS in
-Singapore, India, or Bangladesh) instead of a GitHub Actions runner.
-
-## Tests
-
-```bash
-bash .agent-work/tests/test_run.sh
-bash .agent-work/tests/test_server_control.sh
-bash .agent-work/tests/test_tunnel.sh
-bash .agent-work/tests/test_serveo_tunnel.sh
-bash .agent-work/tests/test_tunnl_tunnel.sh
-bash .agent-work/tests/test_tunnl_provider.sh
-bash .agent-work/tests/test_minekube_tunnel.sh
-bash .agent-work/tests/test_twingate_connector.sh
-bash .agent-work/tests/test_network_tune.sh
-bash .agent-work/tests/test_network_optimizer.sh
-```
-
-`test_tunnel.sh` uses a fake `loclx` client so it can validate the address
-parsing, forwarding and process handling without spending LocalXpose quota.
-`test_serveo_tunnel.sh` uses a fake `ssh` client for the same reason.
-`test_tunnl_tunnel.sh` also uses a fake `ssh` client and checks that the
-tunnl.gg URL serves the status page and its `/healthz` endpoint.
-`test_tunnl_provider.sh` validates the full `TUNNEL_PROVIDER=tunnl` path:
-a TCP game relay plus the tunnl.gg status page.
-`test_minekube_tunnel.sh` uses a fake Gate connector to validate the
-`TUNNEL_PROVIDER=minekube` path, generated Gate config, address file and
-local forwarding without registering a real endpoint.
-`test_network_optimizer.sh` builds the mod, checks its mixin targets against
-`server-26.3.jar`, and starts a disposable server to confirm the mod loads
-without injection errors.
-[0m
-[0m$ [0mcat .agent-work/logs/test-twingate-connector-start.log; echo '---'; cat .agent-work/logs/test-twingate-connector-result.log; echo '---'; cat .agent-work/logs/test-tunnel-after-twingate.log; echo '---'; cat .agent-work/logs/opencode-output.log | tail -40
-Twingate connector 'ultron-twingate-test' is running.
-Create/assign the Minecraft resource in the Twingate Admin Console; its token values were supplied only through the environment.
-Twingate connector 'ultron-twingate-test' is running.
-Twingate connector 'ultron-twingate-test' stopped.
----
-Twingate connector test passed: env-only tokens, cleanup and status handling validated.
----
-Tunnel is live at 127.0.0.1:25601
-HTTP/1.0 200 OK
-Tunnel end-to-end test passed: public TCP endpoint is reachable
----
-- `scripts/serveo-tunnel.sh` provides an alternative free SSH relay with
-  automatic reconnects.
-- `scripts/low-latency-tunnel.sh` prefers Pinggy's Asia-Pacific relay for
-  Bangladeshi players and reconnects when the free hourly tunnel expires.
-- `scripts/tunnl-tunnel.sh` adds a `tunnl.gg` HTTP status page. tunnl.gg does
-  not carry raw TCP, so the game stays on a TCP relay.
-
-If the game is still unplayable, the only real fix is to host the server on
-hardware with a better network path to South Asia (for example a VPS in
-Singapore, India, or Bangladesh) instead of a GitHub Actions runner.
-
-## Tests
-
-```bash
-bash .agent-work/tests/test_run.sh
-bash .agent-work/tests/test_server_control.sh
-bash .agent-work/tests/test_tunnel.sh
-bash .agent-work/tests/test_serveo_tunnel.sh
-bash .agent-work/tests/test_tunnl_tunnel.sh
-bash .agent-work/tests/test_tunnl_provider.sh
-bash .agent-work/tests/test_minekube_tunnel.sh
-bash .agent-work/tests/test_twingate_connector.sh
-bash .agent-work/tests/test_network_tune.sh
-bash .agent-work/tests/test_network_optimizer.sh
-```
-
-`test_tunnel.sh` uses a fake `loclx` client so it can validate the address
-parsing, forwarding and process handling without spending LocalXpose quota.
-`test_serveo_tunnel.sh` uses a fake `ssh` client for the same reason.
-`test_tunnl_tunnel.sh` also uses a fake `ssh` client and checks that the
-tunnl.gg URL serves the status page and its `/healthz` endpoint.
-`test_tunnl_provider.sh` validates the full `TUNNEL_PROVIDER=tunnl` path:
-a TCP game relay plus the tunnl.gg status page.
-`test_minekube_tunnel.sh` uses a fake Gate connector to validate the
-`TUNNEL_PROVIDER=minekube` path, generated Gate config, address file and
-local forwarding without registering a real endpoint.
-`test_network_optimizer.sh` builds the mod, checks its mixin targets against
-`server-26.3.jar`, and starts a disposable server to confirm the mod loads
-without injection errors.
-[0m
-[0m
-[0m$ [0mgh issue view 9 --repo promikailamin/ultron_smp --json number,title,body,state,comments 2>&1 | head -c 6000
-{"body":"twingate access token\n\n<redacted-token>xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx","comments":[{"id":"IC_kwDOVwgw6M8AAAABn-CIkw","author":{"login":"promikailamin"},"authorAssociation":"OWNER","body":"Implemented optional Twingate private access in commit `68b928d` (pushed to `main`).\n\nWhat changed:\n- Added `scripts/twingate-connector.sh` to start/stop/check the pinned `twingate/connector:1` container.\n- Connector credentials are read only from repository secrets/variables (`TWINGATE_NETWORK`, `TWINGATE_ACCESS_TOKEN`, `TWINGATE_REFRESH_TOKEN`) and are never written to the repo or logs.\n- `run.yml` starts the connector only when `TWINGATE_ENABLED=true`; a connector failure is non-fatal so the public tunnel keeps working.\n- Added README setup steps and automated test coverage.\n\nImportant security note: the JWT pasted in this issue was not used or stored anywhere. It appears to be a short-lived client/device token, not a Connector access+refresh token pair, so it cannot configure a Connector. Because it was posted publicly, please revoke/regenerate it in the Twingate Admin Console.\n\nTests actually run:\n- `bash .agent-work/tests/test_twingate_connector.sh` — PASS\n- `bash .agent-work/tests/test_tunnel.sh` — PASS\n- Workflow YAML parse — PASS\n\nRemaining limitation: a real Twingate end-to-end connection could not be tested here because it requires a valid connector token pair, tenant network slug, and an Admin Console Resource. Twingate is private access, not a public Minecraft tunnel; public players should keep using the existing tunnel providers.","createdAt":"2026-11-18T11:28:57Z","includesCreatedEdit":false,"isMinimized":false,"minimizedReason":"","reactionGroups":[],"url":"https://github.com/promikailamin/ultron_smp/issues/9#issuecomment-6977259667","viewerDidAuthor":true},{"id":"IC_kwDOVwgw6M8AAAABn-DMRg","author":{"login":"promikailamin"},"authorAssociation":"OWNER","body":"OpenCode recovery completed. Any remaining workspace changes have been committed and pushed to main.","createdAt":"2026-11-18T11:29:45Z","includesCreatedEdit":false,"isMinimized":false,"minimizedReason":"","reactionGroups":[],"url":"https://github.com/promikailamin/ultron_smp/issues/9#issuecomment-6977276998","viewerDidAuthor":true}],"number":9,"state":"OPEN","title":"Impliment twingate to this server"}
-[0m
-[0m$ [0mgh pr list --repo promikailamin/ultron_smp --state all --limit 20 2>&1; echo '---'; gh run list --repo promikailamin/ultron_smp --limit 10 2>&1 | head -30
----
-in_progress		i added GitHub action secrets TWINGATE_ACCESS_TOKEN and TWINGATE_REFRESH_TOKEN	Issue to OpenCode	main	issues	44296589959	1m3s	2026-11-18T11:38:53Z
-completed	success	Impliment twingate to this server	Issue to OpenCode	main	issues	44294193383	6m44s	2026-11-18T11:23:03Z
-completed	cancelled	Run UltronSMP	Run UltronSMP	main	workflow_dispatch	44291571343	4m51s	2026-11-18T11:06:11Z
-completed	success	Impliment minekube to this server	Issue to OpenCode	main	issues	44281168104	14m58s	2026-11-18T10:00:09Z
-completed	cancelled	Run UltronSMP	Run UltronSMP	main	workflow_dispatch	44279276751	11m7s	2026-11-18T09:47:48Z
-completed	success	I think tunnels are good but the server packets is either too large or sending unwanted packets so ping is so high	Issue to OpenCode	main	issues	44273953887	12m29s	2026-11-18T09:13:46Z
-completed	cancelled	Run UltronSMP	Run UltronSMP	main	workflow_dispatch	44273088890	3m27s	2026-11-18T09:08:15Z
-completed	success	Add tunnl.gg tunnel to this	Issue to OpenCode	main	issues	44270999802	13m35s	2026-11-18T08:54:17Z
-completed	failure	Run UltronSMP	Run UltronSMP	main	workflow_dispatch	44262852433	2m16s	2026-11-18T07:56:56Z
-completed	success	Add serveo tunnel along with bore.pub	Issue to OpenCode	main	issues	44259757978	5m0s	2026-11-18T07:33:05Z
-[0m
-[0m◈ [0mParallel Web Search "Twingate connector access token JWT claims network aud TWINGATE_NETWORK"
-[0m◈ [0mParallel Web Search "Twingate connector docker environment variables TWINGATE_NETWORK TWINGATE_ACCESS_TOKEN required"
-[0m
-[0m$ [0mcat .agent-work/tests/test_run.sh; echo '---workflow opencode---'; cat .github/workflows/opencode.yml
-#!/usr/bin/env bash
-# Start run.sh in a disposable copy of the server and confirm it listens.
-set -euo pipefail
-
-ROOT_DIR="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")/../.." && pwd)"
-TEST_DIR="$ROOT_DIR/.agent-work/tmp/server-test"
-LOG_FILE="$ROOT_DIR/.agent-work/logs/run-test.log"
-TEST_PORT="${TEST_PORT:-25566}"
-
-rm -rf "$TEST_DIR"
-mkdir -p "$TEST_DIR" "$(dirname -- "$LOG_FILE")"
-
-ln -s ../../../libraries "$TEST_DIR/libraries"
-ln -s ../../../versions "$TEST_DIR/versions"
-ln -s ../../../mods "$TEST_DIR/mods"
-ln -s ../../../.fabric "$TEST_DIR/.fabric"
-ln -s ../../../native "$TEST_DIR/native"
-cp "$ROOT_DIR/loader.jar" "$ROOT_DIR/log4j2.xml" "$ROOT_DIR/eula.txt" \
-    "$ROOT_DIR/server.properties" "$ROOT_DIR/run.sh" "$TEST_DIR/"
-cp -a "$ROOT_DIR/world" "$TEST_DIR/world"
-cp -a "$ROOT_DIR/config" "$TEST_DIR/config"
-sed -i "s/^server-port=.*/server-port=${TEST_PORT}/" "$TEST_DIR/server.properties"
-chmod +x "$TEST_DIR/run.sh"
-
-bash "$TEST_DIR/run.sh" >"$LOG_FILE" 2>&1 &
-server_pid=$!
-
-# shellcheck disable=SC2329
-cleanup() {
-    kill "$server_pid" 2>/dev/null || true
-    wait "$server_pid" 2>/dev/null || true
-}
-trap cleanup EXIT
-
-for second in $(seq 1 120); do
-    if (echo > "/dev/tcp/127.0.0.1/${TEST_PORT}") 2>/dev/null; then
-        echo "run.sh test passed: server is listening on port ${TEST_PORT} after ${second}s"
-        exit 0
-    fi
-    if ! kill -0 "$server_pid" 2>/dev/null; then
-        break
-    fi
-    sleep 1
-done
-
-echo "run.sh test failed; see ${LOG_FILE}"
-tail -n 100 "$LOG_FILE" || true
-exit 1
----workflow opencode---
+[0m$ [0mcat .github/workflows/opencode.yml
 name: Issue to OpenCode
 
 on:
@@ -938,291 +816,7 @@ jobs:
               exit 1
           fi
 [0m
-[0m$ [0mgit show f24ae29 -- .agent-work/logs/opencode-output.log | sed -n '1,120p'
-commit f24ae293e097e7a7762c9882cc06612c25e09e27
-Author: github-actions[bot] <41898282+github-actions[bot]@users.noreply.github.com>
-Date:   Wed Nov 18 11:29:43 2026 +0000
-
-    chore: recover OpenCode workspace [skip ci]
-
-diff --git a/.agent-work/logs/opencode-output.log b/.agent-work/logs/opencode-output.log
-index 1e1a474..85ae77c 100644
---- a/.agent-work/logs/opencode-output.log
-+++ b/.agent-work/logs/opencode-output.log
-@@ -3603,3 +3603,86 @@ Tunnel is live at 127.0.0.1:25601
- HTTP/1.0 200 OK
- Tunnel end-to-end test passed: public TCP endpoint is reachable
- [0m
-+[0m$ [0mgit status --short && git add -A && git status --short
-+M .agent-work/logs/opencode-output.log
-+ M .github/workflows/run.yml
-+ M README.md
-+?? .agent-work/logs/test-tunnel-after-twingate.log
-+?? .agent-work/logs/test-twingate-connector-missing.log
-+?? .agent-work/logs/test-twingate-connector-result.log
-+?? .agent-work/logs/test-twingate-connector-start.log
-+?? .agent-work/outputs/issue-9-twingate.md
-+?? .agent-work/tests/test_twingate_connector.sh
-+?? scripts/twingate-connector.sh
-+M  .agent-work/logs/opencode-output.log
-+A  .agent-work/logs/test-tunnel-after-twingate.log
-+A  .agent-work/logs/test-twingate-connector-missing.log
-+A  .agent-work/logs/test-twingate-connector-result.log
-+A  .agent-work/logs/test-twingate-connector-start.log
-+A  .agent-work/outputs/issue-9-twingate.md
-+A  .agent-work/tests/test_twingate_connector.sh
-+M  .github/workflows/run.yml
-+M  README.md
-+A  scripts/twingate-connector.sh
-+[0m
-+[0m$ [0mif git grep --cached -l -E 'eyJ[A-Za-z0-9_-]{10,}\.' >/tmp/opencode/secret-scan.txt 2>/dev/null; then echo 'Potential JWT found in staged files:'; cat /tmp/opencode/secret-scan.txt; else echo 'No JWT-like values staged.'; fi; if git grep --cached -l -E 'ghp_[A-Za-z0-9]{20,}|github_pat_[A-Za-z0-9_]{20,}' >/tmp/opencode/token-scan.txt 2>/dev/null; then echo 'Potential GitHub token found:'; cat /tmp/opencode/token-scan.txt; else echo 'No GitHub-token-like values staged.'; fi
-+No JWT-like values staged.
-+No GitHub-token-like values staged.
-+[0m
-+[0m$ [0mgit commit -m "Add optional Twingate connector with env-only secrets" && git log --oneline -3
-+Author identity unknown
-+
-+*** Please tell me who you are.
-+
-+Run
-+
-+  git config --global user.email "you@example.com"
-+  git config --global user.name "Your Name"
-+
-+to set your account's default identity.
-+Omit --global to set the identity only in this repository.
-+
-+fatal: empty ident name (for <runner@runnervmccnms.w5kyndb1gvhehekumsuunpfd1d.bx.internal.cloudapp.net>) not allowed
-+[0m
-+[0m$ [0mgit config user.name "ultron" && git config user.email "ultron@users.noreply.github.com" && git commit -m "Add optional Twingate connector with env-only secrets" && git log --oneline -3
-+[main 68b928d] Add optional Twingate connector with env-only secrets
-+ 10 files changed, 3379 insertions(+), 4399 deletions(-)
-+ create mode 100644 .agent-work/logs/test-tunnel-after-twingate.log
-+ create mode 100644 .agent-work/logs/test-twingate-connector-missing.log
-+ create mode 100644 .agent-work/logs/test-twingate-connector-result.log
-+ create mode 100644 .agent-work/logs/test-twingate-connector-start.log
-+ create mode 100644 .agent-work/outputs/issue-9-twingate.md
-+ create mode 100755 .agent-work/tests/test_twingate_connector.sh
-+ create mode 100755 scripts/twingate-connector.sh
-+68b928d Add optional Twingate connector with env-only secrets
-+9ad6530 Final Minecraft server backup
-+53b6635 Auto-save Minecraft server data
-+[0m
-+[0m$ [0mgit push origin HEAD:main 2>&1
-+To https://github.com/promikailamin/ultron_smp
-+   9ad6530..68b928d  HEAD -> main
-+[0m
-+[0m$ [0mgh issue comment 9 --repo promikailamin/ultron_smp --body $'Implemented optional Twingate private access in commit `68b928d` (pushed to `main`).\n\nWhat changed:\n- Added `scripts/twingate-connector.sh` to start/stop/check the pinned `twingate/connector:1` container.\n- Connector credentials are read only from repository secrets/variables (`TWINGATE_NETWORK`, `TWINGATE_ACCESS_TOKEN`, `TWINGATE_REFRESH_TOKEN`) and are never written to the repo or logs.\n- `run.yml` starts the connector only when `TWINGATE_ENABLED=true`; a connector failure is non-fatal so the public tunnel keeps working.\n- Added README setup steps and automated test coverage.\n\nImportant security note: the JWT pasted in this issue was not used or stored anywhere. It appears to be a short-lived client/device token, not a Connector access+refresh token pair, so it cannot configure a Connector. Because it was posted publicly, please revoke/regenerate it in the Twingate Admin Console.\n\nTests actually run:\n- `bash .agent-work/tests/test_twingate_connector.sh` — PASS\n- `bash .agent-work/tests/test_tunnel.sh` — PASS\n- Workflow YAML parse — PASS\n\nRemaining limitation: a real Twingate end-to-end connection could not be tested here because it requires a valid connector token pair, tenant network slug, and an Admin Console Resource. Twingate is private access, not a public Minecraft tunnel; public players should keep using the existing tunnel providers.' 2>&1
-+https://github.com/promikailamin/ultron_smp/issues/9#issuecomment-6977259667
-+[0m
-+[0m$ [0mgit status --short; git log --oneline -2; git rev-parse HEAD
-+M .agent-work/logs/opencode-output.log
-+68b928d Add optional Twingate connector with env-only secrets
-+9ad6530 Final Minecraft server backup
-+68b928d40e6aad755d0cf8ff66a538156dc1d511
-+[0m
-+[0m# [0mTodos
-+[✓] Review repo architecture and Twingate requirements
-+[✓] Add secure Twingate connector script (env-only secrets)
-+[✓] Wire optional Twingate connector into run workflow
-+[✓] Add automated test and documentation
-+[✓] Run tests, commit and push, comment on issue
-+[0m
-+Implemented optional Twingate private access and pushed commit `68b928d` to `main`.
-+
-+- Added `scripts/twingate-connector.sh` with env-only connector secrets, no token logging.
-+- Wired `TWINGATE_ENABLED` into `.github/workflows/run.yml`; failures are non-fatal.
-+- Added README docs, issue report, and `test_twingate_connector.sh` (PASS); `test_tunnel.sh` also PASS.
-+- The pasted JWT was not used or stored. It should be revoked and replaced with proper Connector tokens.
-+
-+Comment posted: https://github.com/promikailamin/ultron_smp/issues/9#issuecomment-6977259667
-[0m
-[0m$ [0mpython3 - <<'PY'
-try:
- import yaml; print('pyyaml yes')
-except Exception as e: print('pyyaml no', e)
-PY
-command -v actionlint || true
-command -v ruby || true
-command -v base64 || true
-pyyaml yes
-/usr/bin/ruby
-/usr/bin/base64
-[0m
-[0m← [0mEdit scripts/twingate-connector.sh
-Index: /home/runner/work/ultron_smp/ultron_smp/scripts/twingate-connector.sh
-===================================================================
---- /home/runner/work/ultron_smp/ultron_smp/scripts/twingate-connector.sh
-+++ /home/runner/work/ultron_smp/ultron_smp/scripts/twingate-connector.sh
-@@ -13,8 +13,9 @@
- NETWORK="${TWINGATE_NETWORK:-}"
- ACCESS_TOKEN="${TWINGATE_ACCESS_TOKEN:-}"
- REFRESH_TOKEN="${TWINGATE_REFRESH_TOKEN:-}"
- LOG_LEVEL="${TWINGATE_LOG_LEVEL:-3}"
-+ENABLED_MODE="${TWINGATE_ENABLED:-auto}"
- 
- ENV_FILE=""
- 
- usage() {
-
-[0m
-[0m← [0mEdit scripts/twingate-connector.sh
-Index: /home/runner/work/ultron_smp/ultron_smp/scripts/twingate-connector.sh
-===================================================================
---- /home/runner/work/ultron_smp/ultron_smp/scripts/twingate-connector.sh
-+++ /home/runner/work/ultron_smp/ultron_smp/scripts/twingate-connector.sh
-@@ -22,13 +22,16 @@
-     cat >&2 <<'EOF'
- Usage: twingate-connector.sh {start|stop|status}
- 
- Required for start (provide through the environment, never on the command line):
--  TWINGATE_NETWORK         Twingate network slug
-   TWINGATE_ACCESS_TOKEN    Connector access token
-   TWINGATE_REFRESH_TOKEN   Connector refresh token
- 
- Optional:
-+  TWINGATE_ENABLED         auto (default), true/required, or false/disabled.
-+                           auto starts only when both connector tokens are set.
-+  TWINGATE_NETWORK         Twingate network slug. If omitted, it is read from
-+                           the access token's "aud" claim.
-   TWINGATE_CONNECTOR_NAME  Docker container name (default: ultron-twingate)
-   TWINGATE_DOCKER_IMAGE    Connector image (default: twingate/connector:1)
-   TWINGATE_DOCKER_BIN      Docker executable (default: docker)
-   TWINGATE_READY_TIMEOUT   Seconds to wait for the container (default: 90)
-
-[0m
-[0m← [0mEdit scripts/twingate-connector.sh
-Index: /home/runner/work/ultron_smp/ultron_smp/scripts/twingate-connector.sh
-===================================================================
---- /home/runner/work/ultron_smp/ultron_smp/scripts/twingate-connector.sh
-+++ /home/runner/work/ultron_smp/ultron_smp/scripts/twingate-connector.sh
-@@ -62,22 +62,101 @@
-             ;;
-     esac
- }
- 
-+mode_is_disabled() {
-+    case "${ENABLED_MODE,,}" in
-+        false | 0 | no | off | disabled)
-+            return 0
-+            ;;
-+        *)
-+            return 1
-+            ;;
-+    esac
-+}
-+
-+mode_is_required() {
-+    case "${ENABLED_MODE,,}" in
-+        true | 1 | yes | on | required)
-+            return 0
-+            ;;
-+        *)
-+            return 1
-+            ;;
-+    esac
-+}
-+
-+derive_network_from_token() {
-+    TWINGATE_ACCESS_TOKEN="$ACCESS_TOKEN" python3 - <<'PY'
-+import base64
-+import json
-+import os
-+import sys
-+
-+token = os.environ.get("TWINGATE_ACCESS_TOKEN", "")
-+parts = token.split(".")
-+if len(parts) < 2:
-+    sys.exit(1)
-+
-+payload = parts[1] + "=" * (-len(parts[1]) % 4)
-+try:
-+    claims = json.loads(base64.urlsafe_b64decode(payload.encode("ascii")))
-+except Exception:
-+    sys.exit(1)
-+
-+audience = claims.get("aud")
-+if isinstance(audience, list):
-+    audience = next((item for item in audience if isinstance(item, str) and item), None)
-+if not isinstance(audience, str):
-+    sys.exit(1)
-+
-+audience = audience.strip()
-+if not audience or not all(ch.isalnum() or ch in "._-" for ch in audience):
-+    sys.exit(1)
-+
-+# Twingate documents the JWT "aud" claim as the tenant/network slug.
-+print(audience)
-+PY
-+}
-+
-+should_skip() {
-+    if mode_is_disabled; then
-+        echo "Twingate connector is disabled (TWINGATE_ENABLED=${ENABLED_MODE})."
-+        return 0
-+    fi
-+
-+    if [ -z "$ACCESS_TOKEN" ] && [ -z "$REFRESH_TOKEN" ]; then
-+        if mode_is_required; then
-+            fail "TWINGATE_ACCESS_TOKEN and TWINGATE_REFRESH_TOKEN are required when TWINGATE_ENABLED=${ENABLED_MODE}."
-+        fi
-+        echo "Twingate connector skipped: TWINGATE_ACCESS_TOKEN and TWINGATE_REFRESH_TOKEN are not configured."
-+        return 0
-+    fi
-+
-+    return 1
-+}
-+
- require_tokens() {
-     local missing=""
- 
--    [ -n "$NETWORK" ] || missing="${missing} TWINGATE_NETWORK"
-     [ -n "$ACCESS_TOKEN" ] || missing="${missing} TWINGATE_ACCESS_TOKEN"
-     [ -n "$REFRESH_TOKEN" ] || missing="${missing} TWINGATE_REFRESH_TOKEN"
- 
-     if [ -n "$missing" ]; then
-         fail "missing Twingate connector configuration:${missing}. Set these as GitHub Actions secrets/variables; never paste tokens into issues or commit them."
-     fi
- 
--    validate_value TWINGATE_NETWORK "$NETWORK"
-     validate_value TWINGATE_ACCESS_TOKEN "$ACCESS_TOKEN"
-     validate_value TWINGATE_REFRESH_TOKEN "$REFRESH_TOKEN"
-+
-+    if [ -z "$NETWORK" ]; then
-+        NETWORK="$(derive_network_from_token 2>/dev/null || true)"
-+    fi
-+    if [ -z "$NETWORK" ]; then
-+        fail "missing Twingate connector configuration: TWINGATE_NETWORK could not be read from the access token. Set the repository variable or secret TWINGATE_NETWORK."
-+    fi
-+
-+    validate_value TWINGATE_NETWORK "$NETWORK"
- }
- 
- require_docker() {
-     command -v "$DOCKER_BIN" >/dev/null 2>&1 \
-
-[0m
-[0m← [0mEdit scripts/twingate-connector.sh
-Index: /home/runner/work/ultron_smp/ultron_smp/scripts/twingate-connector.sh
-===================================================================
---- /home/runner/work/ultron_smp/ultron_smp/scripts/twingate-connector.sh
-+++ /home/runner/work/ultron_smp/ultron_smp/scripts/twingate-connector.sh
-@@ -191,8 +191,12 @@
-     "$DOCKER_BIN" rm -f "$CONTAINER_NAME" >/dev/null 2>&1 || true
- }
- 
- start_connector() {
-+    if should_skip; then
-+        return 0
-+    fi
-+
-     require_tokens
-     require_docker
-     mkdir -p "$LOG_DIR"
- 
-
-[0m
-[0m$ [0msed -n '1,230p' scripts/twingate-connector.sh
+[0m$ [0mcat scripts/twingate-connector.sh
 #!/usr/bin/env bash
 set -euo pipefail
 
@@ -1453,51 +1047,1000 @@ start_connector() {
 
 show_status() {
     require_docker
+
+    if container_running; then
+        echo "Twingate connector '${CONTAINER_NAME}' is running."
+        return 0
+    fi
+
+    echo "Twingate connector '${CONTAINER_NAME}' is not running."
+    return 1
+}
+
+case "${1:-}" in
+    start)
+        start_connector
+        ;;
+    stop)
+        stop_connector
+        echo "Twingate connector '${CONTAINER_NAME}' stopped."
+        ;;
+    status)
+        show_status
+        ;;
+    *)
+        usage
+        exit 2
+        ;;
+esac
 [0m
-[0m← [0mEdit .github/workflows/run.yml
-Index: /home/runner/work/ultron_smp/ultron_smp/.github/workflows/run.yml
+[0m$ [0mgit log --oneline -20 -- .github/workflows/run.yml scripts/twingate-connector.sh && git show 944205b --stat
+944205b Enable Twingate automatically from connector secrets
+68b928d Add optional Twingate connector with env-only secrets
+4d71153 Add Minekube Connect tunnel via Gate
+7616c75 Add tunnl.gg status tunnel and Bangladesh-prioritised relay
+3fa0c4b Add selectable Serveo tunnel provider
+e0cc193 Switch tunnel provider to LocalXpose with bore fallback
+22e38bd fix: keep cancellation cleanup within runner kill window
+2312f94 test: wait for console readiness; harden world re-sync
+4aa3b6a fix: save world gracefully and sync before new runs
+ca26579 fix: add low-latency tunnel and TCP tuning for high-ping players
+c9cff14 fix: make server reliably reachable with a public tunnel
+5c2bfd8 fix
+2765625 added port verify
+7ef666b init
+commit 944205b0ecd241d49e8fa4e7d61b5b1a93243fa7
+Author: ultron <ultron@users.noreply.github.com>
+Date:   Wed Nov 18 11:44:35 2026 +0000
+
+    Enable Twingate automatically from connector secrets
+
+ .agent-work/logs/opencode-output.log               | 5007 +++++++-------------
+ .../logs/test-twingate-connector-derived.log       |    2 +
+ .../logs/test-twingate-connector-required.log      |    1 +
+ .../logs/test-twingate-connector-result.log        |    2 +-
+ .agent-work/logs/test-twingate-connector-skip.log  |    1 +
+ .agent-work/outputs/issue-10-twingate.md           |   65 +
+ .agent-work/tests/test_twingate_connector.sh       |  114 +-
+ .github/workflows/run.yml                          |   11 +-
+ README.md                                          |   21 +-
+ scripts/twingate-connector.sh                      |   93 +-
+ 10 files changed, 2063 insertions(+), 3254 deletions(-)
+[0m
+[0m$ [0menv | grep -E '^(GH_TOKEN|GITHUB_TOKEN|PAT_TOKEN)=' | sed 's/=.*/=<set>/'
+PAT_TOKEN=<set>
+GH_TOKEN=<set>
+GITHUB_TOKEN=<set>
+[0m
+[0m$ [0mgh run list --repo promikailamin/ultron_smp --limit 15 --json databaseId,displayTitle,workflowName,status,conclusion,createdAt,headSha 2>&1 | head -100
+[{"conclusion":"","createdAt":"2026-11-18T11:58:11Z","databaseId":44299470801,"displayTitle":"I have added all action secrets for twingate but the run failed see the last run.yml action and fix it","headSha":"f7e0711553800e2e3d6896a761ae35bb6731a605","status":"in_progress","workflowName":"Issue to OpenCode"},{"conclusion":"cancelled","createdAt":"2026-11-18T11:50:52Z","databaseId":44298373037,"displayTitle":"Run UltronSMP","headSha":"c126e6bb335ab60c7bc970072608d97ea9e4e1e0","status":"completed","workflowName":"Run UltronSMP"},{"conclusion":"success","createdAt":"2026-11-18T11:38:53Z","databaseId":44296589959,"displayTitle":"i added GitHub action secrets TWINGATE_ACCESS_TOKEN and TWINGATE_REFRESH_TOKEN","headSha":"f24ae293e097e7a7762c9882cc06612c25e09e27","status":"completed","workflowName":"Issue to OpenCode"},{"conclusion":"success","createdAt":"2026-11-18T11:23:03Z","databaseId":44294193383,"displayTitle":"Impliment twingate to this server","headSha":"9ad6530db954764183305adf933940fb081fe003","status":"completed","workflowName":"Issue to OpenCode"},{"conclusion":"cancelled","createdAt":"2026-11-18T11:06:11Z","databaseId":44291571343,"displayTitle":"Run UltronSMP","headSha":"479048e8845e784d1e4be8ade8aa7a179891dc15","status":"completed","workflowName":"Run UltronSMP"},{"conclusion":"success","createdAt":"2026-11-18T10:00:09Z","databaseId":44281168104,"displayTitle":"Impliment minekube to this server","headSha":"9ce688974ffbddef202a50bb7fcb57721b09da8b","status":"completed","workflowName":"Issue to OpenCode"},{"conclusion":"cancelled","createdAt":"2026-11-18T09:47:48Z","databaseId":44279276751,"displayTitle":"Run UltronSMP","headSha":"206e11638a9b4a33fa5132ebc4794ac843467abe","status":"completed","workflowName":"Run UltronSMP"},{"conclusion":"success","createdAt":"2026-11-18T09:13:46Z","databaseId":44273953887,"displayTitle":"I think tunnels are good but the server packets is either too large or sending unwanted packets so ping is so high","headSha":"853f8211e744c463c92e2c34c1bf95b053a930f6","status":"completed","workflowName":"Issue to OpenCode"},{"conclusion":"cancelled","createdAt":"2026-11-18T09:08:15Z","databaseId":44273088890,"displayTitle":"Run UltronSMP","headSha":"8ac91203793fd8d4fe572f7234ea6d633879021b","status":"completed","workflowName":"Run UltronSMP"},{"conclusion":"success","createdAt":"2026-11-18T08:54:17Z","databaseId":44270999802,"displayTitle":"Add tunnl.gg tunnel to this","headSha":"f9bcb54846175783d7b9e2c8eccd7a94ffb9ab59","status":"completed","workflowName":"Issue to OpenCode"},{"conclusion":"failure","createdAt":"2026-11-18T07:56:56Z","databaseId":44262852433,"displayTitle":"Run UltronSMP","headSha":"13990d6e7f6cef6df4228bc70c67f1a37c2068c7","status":"completed","workflowName":"Run UltronSMP"},{"conclusion":"success","createdAt":"2026-11-18T07:33:05Z","databaseId":44259757978,"displayTitle":"Add serveo tunnel along with bore.pub","headSha":"7d675c213650cdc88647a8e8a7caaaac59677d7a","status":"completed","workflowName":"Issue to OpenCode"},{"conclusion":"cancelled","createdAt":"2026-11-18T07:17:33Z","databaseId":44257727901,"displayTitle":"Run UltronSMP","headSha":"4852fb3edf6991f210a01cad28b98883b3eb1d79","status":"completed","workflowName":"Run UltronSMP"},{"conclusion":"success","createdAt":"2026-11-18T06:56:03Z","databaseId":44254998969,"displayTitle":"Change tunnel provider to local xpose","headSha":"cc69ac1daa51f7507af2cb58485a9d4f7d4f36eb","status":"completed","workflowName":"Issue to OpenCode"},{"conclusion":"failure","createdAt":"2026-11-17T01:56:49Z","databaseId":43999343222,"displayTitle":"Run UltronSMP","headSha":"b272a3dac84f905e16d98a2746f16637e1e7a864","status":"completed","workflowName":"Run UltronSMP"}]
+[0m
+[0m$ [0mgh run view 44298373037 --repo promikailamin/ultron_smp --json jobs 2>&1 | head -c 12000
+{"jobs":[{"completedAt":"2026-11-18T11:57:45Z","conclusion":"cancelled","databaseId":134781264025,"name":"server","startedAt":"2026-11-18T11:50:55Z","status":"completed","steps":[{"completedAt":"2026-11-18T11:50:57Z","conclusion":"success","name":"Set up job","number":1,"startedAt":"2026-11-18T11:50:56Z","status":"completed"},{"completedAt":"2026-11-18T11:51:06Z","conclusion":"success","name":"checkout_repo","number":2,"startedAt":"2026-11-18T11:50:57Z","status":"completed"},{"completedAt":"2026-11-18T11:51:06Z","conclusion":"success","name":"setup_java_25","number":3,"startedAt":"2026-11-18T11:51:06Z","status":"completed"},{"completedAt":"2026-11-18T11:51:08Z","conclusion":"success","name":"configure_git","number":4,"startedAt":"2026-11-18T11:51:06Z","status":"completed"},{"completedAt":"2026-11-18T11:51:08Z","conclusion":"success","name":"tune_network","number":5,"startedAt":"2026-11-18T11:51:08Z","status":"completed"},{"completedAt":"2026-11-18T11:51:16Z","conclusion":"success","name":"refresh_world_from_backup","number":6,"startedAt":"2026-11-18T11:51:08Z","status":"completed"},{"completedAt":"2026-11-18T11:51:36Z","conclusion":"success","name":"run_server","number":7,"startedAt":"2026-11-18T11:51:16Z","status":"completed"},{"completedAt":"2026-11-18T11:51:36Z","conclusion":"success","name":"verify_minecraft_port","number":8,"startedAt":"2026-11-18T11:51:36Z","status":"completed"},{"completedAt":"2026-11-18T11:51:40Z","conclusion":"success","name":"start_twingate_connector","number":9,"startedAt":"2026-11-18T11:51:36Z","status":"completed"},{"completedAt":"2026-11-18T11:51:41Z","conclusion":"success","name":"expose_server","number":10,"startedAt":"2026-11-18T11:51:40Z","status":"completed"},{"completedAt":"2026-11-18T11:51:41Z","conclusion":"success","name":"verify_public_tunnel","number":11,"startedAt":"2026-11-18T11:51:41Z","status":"completed"},{"completedAt":"2026-11-18T11:51:44Z","conclusion":"success","name":"publish_server_address","number":12,"startedAt":"2026-11-18T11:51:41Z","status":"completed"},{"completedAt":"2026-11-18T11:57:37Z","conclusion":"cancelled","name":"keep_server_alive","number":13,"startedAt":"2026-11-18T11:51:44Z","status":"completed"},{"completedAt":"2026-11-18T11:57:42Z","conclusion":"success","name":"restore_final_server","number":14,"startedAt":"2026-11-18T11:57:37Z","status":"completed"},{"completedAt":"2026-11-18T11:57:42Z","conclusion":"success","name":"Post setup_java_25","number":27,"startedAt":"2026-11-18T11:57:42Z","status":"completed"},{"completedAt":"2026-11-18T11:57:43Z","conclusion":"success","name":"Post checkout_repo","number":28,"startedAt":"2026-11-18T11:57:42Z","status":"completed"},{"completedAt":"2026-11-18T11:57:43Z","conclusion":"success","name":"Complete job","number":29,"startedAt":"2026-11-18T11:57:43Z","status":"completed"}],"url":"https://github.com/promikailamin/ultron_smp/actions/runs/44298373037/job/134781264025"}]}
+[0m
+[0m$ [0mgit show HEAD:.agent-work/logs/twingate-connector.log 2>/dev/null | tail -50; ls -la .agent-work/logs | head -50
+total 220
+drwxr-xr-x 2 runner runner  4096 Nov 18 11:58 .
+drwxr-xr-x 7 runner runner  4096 Nov 18 11:58 ..
+-rw-r--r-- 1 runner runner  2231 Nov 18 11:58 issue-3-fix.log
+-rw-r--r-- 1 runner runner  3276 Nov 18 11:58 issue-6-fix.log
+-rw-r--r-- 1 runner runner  2400 Nov 18 11:58 issue-7-fix.log
+-rw-r--r-- 1 runner runner   261 Nov 18 11:58 localxpose-free-account-test.log
+-rw-r--r-- 1 runner runner   169 Nov 18 11:58 low-latency-tunnel-test-ap.log
+-rw-r--r-- 1 runner runner   447 Nov 18 11:58 low-latency-tunnel-test-run.log
+-rw-r--r-- 1 runner runner   445 Nov 18 11:58 low-latency-tunnel-test.log
+-rw-r--r-- 1 runner runner    58 Nov 18 11:58 minekube-auto-test.log
+-rw-r--r-- 1 runner runner    58 Nov 18 11:58 minekube-minekube-test.log
+-rw-r--r-- 1 runner runner  9501 Nov 18 11:58 network-optimizer-test.log
+-rw-r--r-- 1 runner runner   597 Nov 18 11:58 network-tune-test.log
+-rw-r--r-- 1 runner runner 49938 Nov 18 11:58 opencode-output.log
+-rw-r--r-- 1 runner runner    64 Nov 18 11:58 run-test-run2.log
+-rw-r--r-- 1 runner runner  7798 Nov 18 11:58 run-test.log
+-rw-r--r-- 1 runner runner    52 Nov 18 11:58 serveo-tunnel-test.log
+-rw-r--r-- 1 runner runner  9467 Nov 18 11:58 server-control-test.log
+-rw-r--r-- 1 runner runner    54 Nov 18 11:58 status-low-latency.log
+-rw-r--r-- 1 runner runner    55 Nov 18 11:58 status-stable.log
+-rw-r--r-- 1 runner runner    60 Nov 18 11:58 test-serveo-http.log
+-rw-r--r-- 1 runner runner   128 Nov 18 11:58 test-serveo-tunnel-result.log
+-rw-r--r-- 1 runner runner   114 Nov 18 11:58 test-tunnel-after-twingate.log
+-rw-r--r-- 1 runner runner   114 Nov 18 11:58 test-tunnel-dispatch-result.log
+-rw-r--r-- 1 runner runner   205 Nov 18 11:58 test-tunnl-provider-result.log
+-rw-r--r-- 1 runner runner   120 Nov 18 11:58 test-tunnl-tunnel-result.log
+-rw-r--r-- 1 runner runner   191 Nov 18 11:58 test-twingate-connector-derived.log
+-rw-r--r-- 1 runner runner   166 Nov 18 11:58 test-twingate-connector-missing.log
+-rw-r--r-- 1 runner runner    97 Nov 18 11:58 test-twingate-connector-required.log
+-rw-r--r-- 1 runner runner   104 Nov 18 11:58 test-twingate-connector-result.log
+-rw-r--r-- 1 runner runner    97 Nov 18 11:58 test-twingate-connector-skip.log
+-rw-r--r-- 1 runner runner   288 Nov 18 11:58 test-twingate-connector-start.log
+-rw-r--r-- 1 runner runner   331 Nov 18 11:58 tunnel-bore-fallback-test.log
+-rw-r--r-- 1 runner runner   114 Nov 18 11:58 tunnel-test-run.log
+-rw-r--r-- 1 runner runner   320 Nov 18 11:58 tunnel-test-run2.log
+-rw-r--r-- 1 runner runner   283 Nov 18 11:58 tunnel-test-run3.log
+-rw-r--r-- 1 runner runner    34 Nov 18 11:58 tunnel-test.log
+-rw-r--r-- 1 runner runner    81 Nov 18 11:58 tunnl-real-test.log
+-rw-r--r-- 1 runner runner     0 Nov 18 11:58 twingate-connector.log
+[0m
+[0m$ [0mgh run view 44298373037 --repo promikailamin/ultron_smp --log 2>/dev/null | grep -i -A5 -B5 twingate | head -150
+server	checkout_repo	2026-11-18T11:50:57.9536373Z   PLAYER_REGION: bangladesh
+server	checkout_repo	2026-11-18T11:50:57.9536902Z   MINEKUBE_ENDPOINT: 
+server	checkout_repo	2026-11-18T11:50:57.9537392Z   MINEKUBE_CONNECT_TOKEN: 
+server	checkout_repo	2026-11-18T11:50:57.9537909Z   MINEKUBE_GATE_VERSION: 0.81.1
+server	checkout_repo	2026-11-18T11:50:57.9538445Z   MINEKUBE_AUTO: true
+server	checkout_repo	2026-11-18T11:50:57.9539070Z   TWINGATE_ENABLED: auto
+server	checkout_repo	2026-11-18T11:50:57.9539609Z   TWINGATE_NETWORK: ***
+server	checkout_repo	2026-11-18T11:50:57.9540144Z   TWINGATE_CONNECTOR_NAME: ultron-twingate
+server	checkout_repo	2026-11-18T11:50:57.9546129Z   TWINGATE_ACCESS_TOKEN: ***
+server	checkout_repo	2026-11-18T11:50:57.9547482Z   TWINGATE_REFRESH_TOKEN: ***
+server	checkout_repo	2026-11-18T11:50:57.9548008Z ##[endgroup]
+server	checkout_repo	2026-11-18T11:50:58.2242349Z Syncing repository: pro***/ultron_smp
+server	checkout_repo	2026-11-18T11:50:58.2245245Z ##[group]Getting Git version info
+server	checkout_repo	2026-11-18T11:50:58.2246653Z Working directory is '/home/runner/work/ultron_smp/ultron_smp'
+server	checkout_repo	2026-11-18T11:50:58.2249725Z [command]/usr/bin/git version
+--
+server	setup_java_25	2026-11-18T11:51:06.0257766Z   PLAYER_REGION: bangladesh
+server	setup_java_25	2026-11-18T11:51:06.0258103Z   MINEKUBE_ENDPOINT: 
+server	setup_java_25	2026-11-18T11:51:06.0258388Z   MINEKUBE_CONNECT_TOKEN: 
+server	setup_java_25	2026-11-18T11:51:06.0258846Z   MINEKUBE_GATE_VERSION: 0.81.1
+server	setup_java_25	2026-11-18T11:51:06.0259156Z   MINEKUBE_AUTO: true
+server	setup_java_25	2026-11-18T11:51:06.0259436Z   TWINGATE_ENABLED: auto
+server	setup_java_25	2026-11-18T11:51:06.0259750Z   TWINGATE_NETWORK: ***
+server	setup_java_25	2026-11-18T11:51:06.0260070Z   TWINGATE_CONNECTOR_NAME: ultron-twingate
+server	setup_java_25	2026-11-18T11:51:06.0264364Z   TWINGATE_ACCESS_TOKEN: ***
+server	setup_java_25	2026-11-18T11:51:06.0265154Z   TWINGATE_REFRESH_TOKEN: ***
+server	setup_java_25	2026-11-18T11:51:06.0265452Z ##[endgroup]
+server	setup_java_25	2026-11-18T11:51:06.2040742Z ##[warning]setup-java v4 is deprecated and will no longer receive updates. Please migrate to actions/setup-java@v5.
+server	setup_java_25	2026-11-18T11:51:06.2049122Z ##[group]Installed distributions
+server	setup_java_25	2026-11-18T11:51:06.2125468Z Resolved Java 25.0.5+8 from tool-cache
+server	setup_java_25	2026-11-18T11:51:06.2126170Z Setting Java 25.0.5+8 as the default
+--
+server	configure_git	2026-11-18T11:51:06.2549234Z   PLAYER_REGION: bangladesh
+server	configure_git	2026-11-18T11:51:06.2549765Z   MINEKUBE_ENDPOINT: 
+server	configure_git	2026-11-18T11:51:06.2550245Z   MINEKUBE_CONNECT_TOKEN: 
+server	configure_git	2026-11-18T11:51:06.2550751Z   MINEKUBE_GATE_VERSION: 0.81.1
+server	configure_git	2026-11-18T11:51:06.2551254Z   MINEKUBE_AUTO: true
+server	configure_git	2026-11-18T11:51:06.2551704Z   TWINGATE_ENABLED: auto
+server	configure_git	2026-11-18T11:51:06.2552300Z   TWINGATE_NETWORK: ***
+server	configure_git	2026-11-18T11:51:06.2552811Z   TWINGATE_CONNECTOR_NAME: ultron-twingate
+server	configure_git	2026-11-18T11:51:06.2561408Z   TWINGATE_ACCESS_TOKEN: ***
+server	configure_git	2026-11-18T11:51:06.2562919Z   TWINGATE_REFRESH_TOKEN: ***
+server	configure_git	2026-11-18T11:51:06.2563646Z   JAVA_HOME: /opt/hostedtoolcache/Java_Temurin-Hotspot_jdk/25.0.5-8/x64
+server	configure_git	2026-11-18T11:51:06.2564617Z   JAVA_HOME_25_X64: /opt/hostedtoolcache/Java_Temurin-Hotspot_jdk/25.0.5-8/x64
+server	configure_git	2026-11-18T11:51:06.2565541Z   GH_TOKEN: ***
+server	configure_git	2026-11-18T11:51:06.2566001Z ##[endgroup]
+server	tune_network	﻿2026-11-18T11:51:08.0794733Z ##[group]Run set -euo pipefail
+--
+server	tune_network	2026-11-18T11:51:08.0849633Z   PLAYER_REGION: bangladesh
+server	tune_network	2026-11-18T11:51:08.0849877Z   MINEKUBE_ENDPOINT: 
+server	tune_network	2026-11-18T11:51:08.0850136Z   MINEKUBE_CONNECT_TOKEN: 
+server	tune_network	2026-11-18T11:51:08.0850397Z   MINEKUBE_GATE_VERSION: 0.81.1
+server	tune_network	2026-11-18T11:51:08.0850668Z   MINEKUBE_AUTO: true
+server	tune_network	2026-11-18T11:51:08.0850901Z   TWINGATE_ENABLED: auto
+server	tune_network	2026-11-18T11:51:08.0851166Z   TWINGATE_NETWORK: ***
+server	tune_network	2026-11-18T11:51:08.0851428Z   TWINGATE_CONNECTOR_NAME: ultron-twingate
+server	tune_network	2026-11-18T11:51:08.0855759Z   TWINGATE_ACCESS_TOKEN: ***
+server	tune_network	2026-11-18T11:51:08.0856504Z   TWINGATE_REFRESH_TOKEN: ***
+server	tune_network	2026-11-18T11:51:08.0856863Z   JAVA_HOME: /opt/hostedtoolcache/Java_Temurin-Hotspot_jdk/25.0.5-8/x64
+server	tune_network	2026-11-18T11:51:08.0857371Z   JAVA_HOME_25_X64: /opt/hostedtoolcache/Java_Temurin-Hotspot_jdk/25.0.5-8/x64
+server	tune_network	2026-11-18T11:51:08.0857779Z ##[endgroup]
+server	tune_network	2026-11-18T11:51:08.1040396Z Applying low-latency TCP tuning...
+server	tune_network	2026-11-18T11:51:08.1132313Z   net.core.default_qdisc=fq
+--
+server	refresh_world_from_backup	2026-11-18T11:51:08.1455467Z   PLAYER_REGION: bangladesh
+server	refresh_world_from_backup	2026-11-18T11:51:08.1455720Z   MINEKUBE_ENDPOINT: 
+server	refresh_world_from_backup	2026-11-18T11:51:08.1455953Z   MINEKUBE_CONNECT_TOKEN: 
+server	refresh_world_from_backup	2026-11-18T11:51:08.1456218Z   MINEKUBE_GATE_VERSION: 0.81.1
+server	refresh_world_from_backup	2026-11-18T11:51:08.1456469Z   MINEKUBE_AUTO: true
+server	refresh_world_from_backup	2026-11-18T11:51:08.1456691Z   TWINGATE_ENABLED: auto
+server	refresh_world_from_backup	2026-11-18T11:51:08.1456950Z   TWINGATE_NETWORK: ***
+server	refresh_world_from_backup	2026-11-18T11:51:08.1457212Z   TWINGATE_CONNECTOR_NAME: ultron-twingate
+server	refresh_world_from_backup	2026-11-18T11:51:08.1461746Z   TWINGATE_ACCESS_TOKEN: ***
+server	refresh_world_from_backup	2026-11-18T11:51:08.1462505Z   TWINGATE_REFRESH_TOKEN: ***
+server	refresh_world_from_backup	2026-11-18T11:51:08.1462884Z   JAVA_HOME: /opt/hostedtoolcache/Java_Temurin-Hotspot_jdk/25.0.5-8/x64
+server	refresh_world_from_backup	2026-11-18T11:51:08.1463406Z   JAVA_HOME_25_X64: /opt/hostedtoolcache/Java_Temurin-Hotspot_jdk/25.0.5-8/x64
+server	refresh_world_from_backup	2026-11-18T11:51:08.1463818Z ##[endgroup]
+server	refresh_world_from_backup	2026-11-18T11:51:08.4452646Z From https://github.com/pro***/ultron_smp
+server	refresh_world_from_backup	2026-11-18T11:51:08.4453508Z  * branch            main       -> FETCH_HEAD
+--
+server	run_server	2026-11-18T11:51:16.6426378Z   PLAYER_REGION: bangladesh
+server	run_server	2026-11-18T11:51:16.6426622Z   MINEKUBE_ENDPOINT: 
+server	run_server	2026-11-18T11:51:16.6426854Z   MINEKUBE_CONNECT_TOKEN: 
+server	run_server	2026-11-18T11:51:16.6427096Z   MINEKUBE_GATE_VERSION: 0.81.1
+server	run_server	2026-11-18T11:51:16.6427345Z   MINEKUBE_AUTO: true
+server	run_server	2026-11-18T11:51:16.6427569Z   TWINGATE_ENABLED: auto
+server	run_server	2026-11-18T11:51:16.6427874Z   TWINGATE_NETWORK: ***
+server	run_server	2026-11-18T11:51:16.6428129Z   TWINGATE_CONNECTOR_NAME: ultron-twingate
+server	run_server	2026-11-18T11:51:16.6432672Z   TWINGATE_ACCESS_TOKEN: ***
+server	run_server	2026-11-18T11:51:16.6433417Z   TWINGATE_REFRESH_TOKEN: ***
+server	run_server	2026-11-18T11:51:16.6433767Z   JAVA_HOME: /opt/hostedtoolcache/Java_Temurin-Hotspot_jdk/25.0.5-8/x64
+server	run_server	2026-11-18T11:51:16.6434274Z   JAVA_HOME_25_X64: /opt/hostedtoolcache/Java_Temurin-Hotspot_jdk/25.0.5-8/x64
+server	run_server	2026-11-18T11:51:16.6434670Z ##[endgroup]
+server	run_server	2026-11-18T11:51:16.6737928Z Started Minecraft server (pid 2523); console pipe /home/runner/work/_temp/ultron-console.fifo.
+server	run_server	2026-11-18T11:51:16.6740659Z Waiting for Minecraft server on port 25565...
+--
+server	verify_minecraft_port	2026-11-18T11:51:36.3532794Z   PLAYER_REGION: bangladesh
+server	verify_minecraft_port	2026-11-18T11:51:36.3533261Z   MINEKUBE_ENDPOINT: 
+server	verify_minecraft_port	2026-11-18T11:51:36.3533490Z   MINEKUBE_CONNECT_TOKEN: 
+server	verify_minecraft_port	2026-11-18T11:51:36.3533741Z   MINEKUBE_GATE_VERSION: 0.81.1
+server	verify_minecraft_port	2026-11-18T11:51:36.3533986Z   MINEKUBE_AUTO: true
+server	verify_minecraft_port	2026-11-18T11:51:36.3534208Z   TWINGATE_ENABLED: auto
+server	verify_minecraft_port	2026-11-18T11:51:36.3534462Z   TWINGATE_NETWORK: ***
+server	verify_minecraft_port	2026-11-18T11:51:36.3534718Z   TWINGATE_CONNECTOR_NAME: ultron-twingate
+server	verify_minecraft_port	2026-11-18T11:51:36.3539273Z   TWINGATE_ACCESS_TOKEN: ***
+server	verify_minecraft_port	2026-11-18T11:51:36.3540019Z   TWINGATE_REFRESH_TOKEN: ***
+server	verify_minecraft_port	2026-11-18T11:51:36.3540378Z   JAVA_HOME: /opt/hostedtoolcache/Java_Temurin-Hotspot_jdk/25.0.5-8/x64
+server	verify_minecraft_port	2026-11-18T11:51:36.3540893Z   JAVA_HOME_25_X64: /opt/hostedtoolcache/Java_Temurin-Hotspot_jdk/25.0.5-8/x64
+server	verify_minecraft_port	2026-11-18T11:51:36.3541285Z ##[endgroup]
+server	verify_minecraft_port	2026-11-18T11:51:36.3615969Z Checking Minecraft port...
+server	verify_minecraft_port	2026-11-18T11:51:36.4546193Z LISTEN 0      4096               *:25565            *:*    users:(("java",pid=2523,fd=217))
+server	verify_minecraft_port	2026-11-18T11:51:36.4734946Z Minecraft TCP port 25565 is reachable locally!
+server	start_twingate_connector	﻿2026-11-18T11:51:36.4808221Z ##[group]Run set -euo pipefail
+server	start_twingate_connector	2026-11-18T11:51:36.4808576Z ^[[36;1mset -euo pipefail^[[0m
+server	start_twingate_connector	2026-11-18T11:51:36.4809327Z ^[[36;1mbash scripts/twingate-connector.sh start | tee .agent-work/logs/twingate-connector.log^[[0m
+server	start_twingate_connector	2026-11-18T11:51:36.4859953Z shell: /usr/bin/bash -e {0}
+server	start_twingate_connector	2026-11-18T11:51:36.4860215Z env:
+server	start_twingate_connector	2026-11-18T11:51:36.4860415Z   MINECRAFT_PORT: 25565
+server	start_twingate_connector	2026-11-18T11:51:36.4860664Z   SERVER_ISSUE_NUMBER: 1
+server	start_twingate_connector	2026-11-18T11:51:36.4860911Z   TUNNEL_PROVIDER: auto
+server	start_twingate_connector	2026-11-18T11:51:36.4861338Z   LOCALXPOSE_ACCESS_TOKEN: ***
+server	start_twingate_connector	2026-11-18T11:51:36.4861606Z   LOCALXPOSE_REGION: ap
+server	start_twingate_connector	2026-11-18T11:51:36.4861845Z   LOCALXPOSE_BORE_FALLBACK: 
+server	start_twingate_connector	2026-11-18T11:51:36.4862115Z   PLAYER_REGION: bangladesh
+server	start_twingate_connector	2026-11-18T11:51:36.4862353Z   MINEKUBE_ENDPOINT: 
+server	start_twingate_connector	2026-11-18T11:51:36.4862584Z   MINEKUBE_CONNECT_TOKEN: 
+server	start_twingate_connector	2026-11-18T11:51:36.4862823Z   MINEKUBE_GATE_VERSION: 0.81.1
+server	start_twingate_connector	2026-11-18T11:51:36.4863066Z   MINEKUBE_AUTO: true
+server	start_twingate_connector	2026-11-18T11:51:36.4863291Z   TWINGATE_ENABLED: auto
+server	start_twingate_connector	2026-11-18T11:51:36.4863552Z   TWINGATE_NETWORK: ***
+server	start_twingate_connector	2026-11-18T11:51:36.4863850Z   TWINGATE_CONNECTOR_NAME: ultron-twingate
+server	start_twingate_connector	2026-11-18T11:51:36.4868135Z   TWINGATE_ACCESS_TOKEN: ***
+server	start_twingate_connector	2026-11-18T11:51:36.4869095Z   TWINGATE_REFRESH_TOKEN: ***
+server	start_twingate_connector	2026-11-18T11:51:36.4869464Z   JAVA_HOME: /opt/hostedtoolcache/Java_Temurin-Hotspot_jdk/25.0.5-8/x64
+server	start_twingate_connector	2026-11-18T11:51:36.4869956Z   JAVA_HOME_25_X64: /opt/hostedtoolcache/Java_Temurin-Hotspot_jdk/25.0.5-8/x64
+server	start_twingate_connector	2026-11-18T11:51:36.4870346Z ##[endgroup]
+server	start_twingate_connector	2026-11-18T11:51:37.8762710Z Unable to find image 'twingate/connector:1' locally
+server	start_twingate_connector	2026-11-18T11:51:38.6403726Z 1: Pulling from twingate/connector
+server	start_twingate_connector	2026-11-18T11:51:38.9092259Z b32d700bee6a: Pulling fs layer
+server	start_twingate_connector	2026-11-18T11:51:38.9096503Z 59488b8e1808: Pulling fs layer
+server	start_twingate_connector	2026-11-18T11:51:38.9097381Z e424d5008d11: Pulling fs layer
+server	start_twingate_connector	2026-11-18T11:51:38.9097920Z f195684dcfd2: Pulling fs layer
+server	start_twingate_connector	2026-11-18T11:51:38.9098433Z ea381e34dea2: Pulling fs layer
+server	start_twingate_connector	2026-11-18T11:51:38.9099130Z 3fa12498f212: Pulling fs layer
+server	start_twingate_connector	2026-11-18T11:51:38.9099647Z a1d02b0f9fa5: Pulling fs layer
+server	start_twingate_connector	2026-11-18T11:51:38.9100223Z d50f4cc14715: Pulling fs layer
+server	start_twingate_connector	2026-11-18T11:51:38.9100671Z 06b7f4240335: Pulling fs layer
+server	start_twingate_connector	2026-11-18T11:51:38.9101124Z 37fcaebb2f5f: Pulling fs layer
+server	start_twingate_connector	2026-11-18T11:51:38.9101582Z c1567fcf70c5: Pulling fs layer
+server	start_twingate_connector	2026-11-18T11:51:39.0802773Z 59488b8e1808: Download complete
+[0m
+[0m$ [0mgh run view 44298373037 --repo promikailamin/ultron_smp --log 2>/dev/null | grep -E 'start_twingate_connector|expose_server|verify_public_tunnel|publish_server_address|keep_server_alive|restore_final_server' | grep -v 'PLAYER_REGION\|MINEKUBE\|TWINGATE_\|JAVA_HOME\|LOCALXPOSE\|MINECRAFT_PORT\|SERVER_ISSUE\|TUNNEL_PROVIDER\|shell:\|##\[group\]Run\|^server.*set -euo' | tail -80
+server	keep_server_alive	2026-11-18T11:54:47.1464958Z Saving Minecraft server data...
+server	keep_server_alive	2026-11-18T11:54:48.1916974Z [main 8f73a57] Auto-save Minecraft server data
+server	keep_server_alive	2026-11-18T11:54:48.1917761Z  11 files changed, 11 insertions(+), 7 deletions(-)
+server	keep_server_alive	2026-11-18T11:54:48.4652338Z From https://github.com/pro***/ultron_smp
+server	keep_server_alive	2026-11-18T11:54:48.4653163Z  * branch            main       -> FETCH_HEAD
+server	keep_server_alive	2026-11-18T11:54:48.4719033Z Current branch main is up to date.
+server	keep_server_alive	2026-11-18T11:54:49.7318904Z To https://github.com/pro***/ultron_smp
+server	keep_server_alive	2026-11-18T11:54:49.7319881Z    9457583..8f73a57  HEAD -> main
+server	keep_server_alive	2026-11-18T11:54:49.7366797Z Saved and pushed: Auto-save Minecraft server data
+server	keep_server_alive	2026-11-18T11:56:19.8612122Z Saving Minecraft server data...
+server	keep_server_alive	2026-11-18T11:56:20.9012498Z [main 8daffd6] Auto-save Minecraft server data
+server	keep_server_alive	2026-11-18T11:56:20.9013157Z  10 files changed, 4 insertions(+)
+server	keep_server_alive	2026-11-18T11:56:21.1851741Z From https://github.com/pro***/ultron_smp
+server	keep_server_alive	2026-11-18T11:56:21.1852402Z  * branch            main       -> FETCH_HEAD
+server	keep_server_alive	2026-11-18T11:56:21.1919411Z Current branch main is up to date.
+server	keep_server_alive	2026-11-18T11:56:22.3567040Z To https://github.com/pro***/ultron_smp
+server	keep_server_alive	2026-11-18T11:56:22.3567793Z    8f73a57..8daffd6  HEAD -> main
+server	keep_server_alive	2026-11-18T11:56:22.3613622Z Saved and pushed: Auto-save Minecraft server data
+server	keep_server_alive	2026-11-18T11:57:37.9535387Z ##[error]The operation was canceled.
+server	restore_final_server	2026-11-18T11:57:37.9580347Z ^[[36;1mecho "Stopping the server and flushing the world before the final backup..."^[[0m
+server	restore_final_server	2026-11-18T11:57:37.9580923Z ^[[36;1mbash scripts/twingate-connector.sh stop >/dev/null 2>&1 || true^[[0m
+server	restore_final_server	2026-11-18T11:57:37.9581424Z ^[[36;1mbash scripts/server-control.sh save >/dev/null 2>&1 || true^[[0m
+server	restore_final_server	2026-11-18T11:57:37.9581875Z ^[[36;1mbash scripts/server-control.sh stop 45 || true^[[0m
+server	restore_final_server	2026-11-18T11:57:37.9582191Z ^[[36;1m^[[0m
+server	restore_final_server	2026-11-18T11:57:37.9582486Z ^[[36;1m# A previous step may have been killed in the middle of a^[[0m
+server	restore_final_server	2026-11-18T11:57:37.9582948Z ^[[36;1m# git operation. Clear any leftover state before retrying.^[[0m
+server	restore_final_server	2026-11-18T11:57:37.9583341Z ^[[36;1mgit rebase --abort 2>/dev/null || true^[[0m
+server	restore_final_server	2026-11-18T11:57:37.9583678Z ^[[36;1mgit merge --abort 2>/dev/null || true^[[0m
+server	restore_final_server	2026-11-18T11:57:37.9583985Z ^[[36;1mrm -f .git/index.lock^[[0m
+server	restore_final_server	2026-11-18T11:57:37.9584238Z ^[[36;1m^[[0m
+server	restore_final_server	2026-11-18T11:57:37.9584454Z ^[[36;1mecho "Performing final save..."^[[0m
+server	restore_final_server	2026-11-18T11:57:37.9584763Z ^[[36;1m^[[0m
+server	restore_final_server	2026-11-18T11:57:37.9585008Z ^[[36;1mgit add -A^[[0m
+server	restore_final_server	2026-11-18T11:57:37.9585231Z ^[[36;1m^[[0m
+server	restore_final_server	2026-11-18T11:57:37.9585452Z ^[[36;1mif ! git diff --cached --quiet; then^[[0m
+server	restore_final_server	2026-11-18T11:57:37.9585819Z ^[[36;1m    git commit -m "Final Minecraft server backup"^[[0m
+server	restore_final_server	2026-11-18T11:57:37.9586149Z ^[[36;1melse^[[0m
+server	restore_final_server	2026-11-18T11:57:37.9586378Z ^[[36;1m    echo "No new changes."^[[0m
+server	restore_final_server	2026-11-18T11:57:37.9586639Z ^[[36;1mfi^[[0m
+server	restore_final_server	2026-11-18T11:57:37.9586832Z ^[[36;1m^[[0m
+server	restore_final_server	2026-11-18T11:57:37.9587031Z ^[[36;1mpushed=0^[[0m
+server	restore_final_server	2026-11-18T11:57:37.9587257Z ^[[36;1mfor _ in 1 2 3 4 5; do^[[0m
+server	restore_final_server	2026-11-18T11:57:37.9587570Z ^[[36;1m    if ! git fetch origin "$GITHUB_REF_NAME"; then^[[0m
+server	restore_final_server	2026-11-18T11:57:37.9587903Z ^[[36;1m        sleep 5^[[0m
+server	restore_final_server	2026-11-18T11:57:37.9588145Z ^[[36;1m        continue^[[0m
+server	restore_final_server	2026-11-18T11:57:37.9588386Z ^[[36;1m    fi^[[0m
+server	restore_final_server	2026-11-18T11:57:37.9588586Z ^[[36;1m^[[0m
+server	restore_final_server	2026-11-18T11:57:37.9588987Z ^[[36;1m    if git rebase "origin/$GITHUB_REF_NAME"; then^[[0m
+server	restore_final_server	2026-11-18T11:57:37.9589381Z ^[[36;1m        if git push origin "HEAD:$GITHUB_REF_NAME"; then^[[0m
+server	restore_final_server	2026-11-18T11:57:37.9589721Z ^[[36;1m            pushed=1^[[0m
+server	restore_final_server	2026-11-18T11:57:37.9589973Z ^[[36;1m            break^[[0m
+server	restore_final_server	2026-11-18T11:57:37.9590201Z ^[[36;1m        fi^[[0m
+server	restore_final_server	2026-11-18T11:57:37.9590421Z ^[[36;1m    else^[[0m
+server	restore_final_server	2026-11-18T11:57:37.9590838Z ^[[36;1m        git rebase --abort || true^[[0m
+server	restore_final_server	2026-11-18T11:57:37.9591121Z ^[[36;1m    fi^[[0m
+server	restore_final_server	2026-11-18T11:57:37.9591322Z ^[[36;1m    sleep 5^[[0m
+server	restore_final_server	2026-11-18T11:57:37.9591532Z ^[[36;1mdone^[[0m
+server	restore_final_server	2026-11-18T11:57:37.9591810Z ^[[36;1m^[[0m
+server	restore_final_server	2026-11-18T11:57:37.9592014Z ^[[36;1mif [ "$pushed" -ne 1 ]; then^[[0m
+server	restore_final_server	2026-11-18T11:57:37.9592349Z ^[[36;1m    echo "ERROR: final backup could not be pushed."^[[0m
+server	restore_final_server	2026-11-18T11:57:37.9592672Z ^[[36;1m    exit 1^[[0m
+server	restore_final_server	2026-11-18T11:57:37.9592874Z ^[[36;1mfi^[[0m
+server	restore_final_server	2026-11-18T11:57:37.9593067Z ^[[36;1m^[[0m
+server	restore_final_server	2026-11-18T11:57:37.9593272Z ^[[36;1mecho "Backup completed."^[[0m
+server	restore_final_server	2026-11-18T11:57:37.9641586Z env:
+server	restore_final_server	2026-11-18T11:57:37.9651920Z   SERVER_ADDRESS: ultron-916fda84.play.minekube.net:25565
+server	restore_final_server	2026-11-18T11:57:37.9652340Z   SERVER_STATUS_URL: https://swift-canyon-4a024c83.tunnl.gg
+server	restore_final_server	2026-11-18T11:57:37.9652776Z   GH_TOKEN: ***
+server	restore_final_server	2026-11-18T11:57:37.9652987Z ##[endgroup]
+server	restore_final_server	2026-11-18T11:57:37.9720215Z Stopping the server and flushing the world before the final backup...
+server	restore_final_server	2026-11-18T11:57:41.0652038Z Minecraft server stopped.
+server	restore_final_server	2026-11-18T11:57:41.0844829Z Performing final save...
+server	restore_final_server	2026-11-18T11:57:41.1079378Z [main f7e0711] Final Minecraft server backup
+server	restore_final_server	2026-11-18T11:57:41.1079911Z  12 files changed, 26 insertions(+), 2 deletions(-)
+server	restore_final_server	2026-11-18T11:57:41.4036858Z From https://github.com/pro***/ultron_smp
+server	restore_final_server	2026-11-18T11:57:41.4037516Z  * branch            main       -> FETCH_HEAD
+server	restore_final_server	2026-11-18T11:57:41.4105495Z Current branch main is up to date.
+server	restore_final_server	2026-11-18T11:57:42.6801129Z To https://github.com/pro***/ultron_smp
+server	restore_final_server	2026-11-18T11:57:42.6801700Z    8daffd6..f7e0711  HEAD -> main
+server	restore_final_server	2026-11-18T11:57:42.6851459Z Backup completed.
+[0m
+[0m$ [0mgh run view 44291571343 --repo promikailamin/ultron_smp --json jobs 2>&1 | head -c 6000
+{"jobs":[{"completedAt":"2026-11-18T11:11:01Z","conclusion":"cancelled","databaseId":134757825721,"name":"server","startedAt":"2026-11-18T11:06:14Z","status":"completed","steps":[{"completedAt":"2026-11-18T11:06:16Z","conclusion":"success","name":"Set up job","number":1,"startedAt":"2026-11-18T11:06:15Z","status":"completed"},{"completedAt":"2026-11-18T11:06:22Z","conclusion":"success","name":"checkout_repo","number":2,"startedAt":"2026-11-18T11:06:16Z","status":"completed"},{"completedAt":"2026-11-18T11:06:22Z","conclusion":"success","name":"setup_java_25","number":3,"startedAt":"2026-11-18T11:06:22Z","status":"completed"},{"completedAt":"2026-11-18T11:06:23Z","conclusion":"success","name":"configure_git","number":4,"startedAt":"2026-11-18T11:06:22Z","status":"completed"},{"completedAt":"2026-11-18T11:06:23Z","conclusion":"success","name":"tune_network","number":5,"startedAt":"2026-11-18T11:06:23Z","status":"completed"},{"completedAt":"2026-11-18T11:06:31Z","conclusion":"success","name":"refresh_world_from_backup","number":6,"startedAt":"2026-11-18T11:06:23Z","status":"completed"},{"completedAt":"2026-11-18T11:06:40Z","conclusion":"success","name":"run_server","number":7,"startedAt":"2026-11-18T11:06:31Z","status":"completed"},{"completedAt":"2026-11-18T11:06:40Z","conclusion":"success","name":"verify_minecraft_port","number":8,"startedAt":"2026-11-18T11:06:40Z","status":"completed"},{"completedAt":"2026-11-18T11:06:41Z","conclusion":"success","name":"expose_server","number":9,"startedAt":"2026-11-18T11:06:40Z","status":"completed"},{"completedAt":"2026-11-18T11:06:41Z","conclusion":"success","name":"verify_public_tunnel","number":10,"startedAt":"2026-11-18T11:06:41Z","status":"completed"},{"completedAt":"2026-11-18T11:06:44Z","conclusion":"success","name":"publish_server_address","number":11,"startedAt":"2026-11-18T11:06:41Z","status":"completed"},{"completedAt":"2026-11-18T11:10:52Z","conclusion":"cancelled","name":"keep_server_alive","number":12,"startedAt":"2026-11-18T11:06:44Z","status":"completed"},{"completedAt":"2026-11-18T11:10:59Z","conclusion":"success","name":"restore_final_server","number":13,"startedAt":"2026-11-18T11:10:52Z","status":"completed"},{"completedAt":"2026-11-18T11:10:59Z","conclusion":"success","name":"Post setup_java_25","number":25,"startedAt":"2026-11-18T11:10:59Z","status":"completed"},{"completedAt":"2026-11-18T11:10:59Z","conclusion":"success","name":"Post checkout_repo","number":26,"startedAt":"2026-11-18T11:10:59Z","status":"completed"},{"completedAt":"2026-11-18T11:10:59Z","conclusion":"success","name":"Complete job","number":27,"startedAt":"2026-11-18T11:10:59Z","status":"completed"}],"url":"https://github.com/promikailamin/ultron_smp/actions/runs/44291571343/job/134757825721"}]}
+[0m
+[0m$ [0mgh run view 44298373037 --repo promikailamin/ultron_smp --log 2>/dev/null > /tmp/lastrun.log; grep -n 'start_twingate_connector' /tmp/lastrun.log | tail -30
+429:server	start_twingate_connector	2026-11-18T11:51:39.0802773Z 59488b8e1808: Download complete
+430:server	start_twingate_connector	2026-11-18T11:51:39.0803851Z e424d5008d11: Download complete
+431:server	start_twingate_connector	2026-11-18T11:51:39.0808179Z c1567fcf70c5: Download complete
+432:server	start_twingate_connector	2026-11-18T11:51:39.1794934Z 3fa12498f212: Download complete
+433:server	start_twingate_connector	2026-11-18T11:51:39.1795482Z 37fcaebb2f5f: Download complete
+434:server	start_twingate_connector	2026-11-18T11:51:39.1798994Z d50f4cc14715: Download complete
+435:server	start_twingate_connector	2026-11-18T11:51:39.1804266Z b32d700bee6a: Download complete
+436:server	start_twingate_connector	2026-11-18T11:51:39.1805589Z a1d02b0f9fa5: Download complete
+437:server	start_twingate_connector	2026-11-18T11:51:39.1812970Z f195684dcfd2: Download complete
+438:server	start_twingate_connector	2026-11-18T11:51:39.1817894Z ea381e34dea2: Download complete
+439:server	start_twingate_connector	2026-11-18T11:51:39.2802184Z 44136fa355b3: Already exists
+440:server	start_twingate_connector	2026-11-18T11:51:39.2807229Z da6a7cdfa519: Download complete
+441:server	start_twingate_connector	2026-11-18T11:51:39.2812643Z 06b7f4240335: Download complete
+442:server	start_twingate_connector	2026-11-18T11:51:39.2825214Z 59488b8e1808: Pull complete
+443:server	start_twingate_connector	2026-11-18T11:51:39.3927388Z 06b7f4240335: Pull complete
+444:server	start_twingate_connector	2026-11-18T11:51:39.4828164Z 3fa12498f212: Pull complete
+445:server	start_twingate_connector	2026-11-18T11:51:39.4837941Z 37fcaebb2f5f: Pull complete
+446:server	start_twingate_connector	2026-11-18T11:51:39.4859105Z d50f4cc14715: Pull complete
+447:server	start_twingate_connector	2026-11-18T11:51:39.4889340Z a1d02b0f9fa5: Pull complete
+448:server	start_twingate_connector	2026-11-18T11:51:39.4911385Z ea381e34dea2: Pull complete
+449:server	start_twingate_connector	2026-11-18T11:51:39.5267333Z e424d5008d11: Pull complete
+450:server	start_twingate_connector	2026-11-18T11:51:39.5279917Z c1567fcf70c5: Pull complete
+451:server	start_twingate_connector	2026-11-18T11:51:39.5290507Z b32d700bee6a: Pull complete
+452:server	start_twingate_connector	2026-11-18T11:51:39.5301072Z f195684dcfd2: Pull complete
+453:server	start_twingate_connector	2026-11-18T11:51:39.5302534Z Digest: sha256:f02bcac59a7cd1617fcfb63a462b1ac6bcea81c55a54b295ba79373945c7e83a
+454:server	start_twingate_connector	2026-11-18T11:51:39.5303814Z Status: Downloaded newer image for twingate/connector:1
+455:server	start_twingate_connector	2026-11-18T11:51:40.2071109Z docker: Error response from daemon: failed to create task for container: failed to create shim task: OCI runtime create failed: runc create failed: sysctl "net.ipv4.ping_group_range" not allowed in host network namespace
+456:server	start_twingate_connector	2026-11-18T11:51:40.2073649Z 
+457:server	start_twingate_connector	2026-11-18T11:51:40.2074369Z Run 'docker run --help' for more information
+458:server	start_twingate_connector	2026-11-18T11:51:40.2103572Z ##[error]Process completed with exit code 125.
+[0m
+[0m$ [0mcat .agent-work/tests/test_twingate_connector.sh
+#!/usr/bin/env bash
+set -euo pipefail
+
+ROOT_DIR="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")/../.." && pwd)"
+LOG_DIR="$ROOT_DIR/.agent-work/logs"
+TMP_DIR="$ROOT_DIR/.agent-work/tmp"
+TEST_DIR="$TMP_DIR/twingate-connector-test"
+FAKE_DOCKER="$TEST_DIR/fake-docker"
+STATE_DIR="$TEST_DIR/state"
+ENV_DIR="$TEST_DIR/env"
+CONTAINER_NAME="ultron-twingate-test"
+START_LOG="$LOG_DIR/test-twingate-connector-start.log"
+MISSING_LOG="$LOG_DIR/test-twingate-connector-missing.log"
+
+mkdir -p "$LOG_DIR" "$TMP_DIR"
+rm -rf "$TEST_DIR"
+mkdir -p "$STATE_DIR" "$ENV_DIR"
+
+cat >"$FAKE_DOCKER" <<'PY'
+#!/usr/bin/env bash
+set -euo pipefail
+
+state_dir="${FAKE_DOCKER_STATE_DIR:?}"
+command="${1:-}"
+shift || true
+
+case "$command" in
+    run)
+        env_file=""
+        name=""
+        while [ "$#" -gt 0 ]; do
+            case "$1" in
+                --name)
+                    name="$2"
+                    shift 2
+                    ;;
+                --env-file)
+                    env_file="$2"
+                    shift 2
+                    ;;
+                --network | --sysctl | --restart)
+                    shift 2
+                    ;;
+                -*)
+                    shift
+                    ;;
+                *)
+                    shift
+                    ;;
+            esac
+        done
+
+        [ -n "$name" ] || { echo "fake docker: missing name" >&2; exit 1; }
+        [ -f "$env_file" ] || { echo "fake docker: env file missing" >&2; exit 1; }
+
+        for key in TWINGATE_NETWORK TWINGATE_ACCESS_TOKEN TWINGATE_REFRESH_TOKEN; do
+            value="$(sed -n "s/^${key}=//p" "$env_file")"
+            [ -n "$value" ] || { echo "fake docker: ${key} is empty" >&2; exit 1; }
+        done
+
+        if [ -n "${FAKE_DOCKER_EXPECT_NETWORK:-}" ]; then
+            network="$(sed -n 's/^TWINGATE_NETWORK=//p' "$env_file")"
+            [ "$network" = "$FAKE_DOCKER_EXPECT_NETWORK" ] || {
+                echo "fake docker: unexpected network" >&2
+                exit 1
+            }
+        fi
+
+        umask 077
+        printf '%s\n' "$env_file" >"$state_dir/env-file-path"
+        printf 'run\n' >>"$state_dir/run-calls"
+        printf 'true\n' >"$state_dir/${name}.running"
+        echo "fake-container-id"
+        ;;
+    inspect)
+        name="${@: -1}"
+        if [ -f "$state_dir/${name}.running" ]; then
+            cat "$state_dir/${name}.running"
+        else
+            exit 1
+        fi
+        ;;
+    rm)
+        name="${@: -1}"
+        rm -f "$state_dir/${name}.running"
+        ;;
+    *)
+        exit 0
+        ;;
+esac
+PY
+chmod +x "$FAKE_DOCKER"
+
+cleanup() {
+    rm -rf "$TEST_DIR"
+}
+trap cleanup EXIT
+
+bash -n "$ROOT_DIR/scripts/twingate-connector.sh"
+
+python3 - "$ROOT_DIR/.github/workflows/run.yml" <<'PY'
+import sys
+import yaml
+
+with open(sys.argv[1], encoding="utf-8") as handle:
+    workflow = yaml.safe_load(handle)
+
+job = workflow["jobs"]["server"]
+env = job["env"]
+for key in ("TWINGATE_ACCESS_TOKEN", "TWINGATE_REFRESH_TOKEN"):
+    if key not in env:
+        raise SystemExit(f"workflow is missing {key}")
+
+step_names = [step.get("name") for step in job["steps"]]
+if "start_twingate_connector" not in step_names:
+    raise SystemExit("workflow is missing the start_twingate_connector step")
+PY
+
+ACCESS_TOKEN="test-access-$(od -An -N8 -tx1 /dev/urandom | tr -d ' \n')"
+REFRESH_TOKEN="test-refresh-$(od -An -N8 -tx1 /dev/urandom | tr -d ' \n')"
+NETWORK="test-network"
+
+TWINGATE_NETWORK="$NETWORK" \
+    TWINGATE_ACCESS_TOKEN="$ACCESS_TOKEN" \
+    TWINGATE_REFRESH_TOKEN="$REFRESH_TOKEN" \
+    TWINGATE_DOCKER_BIN="$FAKE_DOCKER" \
+    TWINGATE_CONNECTOR_NAME="$CONTAINER_NAME" \
+    TWINGATE_ENV_DIR="$ENV_DIR" \
+    TWINGATE_READY_TIMEOUT="5" \
+    FAKE_DOCKER_STATE_DIR="$STATE_DIR" \
+    FAKE_DOCKER_EXPECT_NETWORK="$NETWORK" \
+    bash "$ROOT_DIR/scripts/twingate-connector.sh" start \
+    >"$START_LOG" 2>&1
+
+grep -q "is running" "$START_LOG"
+if grep -qF "$ACCESS_TOKEN" "$START_LOG" \
+    || grep -qF "$REFRESH_TOKEN" "$START_LOG" \
+    || grep -qF "$NETWORK" "$START_LOG"; then
+    echo "ERROR: connector output leaked a token value." >&2
+    exit 1
+fi
+
+env_file_path="$(cat "$STATE_DIR/env-file-path")"
+if [ -e "$env_file_path" ]; then
+    echo "ERROR: temporary connector env file was not removed." >&2
+    exit 1
+fi
+
+TWINGATE_DOCKER_BIN="$FAKE_DOCKER" \
+    TWINGATE_CONNECTOR_NAME="$CONTAINER_NAME" \
+    FAKE_DOCKER_STATE_DIR="$STATE_DIR" \
+    bash "$ROOT_DIR/scripts/twingate-connector.sh" status \
+    >>"$START_LOG" 2>&1
+
+TWINGATE_DOCKER_BIN="$FAKE_DOCKER" \
+    TWINGATE_CONNECTOR_NAME="$CONTAINER_NAME" \
+    FAKE_DOCKER_STATE_DIR="$STATE_DIR" \
+    bash "$ROOT_DIR/scripts/twingate-connector.sh" stop \
+    >>"$START_LOG" 2>&1
+
+if [ -f "$STATE_DIR/${CONTAINER_NAME}.running" ]; then
+    echo "ERROR: connector container was not stopped." >&2
+    exit 1
+fi
+
+if env -u TWINGATE_ACCESS_TOKEN \
+    TWINGATE_NETWORK="$NETWORK" \
+    TWINGATE_REFRESH_TOKEN="$REFRESH_TOKEN" \
+    TWINGATE_DOCKER_BIN="$FAKE_DOCKER" \
+    TWINGATE_CONNECTOR_NAME="$CONTAINER_NAME" \
+    TWINGATE_ENV_DIR="$ENV_DIR" \
+    FAKE_DOCKER_STATE_DIR="$STATE_DIR" \
+    bash "$ROOT_DIR/scripts/twingate-connector.sh" start \
+    >"$MISSING_LOG" 2>&1; then
+    echo "ERROR: start should fail without TWINGATE_ACCESS_TOKEN." >&2
+    exit 1
+fi
+
+grep -q "missing Twingate connector configuration" "$MISSING_LOG"
+if grep -qF "$REFRESH_TOKEN" "$MISSING_LOG"; then
+    echo "ERROR: failure output leaked a token value." >&2
+    exit 1
+fi
+
+DERIVED_NETWORK="test-derived-$(od -An -N4 -tx1 /dev/urandom | tr -d ' \n')"
+DERIVED_ACCESS_TOKEN="$(python3 - "$DERIVED_NETWORK" <<'PY'
+import base64
+import json
+import sys
+
+
+def encode(value):
+    raw = json.dumps(value, separators=(",", ":")).encode()
+    return base64.urlsafe_b64encode(raw).decode().rstrip("=")
+
+
+header = encode({"alg": "ES256", "typ": "DAT"})
+payload = encode({"aud": sys.argv[1], "iss": "twingate"})
+print(f"{header}.{payload}.test-signature")
+PY
+)"
+DERIVED_REFRESH_TOKEN="test-refresh-$(od -An -N8 -tx1 /dev/urandom | tr -d ' \n')"
+DERIVED_STATE_DIR="$TEST_DIR/state-derived"
+DERIVED_ENV_DIR="$TEST_DIR/env-derived"
+DERIVED_LOG="$LOG_DIR/test-twingate-connector-derived.log"
+mkdir -p "$DERIVED_STATE_DIR" "$DERIVED_ENV_DIR"
+
+env -u TWINGATE_NETWORK \
+    TWINGATE_ENABLED=auto \
+    TWINGATE_ACCESS_TOKEN="$DERIVED_ACCESS_TOKEN" \
+    TWINGATE_REFRESH_TOKEN="$DERIVED_REFRESH_TOKEN" \
+    TWINGATE_DOCKER_BIN="$FAKE_DOCKER" \
+    TWINGATE_CONNECTOR_NAME="${CONTAINER_NAME}-derived" \
+    TWINGATE_ENV_DIR="$DERIVED_ENV_DIR" \
+    TWINGATE_READY_TIMEOUT="5" \
+    FAKE_DOCKER_STATE_DIR="$DERIVED_STATE_DIR" \
+    FAKE_DOCKER_EXPECT_NETWORK="$DERIVED_NETWORK" \
+    bash "$ROOT_DIR/scripts/twingate-connector.sh" start \
+    >"$DERIVED_LOG" 2>&1
+
+grep -q "is running" "$DERIVED_LOG"
+if grep -qF "$DERIVED_ACCESS_TOKEN" "$DERIVED_LOG" \
+    || grep -qF "$DERIVED_REFRESH_TOKEN" "$DERIVED_LOG" \
+    || grep -qF "$DERIVED_NETWORK" "$DERIVED_LOG"; then
+    echo "ERROR: derived-network output leaked a credential value." >&2
+    exit 1
+fi
+
+derived_env_file="$(cat "$DERIVED_STATE_DIR/env-file-path")"
+if [ -e "$derived_env_file" ]; then
+    echo "ERROR: temporary derived-network env file was not removed." >&2
+    exit 1
+fi
+
+SKIP_STATE_DIR="$TEST_DIR/state-skip"
+SKIP_ENV_DIR="$TEST_DIR/env-skip"
+SKIP_LOG="$LOG_DIR/test-twingate-connector-skip.log"
+mkdir -p "$SKIP_STATE_DIR" "$SKIP_ENV_DIR"
+
+env -u TWINGATE_NETWORK -u TWINGATE_ACCESS_TOKEN -u TWINGATE_REFRESH_TOKEN \
+    TWINGATE_ENABLED=auto \
+    TWINGATE_DOCKER_BIN="$FAKE_DOCKER" \
+    TWINGATE_CONNECTOR_NAME="${CONTAINER_NAME}-skip" \
+    TWINGATE_ENV_DIR="$SKIP_ENV_DIR" \
+    FAKE_DOCKER_STATE_DIR="$SKIP_STATE_DIR" \
+    bash "$ROOT_DIR/scripts/twingate-connector.sh" start \
+    >"$SKIP_LOG" 2>&1
+
+grep -q "skipped" "$SKIP_LOG"
+if [ -f "$SKIP_STATE_DIR/run-calls" ]; then
+    echo "ERROR: auto mode started Docker without connector tokens." >&2
+    exit 1
+fi
+
+REQUIRED_LOG="$LOG_DIR/test-twingate-connector-required.log"
+if env -u TWINGATE_NETWORK -u TWINGATE_ACCESS_TOKEN -u TWINGATE_REFRESH_TOKEN \
+    TWINGATE_ENABLED=true \
+    TWINGATE_DOCKER_BIN="$FAKE_DOCKER" \
+    TWINGATE_CONNECTOR_NAME="${CONTAINER_NAME}-required" \
+    TWINGATE_ENV_DIR="$SKIP_ENV_DIR" \
+    FAKE_DOCKER_STATE_DIR="$SKIP_STATE_DIR" \
+    bash "$ROOT_DIR/scripts/twingate-connector.sh" start \
+    >"$REQUIRED_LOG" 2>&1; then
+    echo "ERROR: TWINGATE_ENABLED=true should fail without tokens." >&2
+    exit 1
+fi
+grep -q "are required when TWINGATE_ENABLED=true" "$REQUIRED_LOG"
+
+echo "Twingate connector test passed: auto-detection, env-only tokens, cleanup and status handling validated."
+[0m
+[0m$ [0mcat .agent-work/outputs/issue-10-twingate.md; echo ----; cat .agent-work/logs/test-twingate-connector-start.log; echo ----; cat .agent-work/logs/test-twingate-connector-result.log; echo ----; cat .agent-work/logs/test-tunnel-after-twingate.log
+# Issue 10 - Use the new Twingate secrets
+
+## Request
+
+Issue 10 says that `TWINGATE_ACCESS_TOKEN` and `TWINGATE_REFRESH_TOKEN` have
+been added as GitHub Actions secrets and asks for Twingate to be used in
+`run.yml`.
+
+## Changes
+
+- `.github/workflows/run.yml`
+  - `TWINGATE_ENABLED` now defaults to `auto` instead of `false`.
+  - `TWINGATE_NETWORK` can be supplied as a repository variable or secret.
+  - The `start_twingate_connector` step no longer requires
+    `TWINGATE_ENABLED=true`; it runs the connector script, which starts the
+    connector whenever both token secrets are present.
+  - The step remains `continue-on-error: true`, so Twingate problems cannot
+    stop the Minecraft server or its public tunnel.
+  - Connector output is saved to `.agent-work/logs/twingate-connector.log`.
+- `scripts/twingate-connector.sh`
+  - Added `auto`, `true`/`required`, and `false`/`disabled` modes.
+  - `auto` skips cleanly when neither token is configured.
+  - If `TWINGATE_NETWORK` is not supplied, the network slug is read from the
+    connector access token's JWT `aud` claim. This lets the two new secrets
+    work without adding another repository variable.
+  - Partial or missing credentials still fail with a clear error, and token
+    values are never printed.
+- `README.md`
+  - Updated setup instructions to require only the two token secrets.
+  - Documented automatic startup, the disable/require overrides, and the
+    optional network fallback/override.
+- `.agent-work/tests/test_twingate_connector.sh`
+  - Validates the workflow wiring.
+  - Keeps the existing env-only token, cleanup and status checks.
+  - Adds coverage for deriving the network from the access token.
+  - Adds coverage for auto-skip when tokens are absent.
+  - Adds coverage for explicit `true` mode failing without tokens.
+  - Adds coverage that an explicit `TWINGATE_NETWORK` wins over the token.
+
+## Security
+
+The connector tokens are read only from the environment, written to a mode-600
+temporary env file, passed to Docker with `--env-file`, and removed on exit.
+No real token value is stored in the repository, tests or logs. The test suite
+uses generated fake tokens.
+
+## Validation
+
+Run and passed:
+
+```bash
+bash -n scripts/twingate-connector.sh
+bash -n .agent-work/tests/test_twingate_connector.sh
+python3 -c 'import yaml; yaml.safe_load(open(".github/workflows/run.yml"))'
+bash .agent-work/tests/test_twingate_connector.sh
+```
+
+Logs are in `.agent-work/logs/test-twingate-connector-*.log`.
+
+## Limitation
+
+A real Twingate end-to-end connection still needs a valid connector token
+pair, an Admin Console Connector/Resource, and network access from the runner.
+Those credentials are not available to this test run, so only the repository
+integration and token handling were validated.
+----
+Twingate connector 'ultron-twingate-test' is running.
+Create/assign the Minecraft resource in the Twingate Admin Console; its token values were supplied only through the environment.
+Twingate connector 'ultron-twingate-test' is running.
+Twingate connector 'ultron-twingate-test' stopped.
+----
+Twingate connector test passed: auto-detection, env-only tokens, cleanup and status handling validated.
+----
+Tunnel is live at 127.0.0.1:25601
+HTTP/1.0 200 OK
+Tunnel end-to-end test passed: public TCP endpoint is reachable
+[0m
+[0m$ [0mgrep -n -i 'twingate' README.md | head -40
+87:## Twingate private access (optional)
+89:Twingate is not a public tunnel and does not replace the addresses above. It
+91:authorized Twingate users can reach it. Public players should keep using
+94:The server can run a Twingate Connector alongside the public tunnel:
+96:1. In the Twingate Admin Console, add a Connector to the remote network and
+99:   `TWINGATE_ACCESS_TOKEN` and `TWINGATE_REFRESH_TOKEN`.
+102:   `TWINGATE_NETWORK`.
+103:4. Create a Resource in the Twingate Admin Console for the Minecraft port and
+107:the repository variable `TWINGATE_ENABLED=false` to disable it, or `true` to
+111:`scripts/twingate-connector.sh` runs the pinned
+112:`twingate/connector:1` container with host networking and reads the connector
+113:credentials only from the environment. It reads `TWINGATE_NETWORK` from the
+118:Do not paste Twingate tokens into issues, pull requests, chat or commits. A
+120:Twingate Admin Console. The value pasted into issue 9 was not used or stored
+275:bash .agent-work/tests/test_twingate_connector.sh
+[0m
+[0m$ [0mgrep -n -i -A30 -B5 '## Twingate' README.md
+82-
+83-The token is never stored in the repository. Add or rotate it under
+84-**Settings > Secrets and variables > Actions > Secrets** as
+85-`LOCALXPOSE_ACCESS_TOKEN`.
+86-
+87:## Twingate private access (optional)
+88-
+89-Twingate is not a public tunnel and does not replace the addresses above. It
+90-is a zero-trust access service, so the Minecraft server stays private and only
+91-authorized Twingate users can reach it. Public players should keep using
+92-Minekube, LocalXpose, bore, Serveo, Pinggy or tunnl.
+93-
+94-The server can run a Twingate Connector alongside the public tunnel:
+95-
+96-1. In the Twingate Admin Console, add a Connector to the remote network and
+97-   generate its **Access Token** and **Refresh Token**.
+98-2. Add the two connector tokens as repository secrets
+99-   `TWINGATE_ACCESS_TOKEN` and `TWINGATE_REFRESH_TOKEN`.
+100-3. Optional: if your access token does not contain the tenant name in its
+101-   `aud` claim, add the network slug as the repository variable or secret
+102-   `TWINGATE_NETWORK`.
+103-4. Create a Resource in the Twingate Admin Console for the Minecraft port and
+104-   assign it to the users or groups that should have access.
+105-
+106-The connector starts automatically when both token secrets are present. Set
+107-the repository variable `TWINGATE_ENABLED=false` to disable it, or `true` to
+108-require both secrets. The default `auto` mode skips the connector when the
+109-secrets are not configured.
+110-
+111-`scripts/twingate-connector.sh` runs the pinned
+112-`twingate/connector:1` container with host networking and reads the connector
+113-credentials only from the environment. It reads `TWINGATE_NETWORK` from the
+114-access token's `aud` claim when no explicit network is supplied. It never
+115-writes token values to the repository or logs. The connector is optional and
+116-a connector failure does not stop the public tunnel.
+117-
+[0m
+[0m← [0mEdit scripts/twingate-connector.sh
+Index: /home/runner/work/ultron_smp/ultron_smp/scripts/twingate-connector.sh
 ===================================================================
---- /home/runner/work/ultron_smp/ultron_smp/.github/workflows/run.yml
-+++ /home/runner/work/ultron_smp/ultron_smp/.github/workflows/run.yml
-@@ -40,10 +40,10 @@
- MINEKUBE_ENDPOINT: ${{ vars.MINEKUBE_ENDPOINT }}
- MINEKUBE_CONNECT_TOKEN: ${{ secrets.MINEKUBE_CONNECT_TOKEN }}
- MINEKUBE_GATE_VERSION: ${{ vars.MINEKUBE_GATE_VERSION || '0.81.1' }}
- MINEKUBE_AUTO: ${{ vars.MINEKUBE_AUTO || 'true' }}
--TWINGATE_ENABLED: ${{ vars.TWINGATE_ENABLED || 'false' }}
--TWINGATE_NETWORK: ${{ vars.TWINGATE_NETWORK }}
-+TWINGATE_ENABLED: ${{ vars.TWINGATE_ENABLED || 'auto' }}
-+TWINGATE_NETWORK: ${{ vars.TWINGATE_NETWORK || secrets.TWINGATE_NETWORK }}
- TWINGATE_CONNECTOR_NAME: ${{ vars.TWINGATE_CONNECTOR_NAME || 'ultron-twingate' }}
- TWINGATE_ACCESS_TOKEN: ${{ secrets.TWINGATE_ACCESS_TOKEN }}
- TWINGATE_REFRESH_TOKEN: ${{ secrets.TWINGATE_REFRESH_TOKEN }}
+--- /home/runner/work/ultron_smp/ultron_smp/scripts/twingate-connector.sh
++++ /home/runner/work/ultron_smp/ultron_smp/scripts/twingate-connector.sh
+@@ -8,8 +8,9 @@
  
+ DOCKER_BIN="${TWINGATE_DOCKER_BIN:-docker}"
+ CONTAINER_NAME="${TWINGATE_CONNECTOR_NAME:-ultron-twingate}"
+ IMAGE="${TWINGATE_DOCKER_IMAGE:-twingate/connector:1}"
++NETWORK_MODE="${TWINGATE_DOCKER_NETWORK:-host}"
+ READY_TIMEOUT="${TWINGATE_READY_TIMEOUT:-90}"
+ NETWORK="${TWINGATE_NETWORK:-}"
+ ACCESS_TOKEN="${TWINGATE_ACCESS_TOKEN:-}"
+ REFRESH_TOKEN="${TWINGATE_REFRESH_TOKEN:-}"
 
 [0m
-[0m← [0mEdit .github/workflows/run.yml
-Index: /home/runner/work/ultron_smp/ultron_smp/.github/workflows/run.yml
+[0m← [0mEdit scripts/twingate-connector.sh
+Index: /home/runner/work/ultron_smp/ultron_smp/scripts/twingate-connector.sh
 ===================================================================
---- /home/runner/work/ultron_smp/ultron_smp/.github/workflows/run.yml
-+++ /home/runner/work/ultron_smp/ultron_smp/.github/workflows/run.yml
-@@ -150,13 +150,16 @@
-       print(f"Minecraft TCP port {port} is reachable locally!")
-       PY
+--- /home/runner/work/ultron_smp/ultron_smp/scripts/twingate-connector.sh
++++ /home/runner/work/ultron_smp/ultron_smp/scripts/twingate-connector.sh
+@@ -34,8 +34,10 @@
+                            the access token's "aud" claim.
+   TWINGATE_CONNECTOR_NAME  Docker container name (default: ultron-twingate)
+   TWINGATE_DOCKER_IMAGE    Connector image (default: twingate/connector:1)
+   TWINGATE_DOCKER_BIN      Docker executable (default: docker)
++  TWINGATE_DOCKER_NETWORK  Docker network mode (default: host). Host mode lets the
++                           connector reach 127.0.0.1:25565 on the runner.
+   TWINGATE_READY_TIMEOUT   Seconds to wait for the container (default: 90)
+   TWINGATE_LOG_LEVEL       Connector log level (default: 3)
+   TWINGATE_ENV_DIR         Directory for the temporary env file
+ EOF
+
+[0m
+[0m← [0mEdit scripts/twingate-connector.sh
+Index: /home/runner/work/ultron_smp/ultron_smp/scripts/twingate-connector.sh
+===================================================================
+--- /home/runner/work/ultron_smp/ultron_smp/scripts/twingate-connector.sh
++++ /home/runner/work/ultron_smp/ultron_smp/scripts/twingate-connector.sh
+@@ -205,16 +205,28 @@
  
- - name: start_twingate_connector
--  if: ${{ vars.TWINGATE_ENABLED == 'true' }}
-+  # Secrets cannot be tested directly in an `if:` expression. The
-+  # script starts the connector automatically when both tokens are
-+  # present, skips when they are absent, and honours
-+  # TWINGATE_ENABLED=false/true as an override.
-   continue-on-error: true
-   run: |
-       set -euo pipefail
--      bash scripts/twingate-connector.sh start
-+      bash scripts/twingate-connector.sh start | tee .agent-work/logs/twingate-connector.log
+ stop_connector
+ write_env_file
  
- - name: expose_server
-   id: expose-tunnel
-   run: |
+-"$DOCKER_BIN" run -d \
+-    --name "$CONTAINER_NAME" \
+-    --restart unless-stopped \
+-    --network host \
+-    --sysctl net.ipv4.ping_group_range="0 2147483647" \
+-    --env-file "$ENV_FILE" \
+-    "$IMAGE" >/dev/null
++local -a run_args=(
++    run -d
++    --name "$CONTAINER_NAME"
++    --restart unless-stopped
++    --network "$NETWORK_MODE"
++)
+ 
++# Twingate recommends this sysctl for its default bridge network, but the
++# kernel rejects it when the container shares the host network namespace:
++#   sysctl "net.ipv4.ping_group_range" not allowed in host network namespace
++# Host networking is what lets the connector reach the Minecraft server on
++# 127.0.0.1, so only add the sysctl for non-host network modes.
++if [ "$NETWORK_MODE" != "host" ]; then
++    run_args+=(--sysctl net.ipv4.ping_group_range="0 2147483647")
++fi
++
++run_args+=(--env-file "$ENV_FILE" "$IMAGE")
++
++"$DOCKER_BIN" "${run_args[@]}" >/dev/null
++
+ local waited=0
+ while [ "$waited" -lt "$READY_TIMEOUT" ]; do
+     if container_running; then
+         echo "Twingate connector '${CONTAINER_NAME}' is running."
+
+[0m
+[0m← [0mEdit .agent-work/tests/test_twingate_connector.sh
+Index: /home/runner/work/ultron_smp/ultron_smp/.agent-work/tests/test_twingate_connector.sh
+===================================================================
+--- /home/runner/work/ultron_smp/ultron_smp/.agent-work/tests/test_twingate_connector.sh
++++ /home/runner/work/ultron_smp/ultron_smp/.agent-work/tests/test_twingate_connector.sh
+@@ -27,8 +27,10 @@
+ case "$command" in
+     run)
+         env_file=""
+         name=""
++        network=""
++        sysctl_value=""
+         while [ "$#" -gt 0 ]; do
+             case "$1" in
+                 --name)
+                     name="$2"
+@@ -37,11 +39,19 @@
+                 --env-file)
+                     env_file="$2"
+                     shift 2
+                     ;;
+-                --network | --sysctl | --restart)
++                --network)
++                    network="$2"
+                     shift 2
+                     ;;
++                --sysctl)
++                    sysctl_value="$2"
++                    shift 2
++                    ;;
++                --restart)
++                    shift 2
++                    ;;
+                 -*)
+                     shift
+                     ;;
+                 *)
+@@ -52,8 +62,18 @@
+ 
+         [ -n "$name" ] || { echo "fake docker: missing name" >&2; exit 1; }
+         [ -f "$env_file" ] || { echo "fake docker: env file missing" >&2; exit 1; }
+ 
++        # Reproduce the real kernel restriction that broke the connector:
++        # the ping_group_range sysctl cannot be set in the host netns.
++        if [ "$network" = "host" ] && [ -n "$sysctl_value" ]; then
++            echo "fake docker: sysctl \"net.ipv4.ping_group_range\" not allowed in host network namespace" >&2
++            exit 125
++        fi
++
++        printf '%s\n' "$network" >"$state_dir/run-network"
++        printf '%s\n' "$sysctl_value" >"$state_dir/run-sysctl"
++
+         for key in TWINGATE_NETWORK TWINGATE_ACCESS_TOKEN TWINGATE_REFRESH_TOKEN; do
+             value="$(sed -n "s/^${key}=//p" "$env_file")"
+             [ -n "$value" ] || { echo "fake docker: ${key} is empty" >&2; exit 1; }
+         done
+
+[0m
+[0m← [0mEdit .agent-work/tests/test_twingate_connector.sh
+Index: /home/runner/work/ultron_smp/ultron_smp/.agent-work/tests/test_twingate_connector.sh
+===================================================================
+--- /home/runner/work/ultron_smp/ultron_smp/.agent-work/tests/test_twingate_connector.sh
++++ /home/runner/work/ultron_smp/ultron_smp/.agent-work/tests/test_twingate_connector.sh
+@@ -159,8 +159,17 @@
+     echo "ERROR: connector output leaked a token value." >&2
+     exit 1
+ fi
+ 
++if [ "$(cat "$STATE_DIR/run-network")" != "host" ]; then
++    echo "ERROR: connector should default to host networking." >&2
++    exit 1
++fi
++if [ -n "$(cat "$STATE_DIR/run-sysctl")" ]; then
++    echo "ERROR: host networking must not pass the ping_group_range sysctl." >&2
++    exit 1
++fi
++
+ env_file_path="$(cat "$STATE_DIR/env-file-path")"
+ if [ -e "$env_file_path" ]; then
+     echo "ERROR: temporary connector env file was not removed." >&2
+     exit 1
+
+[0m
+[0m← [0mEdit .agent-work/tests/test_twingate_connector.sh
+Index: /home/runner/work/ultron_smp/ultron_smp/.agent-work/tests/test_twingate_connector.sh
+===================================================================
+--- /home/runner/work/ultron_smp/ultron_smp/.agent-work/tests/test_twingate_connector.sh
++++ /home/runner/work/ultron_smp/ultron_smp/.agent-work/tests/test_twingate_connector.sh
+@@ -260,8 +260,41 @@
+     echo "ERROR: temporary derived-network env file was not removed." >&2
+     exit 1
+ fi
+ 
++BRIDGE_STATE_DIR="$TEST_DIR/state-bridge"
++BRIDGE_ENV_DIR="$TEST_DIR/env-bridge"
++BRIDGE_LOG="$LOG_DIR/test-twingate-connector-bridge.log"
++mkdir -p "$BRIDGE_STATE_DIR" "$BRIDGE_ENV_DIR"
++
++TWINGATE_NETWORK="$NETWORK" \
++    TWINGATE_ACCESS_TOKEN="$ACCESS_TOKEN" \
++    TWINGATE_REFRESH_TOKEN="$REFRESH_TOKEN" \
++    TWINGATE_DOCKER_BIN="$FAKE_DOCKER" \
++    TWINGATE_DOCKER_NETWORK="bridge" \
++    TWINGATE_CONNECTOR_NAME="${CONTAINER_NAME}-bridge" \
++    TWINGATE_ENV_DIR="$BRIDGE_ENV_DIR" \
++    TWINGATE_READY_TIMEOUT="5" \
++    FAKE_DOCKER_STATE_DIR="$BRIDGE_STATE_DIR" \
++    bash "$ROOT_DIR/scripts/twingate-connector.sh" start \
++    >"$BRIDGE_LOG" 2>&1
++
++grep -q "is running" "$BRIDGE_LOG"
++if [ "$(cat "$BRIDGE_STATE_DIR/run-network")" != "bridge" ]; then
++    echo "ERROR: TWINGATE_DOCKER_NETWORK=bridge was not honoured." >&2
++    exit 1
++fi
++if [ -z "$(cat "$BRIDGE_STATE_DIR/run-sysctl")" ]; then
++    echo "ERROR: non-host networking should pass the ping_group_range sysctl." >&2
++    exit 1
++fi
++
++TWINGATE_DOCKER_BIN="$FAKE_DOCKER" \
++    TWINGATE_CONNECTOR_NAME="${CONTAINER_NAME}-bridge" \
++    FAKE_DOCKER_STATE_DIR="$BRIDGE_STATE_DIR" \
++    bash "$ROOT_DIR/scripts/twingate-connector.sh" stop \
++    >>"$BRIDGE_LOG" 2>&1
++
+ SKIP_STATE_DIR="$TEST_DIR/state-skip"
+ SKIP_ENV_DIR="$TEST_DIR/env-skip"
+ SKIP_LOG="$LOG_DIR/test-twingate-connector-skip.log"
+ mkdir -p "$SKIP_STATE_DIR" "$SKIP_ENV_DIR"
 
 [0m
 [0m← [0mEdit README.md
@@ -1505,813 +2048,326 @@ Index: /home/runner/work/ultron_smp/ultron_smp/README.md
 ===================================================================
 --- /home/runner/work/ultron_smp/ultron_smp/README.md
 +++ /home/runner/work/ultron_smp/ultron_smp/README.md
-@@ -94,20 +94,27 @@
- The server can run a Twingate Connector alongside the public tunnel:
+@@ -114,8 +114,15 @@
+ access token's `aud` claim when no explicit network is supplied. It never
+ writes token values to the repository or logs. The connector is optional and
+ a connector failure does not stop the public tunnel.
  
- 1. In the Twingate Admin Console, add a Connector to the remote network and
-    generate its **Access Token** and **Refresh Token**.
--2. Add the network slug as the repository variable `TWINGATE_NETWORK`, and the
--   two connector tokens as repository secrets `TWINGATE_ACCESS_TOKEN` and
--   `TWINGATE_REFRESH_TOKEN`.
--3. Set the repository variable `TWINGATE_ENABLED=true`.
-+2. Add the two connector tokens as repository secrets
-+   `TWINGATE_ACCESS_TOKEN` and `TWINGATE_REFRESH_TOKEN`.
-+3. Optional: if your access token does not contain the tenant name in its
-+   `aud` claim, add the network slug as the repository variable or secret
-+   `TWINGATE_NETWORK`.
- 4. Create a Resource in the Twingate Admin Console for the Minecraft port and
-    assign it to the users or groups that should have access.
- 
-+The connector starts automatically when both token secrets are present. Set
-+the repository variable `TWINGATE_ENABLED=false` to disable it, or `true` to
-+require both secrets. The default `auto` mode skips the connector when the
-+secrets are not configured.
++Host networking allows the connector to reach the Minecraft server at
++`127.0.0.1:25565`, but Docker rejects the Twingate-recommended
++`net.ipv4.ping_group_range` sysctl in the host network namespace. The script
++therefore applies that sysctl only for non-host modes. Set
++`TWINGATE_DOCKER_NETWORK=bridge` only if your resource is reachable through
++the Docker bridge gateway instead of localhost.
 +
- `scripts/twingate-connector.sh` runs the pinned
- `twingate/connector:1` container with host networking and reads the connector
--tokens only from the environment. It never writes token values to the
--repository or logs. The connector is optional and a connector failure does
--not stop the public tunnel.
-+credentials only from the environment. It reads `TWINGATE_NETWORK` from the
-+access token's `aud` claim when no explicit network is supplied. It never
-+writes token values to the repository or logs. The connector is optional and
-+a connector failure does not stop the public tunnel.
- 
  Do not paste Twingate tokens into issues, pull requests, chat or commits. A
  token that has been posted publicly must be revoked and regenerated in the
  Twingate Admin Console. The value pasted into issue 9 was not used or stored
+ by this repository.
 
 [0m
-[0m← [0mEdit .agent-work/tests/test_twingate_connector.sh
-Index: /home/runner/work/ultron_smp/ultron_smp/.agent-work/tests/test_twingate_connector.sh
-===================================================================
---- /home/runner/work/ultron_smp/ultron_smp/.agent-work/tests/test_twingate_connector.sh
-+++ /home/runner/work/ultron_smp/ultron_smp/.agent-work/tests/test_twingate_connector.sh
-@@ -57,10 +57,19 @@
-         value="$(sed -n "s/^${key}=//p" "$env_file")"
-         [ -n "$value" ] || { echo "fake docker: ${key} is empty" >&2; exit 1; }
-     done
- 
-+    if [ -n "${FAKE_DOCKER_EXPECT_NETWORK:-}" ]; then
-+        network="$(sed -n 's/^TWINGATE_NETWORK=//p' "$env_file")"
-+        [ "$network" = "$FAKE_DOCKER_EXPECT_NETWORK" ] || {
-+            echo "fake docker: unexpected network" >&2
-+            exit 1
-+        }
-+    fi
-+
-     umask 077
-     printf '%s\n' "$env_file" >"$state_dir/env-file-path"
-+    printf 'run\n' >>"$state_dir/run-calls"
-     printf 'true\n' >"$state_dir/${name}.running"
-     echo "fake-container-id"
-     ;;
- inspect)
-
-[0m
-[0m← [0mEdit .agent-work/tests/test_twingate_connector.sh
-Index: /home/runner/work/ultron_smp/ultron_smp/.agent-work/tests/test_twingate_connector.sh
-===================================================================
---- /home/runner/work/ultron_smp/ultron_smp/.agent-work/tests/test_twingate_connector.sh
-+++ /home/runner/work/ultron_smp/ultron_smp/.agent-work/tests/test_twingate_connector.sh
-@@ -97,8 +97,26 @@
- trap cleanup EXIT
- 
- bash -n "$ROOT_DIR/scripts/twingate-connector.sh"
- 
-+python3 - "$ROOT_DIR/.github/workflows/run.yml" <<'PY'
-+import sys
-+import yaml
-+
-+with open(sys.argv[1], encoding="utf-8") as handle:
-+    workflow = yaml.safe_load(handle)
-+
-+job = workflow["jobs"]["server"]
-+env = job["env"]
-+for key in ("TWINGATE_ACCESS_TOKEN", "TWINGATE_REFRESH_TOKEN"):
-+    if key not in env:
-+        raise SystemExit(f"workflow is missing {key}")
-+
-+step_names = [step.get("name") for step in job["steps"]]
-+if "start_twingate_connector" not in step_names:
-+    raise SystemExit("workflow is missing the start_twingate_connector step")
-+PY
-+
- ACCESS_TOKEN="test-access-$(od -An -N8 -tx1 /dev/urandom | tr -d ' \n')"
- REFRESH_TOKEN="test-refresh-$(od -An -N8 -tx1 /dev/urandom | tr -d ' \n')"
- NETWORK="test-network"
- 
-
-[0m
-[0m← [0mEdit .agent-work/tests/test_twingate_connector.sh
-Index: /home/runner/work/ultron_smp/ultron_smp/.agent-work/tests/test_twingate_connector.sh
-===================================================================
---- /home/runner/work/ultron_smp/ultron_smp/.agent-work/tests/test_twingate_connector.sh
-+++ /home/runner/work/ultron_smp/ultron_smp/.agent-work/tests/test_twingate_connector.sh
-@@ -180,5 +180,89 @@
-     echo "ERROR: failure output leaked a token value." >&2
-     exit 1
- fi
- 
--echo "Twingate connector test passed: env-only tokens, cleanup and status handling validated."
-+DERIVED_NETWORK="test-derived-$(od -An -N4 -tx1 /dev/urandom | tr -d ' \n')"
-+DERIVED_ACCESS_TOKEN="$(python3 - "$DERIVED_NETWORK" <<'PY'
-+import base64
-+import json
-+import sys
-+
-+
-+def encode(value):
-+    raw = json.dumps(value, separators=(",", ":")).encode()
-+    return base64.urlsafe_b64encode(raw).decode().rstrip("=")
-+
-+
-+header = encode({"alg": "ES256", "typ": "DAT"})
-+payload = encode({"aud": sys.argv[1], "iss": "twingate"})
-+print(f"{header}.{payload}.test-signature")
-+PY
-+)"
-+DERIVED_REFRESH_TOKEN="test-refresh-$(od -An -N8 -tx1 /dev/urandom | tr -d ' \n')"
-+DERIVED_STATE_DIR="$TEST_DIR/state-derived"
-+DERIVED_ENV_DIR="$TEST_DIR/env-derived"
-+DERIVED_LOG="$LOG_DIR/test-twingate-connector-derived.log"
-+mkdir -p "$DERIVED_STATE_DIR" "$DERIVED_ENV_DIR"
-+
-+env -u TWINGATE_NETWORK \
-+    TWINGATE_ENABLED=auto \
-+    TWINGATE_ACCESS_TOKEN="$DERIVED_ACCESS_TOKEN" \
-+    TWINGATE_REFRESH_TOKEN="$DERIVED_REFRESH_TOKEN" \
-+    TWINGATE_DOCKER_BIN="$FAKE_DOCKER" \
-+    TWINGATE_CONNECTOR_NAME="${CONTAINER_NAME}-derived" \
-+    TWINGATE_ENV_DIR="$DERIVED_ENV_DIR" \
-+    TWINGATE_READY_TIMEOUT="5" \
-+    FAKE_DOCKER_STATE_DIR="$DERIVED_STATE_DIR" \
-+    FAKE_DOCKER_EXPECT_NETWORK="$DERIVED_NETWORK" \
-+    bash "$ROOT_DIR/scripts/twingate-connector.sh" start \
-+    >"$DERIVED_LOG" 2>&1
-+
-+grep -q "is running" "$DERIVED_LOG"
-+if grep -qF "$DERIVED_ACCESS_TOKEN" "$DERIVED_LOG" \
-+    || grep -qF "$DERIVED_REFRESH_TOKEN" "$DERIVED_LOG" \
-+    || grep -qF "$DERIVED_NETWORK" "$DERIVED_LOG"; then
-+    echo "ERROR: derived-network output leaked a credential value." >&2
-+    exit 1
-+fi
-+
-+derived_env_file="$(cat "$DERIVED_STATE_DIR/env-file-path")"
-+if [ -e "$derived_env_file" ]; then
-+    echo "ERROR: temporary derived-network env file was not removed." >&2
-+    exit 1
-+fi
-+
-+SKIP_STATE_DIR="$TEST_DIR/state-skip"
-+SKIP_ENV_DIR="$TEST_DIR/env-skip"
-+SKIP_LOG="$LOG_DIR/test-twingate-connector-skip.log"
-+mkdir -p "$SKIP_STATE_DIR" "$SKIP_ENV_DIR"
-+
-+env -u TWINGATE_NETWORK -u TWINGATE_ACCESS_TOKEN -u TWINGATE_REFRESH_TOKEN \
-+    TWINGATE_ENABLED=auto \
-+    TWINGATE_DOCKER_BIN="$FAKE_DOCKER" \
-+    TWINGATE_CONNECTOR_NAME="${CONTAINER_NAME}-skip" \
-+    TWINGATE_ENV_DIR="$SKIP_ENV_DIR" \
-+    FAKE_DOCKER_STATE_DIR="$SKIP_STATE_DIR" \
-+    bash "$ROOT_DIR/scripts/twingate-connector.sh" start \
-+    >"$SKIP_LOG" 2>&1
-+
-+grep -q "skipped" "$SKIP_LOG"
-+if [ -f "$SKIP_STATE_DIR/run-calls" ]; then
-+    echo "ERROR: auto mode started Docker without connector tokens." >&2
-+    exit 1
-+fi
-+
-+REQUIRED_LOG="$LOG_DIR/test-twingate-connector-required.log"
-+if env -u TWINGATE_NETWORK -u TWINGATE_ACCESS_TOKEN -u TWINGATE_REFRESH_TOKEN \
-+    TWINGATE_ENABLED=true \
-+    TWINGATE_DOCKER_BIN="$FAKE_DOCKER" \
-+    TWINGATE_CONNECTOR_NAME="${CONTAINER_NAME}-required" \
-+    TWINGATE_ENV_DIR="$SKIP_ENV_DIR" \
-+    FAKE_DOCKER_STATE_DIR="$SKIP_STATE_DIR" \
-+    bash "$ROOT_DIR/scripts/twingate-connector.sh" start \
-+    >"$REQUIRED_LOG" 2>&1; then
-+    echo "ERROR: TWINGATE_ENABLED=true should fail without tokens." >&2
-+    exit 1
-+fi
-+grep -q "are required when TWINGATE_ENABLED=true" "$REQUIRED_LOG"
-+
-+echo "Twingate connector test passed: auto-detection, env-only tokens, cleanup and status handling validated."
-
-[0m
-[0m$ [0mbash -n scripts/twingate-connector.sh && bash -n .agent-work/tests/test_twingate_connector.sh && python3 -c 'import yaml; yaml.safe_load(open(".github/workflows/run.yml")); print("workflow yaml parse OK")'
-workflow yaml parse OK
-[0m
-[0m$ [0mset -o pipefail; bash .agent-work/tests/test_twingate_connector.sh 2>&1 | tee .agent-work/logs/test-twingate-connector-result.log
+[0m$ [0mbash -n scripts/twingate-connector.sh && bash -n .agent-work/tests/test_twingate_connector.sh && python3 -c 'import yaml; yaml.safe_load(open(".github/workflows/run.yml"))' && bash .agent-work/tests/test_twingate_connector.sh
 Twingate connector test passed: auto-detection, env-only tokens, cleanup and status handling validated.
 [0m
-[0m$ [0msed -n '28,52p' .github/workflows/run.yml; echo '---'; sed -n '148,170p' .github/workflows/run.yml; echo '---'; sed -n '87,125p' README.md
-jobs:
-    server:
-        runs-on: ubuntu-latest
-        timeout-minutes: 360
-        env:
-            MINECRAFT_PORT: '25565'
-            SERVER_ISSUE_NUMBER: '1'
-            TUNNEL_PROVIDER: ${{ inputs.tunnel || 'auto' }}
-            LOCALXPOSE_ACCESS_TOKEN: ${{ secrets.LOCALXPOSE_ACCESS_TOKEN }}
-            LOCALXPOSE_REGION: ${{ vars.LOCALXPOSE_REGION || 'ap' }}
-            LOCALXPOSE_BORE_FALLBACK: ${{ vars.LOCALXPOSE_BORE_FALLBACK }}
-            PLAYER_REGION: ${{ vars.PLAYER_REGION || 'bangladesh' }}
-            MINEKUBE_ENDPOINT: ${{ vars.MINEKUBE_ENDPOINT }}
-            MINEKUBE_CONNECT_TOKEN: ${{ secrets.MINEKUBE_CONNECT_TOKEN }}
-            MINEKUBE_GATE_VERSION: ${{ vars.MINEKUBE_GATE_VERSION || '0.81.1' }}
-            MINEKUBE_AUTO: ${{ vars.MINEKUBE_AUTO || 'true' }}
-            TWINGATE_ENABLED: ${{ vars.TWINGATE_ENABLED || 'auto' }}
-            TWINGATE_NETWORK: ${{ vars.TWINGATE_NETWORK || secrets.TWINGATE_NETWORK }}
-            TWINGATE_CONNECTOR_NAME: ${{ vars.TWINGATE_CONNECTOR_NAME || 'ultron-twingate' }}
-            TWINGATE_ACCESS_TOKEN: ${{ secrets.TWINGATE_ACCESS_TOKEN }}
-            TWINGATE_REFRESH_TOKEN: ${{ secrets.TWINGATE_REFRESH_TOKEN }}
-
-        steps:
-            - name: checkout_repo
-              uses: actions/checkout@v4
----
-                  with socket.create_connection(("127.0.0.1", port), timeout=5):
-                      pass
-                  print(f"Minecraft TCP port {port} is reachable locally!")
-                  PY
-
-            - name: start_twingate_connector
-              # Secrets cannot be tested directly in an `if:` expression. The
-              # script starts the connector automatically when both tokens are
-              # present, skips when they are absent, and honours
-              # TWINGATE_ENABLED=false/true as an override.
-              continue-on-error: true
-              run: |
-                  set -euo pipefail
-                  bash scripts/twingate-connector.sh start | tee .agent-work/logs/twingate-connector.log
-
-            - name: expose_server
-              id: expose-tunnel
-              run: |
-                  set -euo pipefail
-                  bash scripts/tunnel.sh | tee .agent-work/logs/tunnel-start.log
-
-                  address="$(grep -v '^#' SERVER_ADDRESS.txt | grep -E ':[0-9]+$' | tail -n 1)"
-                  if [ -z "$address" ]; then
----
-## Twingate private access (optional)
-
-Twingate is not a public tunnel and does not replace the addresses above. It
-is a zero-trust access service, so the Minecraft server stays private and only
-authorized Twingate users can reach it. Public players should keep using
-Minekube, LocalXpose, bore, Serveo, Pinggy or tunnl.
-
-The server can run a Twingate Connector alongside the public tunnel:
-
-1. In the Twingate Admin Console, add a Connector to the remote network and
-   generate its **Access Token** and **Refresh Token**.
-2. Add the two connector tokens as repository secrets
-   `TWINGATE_ACCESS_TOKEN` and `TWINGATE_REFRESH_TOKEN`.
-3. Optional: if your access token does not contain the tenant name in its
-   `aud` claim, add the network slug as the repository variable or secret
-   `TWINGATE_NETWORK`.
-4. Create a Resource in the Twingate Admin Console for the Minecraft port and
-   assign it to the users or groups that should have access.
-
-The connector starts automatically when both token secrets are present. Set
-the repository variable `TWINGATE_ENABLED=false` to disable it, or `true` to
-require both secrets. The default `auto` mode skips the connector when the
-secrets are not configured.
-
-`scripts/twingate-connector.sh` runs the pinned
-`twingate/connector:1` container with host networking and reads the connector
-credentials only from the environment. It reads `TWINGATE_NETWORK` from the
-access token's `aud` claim when no explicit network is supplied. It never
-writes token values to the repository or logs. The connector is optional and
-a connector failure does not stop the public tunnel.
-
-Do not paste Twingate tokens into issues, pull requests, chat or commits. A
-token that has been posted publicly must be revoked and regenerated in the
-Twingate Admin Console. The value pasted into issue 9 was not used or stored
-by this repository.
-
-## Tunnel settings
-
-- `LOCALXPOSE_REGION` (repository variable) - relay region: `ap`, `us`, `eu`,
+[0m$ [0mcommand -v docker || true; docker version --format '{{.Server.Version}}' 2>/dev/null || true
+/usr/bin/docker
+29.4.2
 [0m
-[0m$ [0mcat .agent-work/logs/test-twingate-connector-result.log; echo '---'; for f in .agent-work/logs/test-twingate-connector-{start,derived,skip,required,missing}.log; do echo "== $f =="; cat "$f"; done
-Twingate connector test passed: auto-detection, env-only tokens, cleanup and status handling validated.
----
-== .agent-work/logs/test-twingate-connector-start.log ==
-Twingate connector 'ultron-twingate-test' is running.
-Create/assign the Minecraft resource in the Twingate Admin Console; its token values were supplied only through the environment.
-Twingate connector 'ultron-twingate-test' is running.
-Twingate connector 'ultron-twingate-test' stopped.
-== .agent-work/logs/test-twingate-connector-derived.log ==
-Twingate connector 'ultron-twingate-test-derived' is running.
-Create/assign the Minecraft resource in the Twingate Admin Console; its token values were supplied only through the environment.
-== .agent-work/logs/test-twingate-connector-skip.log ==
-Twingate connector skipped: TWINGATE_ACCESS_TOKEN and TWINGATE_REFRESH_TOKEN are not configured.
-== .agent-work/logs/test-twingate-connector-required.log ==
-ERROR: TWINGATE_ACCESS_TOKEN and TWINGATE_REFRESH_TOKEN are required when TWINGATE_ENABLED=true.
-== .agent-work/logs/test-twingate-connector-missing.log ==
-ERROR: missing Twingate connector configuration: TWINGATE_ACCESS_TOKEN. Set these as GitHub Actions secrets/variables; never paste tokens into issues or commit them.
+[0m$ [0mdocker images --format '{{.Repository}}:{{.Tag}}' | head -20
+ghcr.io/github/gh-aw-mcpg:latest
+ghcr.io/dependabot/dependabot-updater-core:latest
+ghcr.io/github/gh-aw-firewall/squid:latest
+ghcr.io/github/gh-aw-firewall/agent:latest
+ghcr.io/github/gh-aw-firewall/api-proxy:latest
+ghcr.io/github/github-mcp-server:latest
 [0m
-[0m← [0mEdit .agent-work/tests/test_twingate_connector.sh
-Index: /home/runner/work/ultron_smp/ultron_smp/.agent-work/tests/test_twingate_connector.sh
-===================================================================
---- /home/runner/work/ultron_smp/ultron_smp/.agent-work/tests/test_twingate_connector.sh
-+++ /home/runner/work/ultron_smp/ultron_smp/.agent-work/tests/test_twingate_connector.sh
-@@ -127,8 +127,9 @@
-     TWINGATE_CONNECTOR_NAME="$CONTAINER_NAME" \
-     TWINGATE_ENV_DIR="$ENV_DIR" \
-     TWINGATE_READY_TIMEOUT="5" \
-     FAKE_DOCKER_STATE_DIR="$STATE_DIR" \
-+    FAKE_DOCKER_EXPECT_NETWORK="$NETWORK" \
-     bash "$ROOT_DIR/scripts/twingate-connector.sh" start \
-     >"$START_LOG" 2>&1
- 
- grep -q "is running" "$START_LOG"
+[0m$ [0mset +e
+docker create --name ultron-sysctl-repro --network host --sysctl net.ipv4.ping_group_range="0 2147483647" ghcr.io/github/github-mcp-server:latest >/tmp/sysctl.out 2>/tmp/sysctl.err
+rc1=$?
+docker rm -f ultron-sysctl-repro >/dev/null 2>&1
+docker create --name ultron-sysctl-fixed --network host ghcr.io/github/github-mcp-server:latest >/tmp/nosysctl.out 2>/tmp/nosysctl.err
+rc2=$?
+docker rm -f ultron-sysctl-fixed >/dev/null 2>&1
+echo "with sysctl rc=$rc1: $(cat /tmp/sysctl.err)"
+echo "without sysctl rc=$rc2: $(cat /tmp/nosysctl.err)"
+with sysctl rc=0: 
+without sysctl rc=0:
+[0m
+[0m$ [0mset +e
+docker run -d --name ultron-sysctl-repro --network host --sysctl net.ipv4.ping_group_range="0 2147483647" ghcr.io/github/github-mcp-server:latest >/tmp/sysctl.out 2>/tmp/sysctl.err
+rc1=$?
+docker rm -f ultron-sysctl-repro >/dev/null 2>&1
+docker run -d --name ultron-sysctl-fixed --network host ghcr.io/github/github-mcp-server:latest >/tmp/nosysctl.out 2>/tmp/nosysctl.err
+rc2=$?
+docker rm -f ultron-sysctl-fixed >/dev/null 2>&1
+echo "with sysctl rc=$rc1: $(cat /tmp/sysctl.err)"
+echo "without sysctl rc=$rc2: $(cat /tmp/nosysctl.err)"
+with sysctl rc=125: docker: Error response from daemon: failed to create task for container: failed to create shim task: OCI runtime create failed: runc create failed: sysctl "net.ipv4.ping_group_range" not allowed in host network namespace
 
+Run 'docker run --help' for more information
+without sysctl rc=0:
 [0m
-[0m$ [0mbash .agent-work/tests/test_twingate_connector.sh 2>&1 | tee .agent-work/logs/test-twingate-connector-result.log
-Twingate connector test passed: auto-detection, env-only tokens, cleanup and status handling validated.
+[0m$ [0mset -euo pipefail
+mkdir -p .agent-work/tmp .agent-work/logs
+envfile=".agent-work/tmp/twingate-fake-env"
+umask 077
+printf 'TWINGATE_NETWORK=%s\nTWINGATE_ACCESS_TOKEN=%s\nTWINGATE_REFRESH_TOKEN=%s\nTWINGATE_LOG_LEVEL=3\n' 'fake-network' 'fake-access-token' 'fake-refresh-token' > "$envfile"
+chmod 600 "$envfile"
+log=.agent-work/logs/test-twingate-docker-host-sysctl.log
+{
+  echo "Testing Twingate connector container startup with host networking and no sysctl"
+  echo "Date: $(date -u +%Y-%m-%dT%H:%M:%SZ)"
+  echo "Docker: $(docker version --format '{{.Server.Version}}')"
+  echo
+  echo "1. Reproducing the original failure (host networking + ping_group_range sysctl):"
+  if docker run -d --name ultron-twingate-sysctl-repro --network host --sysctl net.ipv4.ping_group_range="0 2147483647" twingate/connector:1 >/tmp/tg-repro.out 2>>"$log"; then
+    echo "   UNEXPECTED: docker run succeeded" >> "$log"
+    docker rm -f ultron-twingate-sysctl-repro >/dev/null 2>&1 || true
+  else
+    echo "   Reproduced as expected: docker rejected the sysctl in the host netns." >> "$log"
+  fi
+  docker rm -f ultron-twingate-sysctl-repro >/dev/null 2>&1 || true
+  echo >> "$log"
+  echo "2. Starting twingate/connector:1 with host networking WITHOUT the sysctl (fake credentials):" >> "$log"
+  if docker run -d --name ultron-twingate-sysctl-fixed --network host --env-file "$envfile" twingate/connector:1 >> "$log" 2>&1; then
+    sleep 8
+    state="$(docker inspect --format '{{.State.Status}}' ultron-twingate-sysctl-fixed 2>/dev/null || echo missing)"
+    echo "   Container state: $state" >> "$log"
+    echo "   Recent container logs:" >> "$log"
+    docker logs --tail 20 ultron-twingate-sysctl-fixed >> "$log" 2>&1 || true
+    docker rm -f ultron-twingate-sysctl-fixed >/dev/null 2>&1 || true
+  else
+    echo "   ERROR: container failed to start" >> "$log"
+  fi
+  rm -f "$envfile"
+} 2>&1
+cat "$log"
+Testing Twingate connector container startup with host networking and no sysctl
+Date: 2026-11-18T12:02:07Z
+Docker: 29.4.2
+
+1. Reproducing the original failure (host networking + ping_group_range sysctl):
+Unable to find image 'twingate/connector:1' locally
+1: Pulling from twingate/connector
+b32d700bee6a: Pulling fs layer
+59488b8e1808: Pulling fs layer
+06b7f4240335: Pulling fs layer
+3fa12498f212: Pulling fs layer
+d50f4cc14715: Pulling fs layer
+a1d02b0f9fa5: Pulling fs layer
+ea381e34dea2: Pulling fs layer
+37fcaebb2f5f: Pulling fs layer
+e424d5008d11: Pulling fs layer
+f195684dcfd2: Pulling fs layer
+c1567fcf70c5: Pulling fs layer
+b32d700bee6a: Download complete
+59488b8e1808: Download complete
+3fa12498f212: Download complete
+d50f4cc14715: Download complete
+37fcaebb2f5f: Download complete
+f195684dcfd2: Download complete
+a1d02b0f9fa5: Download complete
+ea381e34dea2: Download complete
+e424d5008d11: Download complete
+c1567fcf70c5: Download complete
+59488b8e1808: Pull complete
+06b7f4240335: Download complete
+06b7f4240335: Pull complete
+da6a7cdfa519: Download complete
+44136fa355b3: Already exists
+b32d700bee6a: Pull complete
+3fa12498f212: Pull complete
+d50f4cc14715: Pull complete
+37fcaebb2f5f: Pull complete
+f195684dcfd2: Pull complete
+a1d02b0f9fa5: Pull complete
+ea381e34dea2: Pull complete
+e424d5008d11: Pull complete
+c1567fcf70c5: Pull complete
+Digest: sha256:f02bcac59a7cd1617fcfb63a462b1ac6bcea81c55a54b295ba79373945c7e83a
+Status: Downloaded newer image for twingate/connector:1
+docker: Error response from daemon: failed to create task for container: failed to create shim task: OCI runtime create failed: runc create failed: sysctl "net.ipv4.ping_group_range" not allowed in host network namespace
+
+Run 'docker run --help' for more information
+   Reproduced as expected: docker rejected the sysctl in the host netns.
+
+2. Starting twingate/connector:1 with host networking WITHOUT the sysctl (fake credentials):
+0e5babada92b554b825058a1670435251a8191cca84154b2690b0291684d4536
+   Container state: running
+   Recent container logs:
+State: Offline
+State: Authentication
+State: Error
 [0m
-[0m← [0mWrite .agent-work/outputs/issue-10-twingate.md
+[0m← [0mWrite .agent-work/tests/test_twingate_docker_host.sh
 Wrote file successfully.
 [0m
-[0m$ [0mgit status --short; echo '---diffstat---'; git diff --stat; echo '---secret scan---'; git diff -- . ':(exclude).agent-work/logs/opencode-output.log' | grep -nE 'eyJ[A-Za-z0-9_-]{10,}\.|ghp_[A-Za-z0-9]{20,}|github_pat_[A-Za-z0-9_]{20,}' || echo 'No JWT/GitHub-token-like values in diff'
-M .agent-work/logs/opencode-output.log
- M .agent-work/logs/test-twingate-connector-result.log
- M .agent-work/tests/test_twingate_connector.sh
- M .github/workflows/run.yml
- M README.md
- M scripts/twingate-connector.sh
-?? .agent-work/logs/test-twingate-connector-derived.log
-?? .agent-work/logs/test-twingate-connector-required.log
-?? .agent-work/logs/test-twingate-connector-skip.log
-?? .agent-work/outputs/issue-10-twingate.md
----diffstat---
- .agent-work/logs/opencode-output.log               | 4809 ++++++--------------
- .../logs/test-twingate-connector-result.log        |    2 +-
- .agent-work/tests/test_twingate_connector.sh       |  114 +-
- .github/workflows/run.yml                          |   11 +-
- README.md                                          |   21 +-
- scripts/twingate-connector.sh                      |   93 +-
- 6 files changed, 1706 insertions(+), 3344 deletions(-)
----secret scan---
-No JWT/GitHub-token-like values in diff
-[0m
-[0m$ [0mgit diff -- .github/workflows/run.yml scripts/twingate-connector.sh README.md .agent-work/tests/test_twingate_connector.sh | sed -n '1,260p'
-diff --git a/.agent-work/tests/test_twingate_connector.sh b/.agent-work/tests/test_twingate_connector.sh
-index 3019fa3..d01e98d 100755
---- a/.agent-work/tests/test_twingate_connector.sh
-+++ b/.agent-work/tests/test_twingate_connector.sh
-@@ -58,8 +58,17 @@ case "$command" in
-             [ -n "$value" ] || { echo "fake docker: ${key} is empty" >&2; exit 1; }
-         done
+[0m← [0mEdit .agent-work/tests/test_twingate_docker_host.sh
+Index: /home/runner/work/ultron_smp/ultron_smp/.agent-work/tests/test_twingate_docker_host.sh
+===================================================================
+--- /home/runner/work/ultron_smp/ultron_smp/.agent-work/tests/test_twingate_docker_host.sh
++++ /home/runner/work/ultron_smp/ultron_smp/.agent-work/tests/test_twingate_docker_host.sh
+@@ -76,10 +76,12 @@
+     if [ "$state" = "missing" ]; then
+         echo "   ERROR: container disappeared after start."
+         exit 1
+     fi
+-} 2>&1 | tee "$LOG"
++} >"$LOG" 2>&1
  
-+        if [ -n "${FAKE_DOCKER_EXPECT_NETWORK:-}" ]; then
-+            network="$(sed -n 's/^TWINGATE_NETWORK=//p' "$env_file")"
-+            [ "$network" = "$FAKE_DOCKER_EXPECT_NETWORK" ] || {
-+                echo "fake docker: unexpected network" >&2
-+                exit 1
-+            }
-+        fi
++cat "$LOG"
 +
-         umask 077
-         printf '%s\n' "$env_file" >"$state_dir/env-file-path"
-+        printf 'run\n' >>"$state_dir/run-calls"
-         printf 'true\n' >"$state_dir/${name}.running"
-         echo "fake-container-id"
-         ;;
-@@ -89,6 +98,24 @@ trap cleanup EXIT
- 
- bash -n "$ROOT_DIR/scripts/twingate-connector.sh"
- 
-+python3 - "$ROOT_DIR/.github/workflows/run.yml" <<'PY'
-+import sys
-+import yaml
-+
-+with open(sys.argv[1], encoding="utf-8") as handle:
-+    workflow = yaml.safe_load(handle)
-+
-+job = workflow["jobs"]["server"]
-+env = job["env"]
-+for key in ("TWINGATE_ACCESS_TOKEN", "TWINGATE_REFRESH_TOKEN"):
-+    if key not in env:
-+        raise SystemExit(f"workflow is missing {key}")
-+
-+step_names = [step.get("name") for step in job["steps"]]
-+if "start_twingate_connector" not in step_names:
-+    raise SystemExit("workflow is missing the start_twingate_connector step")
-+PY
-+
- ACCESS_TOKEN="test-access-$(od -An -N8 -tx1 /dev/urandom | tr -d ' \n')"
- REFRESH_TOKEN="test-refresh-$(od -An -N8 -tx1 /dev/urandom | tr -d ' \n')"
- NETWORK="test-network"
-@@ -101,6 +128,7 @@ TWINGATE_NETWORK="$NETWORK" \
-     TWINGATE_ENV_DIR="$ENV_DIR" \
-     TWINGATE_READY_TIMEOUT="5" \
-     FAKE_DOCKER_STATE_DIR="$STATE_DIR" \
-+    FAKE_DOCKER_EXPECT_NETWORK="$NETWORK" \
-     bash "$ROOT_DIR/scripts/twingate-connector.sh" start \
-     >"$START_LOG" 2>&1
- 
-@@ -154,4 +182,88 @@ if grep -qF "$REFRESH_TOKEN" "$MISSING_LOG"; then
+ if [ "${failure:-0}" -ne 0 ]; then
      exit 1
  fi
  
--echo "Twingate connector test passed: env-only tokens, cleanup and status handling validated."
-+DERIVED_NETWORK="test-derived-$(od -An -N4 -tx1 /dev/urandom | tr -d ' \n')"
-+DERIVED_ACCESS_TOKEN="$(python3 - "$DERIVED_NETWORK" <<'PY'
-+import base64
-+import json
-+import sys
-+
-+
-+def encode(value):
-+    raw = json.dumps(value, separators=(",", ":")).encode()
-+    return base64.urlsafe_b64encode(raw).decode().rstrip("=")
-+
-+
-+header = encode({"alg": "ES256", "typ": "DAT"})
-+payload = encode({"aud": sys.argv[1], "iss": "twingate"})
-+print(f"{header}.{payload}.test-signature")
-+PY
-+)"
-+DERIVED_REFRESH_TOKEN="test-refresh-$(od -An -N8 -tx1 /dev/urandom | tr -d ' \n')"
-+DERIVED_STATE_DIR="$TEST_DIR/state-derived"
-+DERIVED_ENV_DIR="$TEST_DIR/env-derived"
-+DERIVED_LOG="$LOG_DIR/test-twingate-connector-derived.log"
-+mkdir -p "$DERIVED_STATE_DIR" "$DERIVED_ENV_DIR"
-+
-+env -u TWINGATE_NETWORK \
-+    TWINGATE_ENABLED=auto \
-+    TWINGATE_ACCESS_TOKEN="$DERIVED_ACCESS_TOKEN" \
-+    TWINGATE_REFRESH_TOKEN="$DERIVED_REFRESH_TOKEN" \
-+    TWINGATE_DOCKER_BIN="$FAKE_DOCKER" \
-+    TWINGATE_CONNECTOR_NAME="${CONTAINER_NAME}-derived" \
-+    TWINGATE_ENV_DIR="$DERIVED_ENV_DIR" \
-+    TWINGATE_READY_TIMEOUT="5" \
-+    FAKE_DOCKER_STATE_DIR="$DERIVED_STATE_DIR" \
-+    FAKE_DOCKER_EXPECT_NETWORK="$DERIVED_NETWORK" \
-+    bash "$ROOT_DIR/scripts/twingate-connector.sh" start \
-+    >"$DERIVED_LOG" 2>&1
-+
-+grep -q "is running" "$DERIVED_LOG"
-+if grep -qF "$DERIVED_ACCESS_TOKEN" "$DERIVED_LOG" \
-+    || grep -qF "$DERIVED_REFRESH_TOKEN" "$DERIVED_LOG" \
-+    || grep -qF "$DERIVED_NETWORK" "$DERIVED_LOG"; then
-+    echo "ERROR: derived-network output leaked a credential value." >&2
-+    exit 1
-+fi
-+
-+derived_env_file="$(cat "$DERIVED_STATE_DIR/env-file-path")"
-+if [ -e "$derived_env_file" ]; then
-+    echo "ERROR: temporary derived-network env file was not removed." >&2
-+    exit 1
-+fi
-+
-+SKIP_STATE_DIR="$TEST_DIR/state-skip"
-+SKIP_ENV_DIR="$TEST_DIR/env-skip"
-+SKIP_LOG="$LOG_DIR/test-twingate-connector-skip.log"
-+mkdir -p "$SKIP_STATE_DIR" "$SKIP_ENV_DIR"
-+
-+env -u TWINGATE_NETWORK -u TWINGATE_ACCESS_TOKEN -u TWINGATE_REFRESH_TOKEN \
-+    TWINGATE_ENABLED=auto \
-+    TWINGATE_DOCKER_BIN="$FAKE_DOCKER" \
-+    TWINGATE_CONNECTOR_NAME="${CONTAINER_NAME}-skip" \
-+    TWINGATE_ENV_DIR="$SKIP_ENV_DIR" \
-+    FAKE_DOCKER_STATE_DIR="$SKIP_STATE_DIR" \
-+    bash "$ROOT_DIR/scripts/twingate-connector.sh" start \
-+    >"$SKIP_LOG" 2>&1
-+
-+grep -q "skipped" "$SKIP_LOG"
-+if [ -f "$SKIP_STATE_DIR/run-calls" ]; then
-+    echo "ERROR: auto mode started Docker without connector tokens." >&2
-+    exit 1
-+fi
-+
-+REQUIRED_LOG="$LOG_DIR/test-twingate-connector-required.log"
-+if env -u TWINGATE_NETWORK -u TWINGATE_ACCESS_TOKEN -u TWINGATE_REFRESH_TOKEN \
-+    TWINGATE_ENABLED=true \
-+    TWINGATE_DOCKER_BIN="$FAKE_DOCKER" \
-+    TWINGATE_CONNECTOR_NAME="${CONTAINER_NAME}-required" \
-+    TWINGATE_ENV_DIR="$SKIP_ENV_DIR" \
-+    FAKE_DOCKER_STATE_DIR="$SKIP_STATE_DIR" \
-+    bash "$ROOT_DIR/scripts/twingate-connector.sh" start \
-+    >"$REQUIRED_LOG" 2>&1; then
-+    echo "ERROR: TWINGATE_ENABLED=true should fail without tokens." >&2
-+    exit 1
-+fi
-+grep -q "are required when TWINGATE_ENABLED=true" "$REQUIRED_LOG"
-+
-+echo "Twingate connector test passed: auto-detection, env-only tokens, cleanup and status handling validated."
-diff --git a/.github/workflows/run.yml b/.github/workflows/run.yml
-index afe3c30..ae4d96f 100644
---- a/.github/workflows/run.yml
-+++ b/.github/workflows/run.yml
-@@ -41,8 +41,8 @@ jobs:
-             MINEKUBE_CONNECT_TOKEN: ${{ secrets.MINEKUBE_CONNECT_TOKEN }}
-             MINEKUBE_GATE_VERSION: ${{ vars.MINEKUBE_GATE_VERSION || '0.81.1' }}
-             MINEKUBE_AUTO: ${{ vars.MINEKUBE_AUTO || 'true' }}
--            TWINGATE_ENABLED: ${{ vars.TWINGATE_ENABLED || 'false' }}
--            TWINGATE_NETWORK: ${{ vars.TWINGATE_NETWORK }}
-+            TWINGATE_ENABLED: ${{ vars.TWINGATE_ENABLED || 'auto' }}
-+            TWINGATE_NETWORK: ${{ vars.TWINGATE_NETWORK || secrets.TWINGATE_NETWORK }}
-             TWINGATE_CONNECTOR_NAME: ${{ vars.TWINGATE_CONNECTOR_NAME || 'ultron-twingate' }}
-             TWINGATE_ACCESS_TOKEN: ${{ secrets.TWINGATE_ACCESS_TOKEN }}
-             TWINGATE_REFRESH_TOKEN: ${{ secrets.TWINGATE_REFRESH_TOKEN }}
-@@ -151,11 +151,14 @@ jobs:
-                   PY
- 
-             - name: start_twingate_connector
--              if: ${{ vars.TWINGATE_ENABLED == 'true' }}
-+              # Secrets cannot be tested directly in an `if:` expression. The
-+              # script starts the connector automatically when both tokens are
-+              # present, skips when they are absent, and honours
-+              # TWINGATE_ENABLED=false/true as an override.
-               continue-on-error: true
-               run: |
-                   set -euo pipefail
--                  bash scripts/twingate-connector.sh start
-+                  bash scripts/twingate-connector.sh start | tee .agent-work/logs/twingate-connector.log
- 
-             - name: expose_server
-               id: expose-tunnel
-diff --git a/README.md b/README.md
-index 9e3a361..50a7456 100644
---- a/README.md
-+++ b/README.md
-@@ -95,18 +95,25 @@ The server can run a Twingate Connector alongside the public tunnel:
- 
- 1. In the Twingate Admin Console, add a Connector to the remote network and
-    generate its **Access Token** and **Refresh Token**.
--2. Add the network slug as the repository variable `TWINGATE_NETWORK`, and the
--   two connector tokens as repository secrets `TWINGATE_ACCESS_TOKEN` and
--   `TWINGATE_REFRESH_TOKEN`.
--3. Set the repository variable `TWINGATE_ENABLED=true`.
-+2. Add the two connector tokens as repository secrets
-+   `TWINGATE_ACCESS_TOKEN` and `TWINGATE_REFRESH_TOKEN`.
-+3. Optional: if your access token does not contain the tenant name in its
-+   `aud` claim, add the network slug as the repository variable or secret
-+   `TWINGATE_NETWORK`.
- 4. Create a Resource in the Twingate Admin Console for the Minecraft port and
-    assign it to the users or groups that should have access.
- 
-+The connector starts automatically when both token secrets are present. Set
-+the repository variable `TWINGATE_ENABLED=false` to disable it, or `true` to
-+require both secrets. The default `auto` mode skips the connector when the
-+secrets are not configured.
-+
- `scripts/twingate-connector.sh` runs the pinned
- `twingate/connector:1` container with host networking and reads the connector
--tokens only from the environment. It never writes token values to the
--repository or logs. The connector is optional and a connector failure does
--not stop the public tunnel.
-+credentials only from the environment. It reads `TWINGATE_NETWORK` from the
-+access token's `aud` claim when no explicit network is supplied. It never
-+writes token values to the repository or logs. The connector is optional and
-+a connector failure does not stop the public tunnel.
- 
- Do not paste Twingate tokens into issues, pull requests, chat or commits. A
- token that has been posted publicly must be revoked and regenerated in the
+
+[0m
+[0m$ [0mchmod +x .agent-work/tests/test_twingate_docker_host.sh && bash -n .agent-work/tests/test_twingate_docker_host.sh && bash .agent-work/tests/test_twingate_docker_host.sh
+Testing Docker host-networking sysctl compatibility
+Date: 2026-11-18T12:02:38Z
+Docker server: 29.4.2
+Image: twingate/connector:1
+
+1. Reproducing the original failure (host networking + ping_group_range sysctl):
+   Reproduced as expected: docker rejected the sysctl in the host netns.
+
+2. Starting the connector image with host networking WITHOUT the sysctl:
+   Container state: running
+   Recent container logs (fake credentials are expected to be rejected):
+State: Offline
+State: Authentication
+State: Error
+Twingate Docker host-networking test passed; log: /home/runner/work/ultron_smp/ultron_smp/.agent-work/logs/test-twingate-docker-host-sysctl.log
+[0m
+[0m$ [0mgit diff --stat && git status --short && git diff -- scripts/twingate-connector.sh | head -120
+.agent-work/logs/opencode-output.log         | 3281 +++++++++++++-------------
+ .agent-work/tests/test_twingate_connector.sh |   64 +-
+ README.md                                    |    7 +
+ scripts/twingate-connector.sh                |   29 +-
+ 4 files changed, 1695 insertions(+), 1686 deletions(-)
+ M .agent-work/logs/opencode-output.log
+ M .agent-work/tests/test_twingate_connector.sh
+ M README.md
+ M scripts/twingate-connector.sh
+?? .agent-work/logs/test-twingate-connector-bridge.log
+?? .agent-work/logs/test-twingate-docker-host-sysctl.log
+?? .agent-work/tests/test_twingate_docker_host.sh
 diff --git a/scripts/twingate-connector.sh b/scripts/twingate-connector.sh
-index 781e9eb..a34366e 100755
+index a34366e..0e801d0 100755
 --- a/scripts/twingate-connector.sh
 +++ b/scripts/twingate-connector.sh
-@@ -14,6 +14,7 @@ NETWORK="${TWINGATE_NETWORK:-}"
+@@ -9,6 +9,7 @@ ENV_DIR="${TWINGATE_ENV_DIR:-$DEFAULT_TMP_DIR}"
+ DOCKER_BIN="${TWINGATE_DOCKER_BIN:-docker}"
+ CONTAINER_NAME="${TWINGATE_CONNECTOR_NAME:-ultron-twingate}"
+ IMAGE="${TWINGATE_DOCKER_IMAGE:-twingate/connector:1}"
++NETWORK_MODE="${TWINGATE_DOCKER_NETWORK:-host}"
+ READY_TIMEOUT="${TWINGATE_READY_TIMEOUT:-90}"
+ NETWORK="${TWINGATE_NETWORK:-}"
  ACCESS_TOKEN="${TWINGATE_ACCESS_TOKEN:-}"
- REFRESH_TOKEN="${TWINGATE_REFRESH_TOKEN:-}"
- LOG_LEVEL="${TWINGATE_LOG_LEVEL:-3}"
-+ENABLED_MODE="${TWINGATE_ENABLED:-auto}"
- 
- ENV_FILE=""
- 
-@@ -22,11 +23,14 @@ usage() {
- Usage: twingate-connector.sh {start|stop|status}
- 
- Required for start (provide through the environment, never on the command line):
--  TWINGATE_NETWORK         Twingate network slug
-   TWINGATE_ACCESS_TOKEN    Connector access token
-   TWINGATE_REFRESH_TOKEN   Connector refresh token
- 
- Optional:
-+  TWINGATE_ENABLED         auto (default), true/required, or false/disabled.
-+                           auto starts only when both connector tokens are set.
-+  TWINGATE_NETWORK         Twingate network slug. If omitted, it is read from
-+                           the access token's "aud" claim.
+@@ -34,6 +35,8 @@ Optional:
    TWINGATE_CONNECTOR_NAME  Docker container name (default: ultron-twingate)
    TWINGATE_DOCKER_IMAGE    Connector image (default: twingate/connector:1)
    TWINGATE_DOCKER_BIN      Docker executable (default: docker)
-@@ -59,10 +63,81 @@ validate_value() {
-     esac
- }
++  TWINGATE_DOCKER_NETWORK  Docker network mode (default: host). Host mode lets the
++                           connector reach 127.0.0.1:25565 on the runner.
+   TWINGATE_READY_TIMEOUT   Seconds to wait for the container (default: 90)
+   TWINGATE_LOG_LEVEL       Connector log level (default: 3)
+   TWINGATE_ENV_DIR         Directory for the temporary env file
+@@ -203,13 +206,25 @@ start_connector() {
+     stop_connector
+     write_env_file
  
-+mode_is_disabled() {
-+    case "${ENABLED_MODE,,}" in
-+        false | 0 | no | off | disabled)
-+            return 0
-+            ;;
-+        *)
-+            return 1
-+            ;;
-+    esac
-+}
+-    "$DOCKER_BIN" run -d \
+-        --name "$CONTAINER_NAME" \
+-        --restart unless-stopped \
+-        --network host \
+-        --sysctl net.ipv4.ping_group_range="0 2147483647" \
+-        --env-file "$ENV_FILE" \
+-        "$IMAGE" >/dev/null
++    local -a run_args=(
++        run -d
++        --name "$CONTAINER_NAME"
++        --restart unless-stopped
++        --network "$NETWORK_MODE"
++    )
 +
-+mode_is_required() {
-+    case "${ENABLED_MODE,,}" in
-+        true | 1 | yes | on | required)
++    # Twingate recommends this sysctl for its default bridge network, but the
++    # kernel rejects it when the container shares the host network namespace:
++    #   sysctl "net.ipv4.ping_group_range" not allowed in host network namespace
++    # Host networking is what lets the connector reach the Minecraft server on
++    # 127.0.0.1, so only add the sysctl for non-host network modes.
++    if [ "$NETWORK_MODE" != "host" ]; then
++        run_args+=(--sysctl net.ipv4.ping_group_range="0 2147483647")
++    fi
++
++    run_args+=(--env-file "$ENV_FILE" "$IMAGE")
++
++    "$DOCKER_BIN" "${run_args[@]}" >/dev/null
+ 
+     local waited=0
+     while [ "$waited" -lt "$READY_TIMEOUT" ]; do
 [0m
-[0m$ [0mpython3 - <<'PY'
-import re, subprocess
-paths = ['.agent-work/logs/opencode-output.log']
-patterns = [re.compile(r'eyJ[A-Za-z0-9_-]{10,}\.'), re.compile(r'ghp_[A-Za-z0-9]{20,}'), re.compile(r'github_pat_[A-Za-z0-9_]{20,}')]
-for p in paths:
-    with open(p, 'r', errors='replace') as f:
-        for i, line in enumerate(f, 1):
-            if any(pat.search(line) for pat in patterns):
-                print(f'{p}:{i}: possible credential-like value ({len(line)} chars)')
-PY
-.agent-work/logs/opencode-output.log:562: possible credential-like value (2786 chars)
+[0m$ [0msed -n '250,290p' README.md
+The workflow makes the best of the available infrastructure:
+
+- `scripts/network-tune.sh` enables BBR, larger TCP buffers, a lower
+  unsent-byte watermark, and a larger network backlog so long-haul
+  connections recover better from packet loss.
+- `scripts/minekube-tunnel.sh` uses Minekube Connect through Gate, which gives
+  players a nearby Connect edge and avoids exposing the runner directly.
+- `scripts/tunnel.sh` selects the tunnel provider and uses a LocalXpose TCP
+  tunnel, with the region selectable through `LOCALXPOSE_REGION`.
+- `scripts/bore-tunnel.sh` keeps the stable `bore.pub` option and fallback
+  available.
+- `scripts/serveo-tunnel.sh` provides an alternative free SSH relay with
+  automatic reconnects.
+- `scripts/low-latency-tunnel.sh` prefers Pinggy's Asia-Pacific relay for
+  Bangladeshi players and reconnects when the free hourly tunnel expires.
+- `scripts/tunnl-tunnel.sh` adds a `tunnl.gg` HTTP status page. tunnl.gg does
+  not carry raw TCP, so the game stays on a TCP relay.
+
+If the game is still unplayable, the only real fix is to host the server on
+hardware with a better network path to South Asia (for example a VPS in
+Singapore, India, or Bangladesh) instead of a GitHub Actions runner.
+
+## Tests
+
+```bash
+bash .agent-work/tests/test_run.sh
+bash .agent-work/tests/test_server_control.sh
+bash .agent-work/tests/test_tunnel.sh
+bash .agent-work/tests/test_serveo_tunnel.sh
+bash .agent-work/tests/test_tunnl_tunnel.sh
+bash .agent-work/tests/test_tunnl_provider.sh
+bash .agent-work/tests/test_minekube_tunnel.sh
+bash .agent-work/tests/test_twingate_connector.sh
+bash .agent-work/tests/test_network_tune.sh
+bash .agent-work/tests/test_network_optimizer.sh
+```
+
+`test_tunnel.sh` uses a fake `loclx` client so it can validate the address
+parsing, forwarding and process handling without spending LocalXpose quota.
+`test_serveo_tunnel.sh` uses a fake `ssh` client for the same reason.
+`test_tunnl_tunnel.sh` also uses a fake `ssh` client and checks that the
 [0m
-[0m$ [0mgit show HEAD:.agent-work/logs/opencode-output.log > /tmp/opencode/head-opencode.log 2>/dev/null || true; python3 - <<'PY'
-import re
-p='/tmp/opencode/head-opencode.log'
-try:
-    with open(p, 'r', errors='replace') as f:
-        for i, line in enumerate(f, 1):
-            if re.search(r'eyJ[A-Za-z0-9_-]{10,}\.|ghp_[A-Za-z0-9]{20,}|github_pat_[A-Za-z0-9_]{20,}', line):
-                print(f'{p}:{i}: possible credential-like value ({len(line)} chars)')
-except FileNotFoundError:
-    print('no previous log')
-PY
-(no output)
+[0m← [0mEdit README.md
+Index: /home/runner/work/ultron_smp/ultron_smp/README.md
+===================================================================
+--- /home/runner/work/ultron_smp/ultron_smp/README.md
++++ /home/runner/work/ultron_smp/ultron_smp/README.md
+@@ -279,8 +279,9 @@
+ bash .agent-work/tests/test_tunnl_tunnel.sh
+ bash .agent-work/tests/test_tunnl_provider.sh
+ bash .agent-work/tests/test_minekube_tunnel.sh
+ bash .agent-work/tests/test_twingate_connector.sh
++bash .agent-work/tests/test_twingate_docker_host.sh
+ bash .agent-work/tests/test_network_tune.sh
+ bash .agent-work/tests/test_network_optimizer.sh
+ ```
+ 
+
 [0m
-[0m$ [0mpython3 - <<'PY'
-import re
-from pathlib import Path
-
-path = Path('.agent-work/logs/opencode-output.log')
-data = path.read_bytes()
-pattern = re.compile(rb'eyJ[A-Za-z0-9_-]+(?:\.[A-Za-z0-9_-]+){2,}')
-
-def redact(match):
-    value = b'<redacted-token>'
-    original = match.group(0)
-    if len(value) >= len(original):
-        return value[:len(original)]
-    return value + b'x' * (len(original) - len(value))
-
-updated, count = pattern.subn(redact, data)
-if count:
-    with path.open('r+b') as handle:
-        handle.seek(0)
-        handle.write(updated)
-        if len(updated) < len(data):
-            handle.truncate()
-    print(f'Redacted {count} JWT-like value(s) from {path}.')
-else:
-    print(f'No JWT-like values found in {path}.')
-PY
-python3 - <<'PY'
-import re
-from pathlib import Path
-for p in ['.agent-work/logs/opencode-output.log']:
-    data = Path(p).read_bytes()
-    hits = re.findall(rb'eyJ[A-Za-z0-9_-]+(?:\.[A-Za-z0-9_-]+){2,}', data)
-    print(f'{p}: {len(hits)} JWT-like value(s) remaining')
-PY
-Redacted 1 JWT-like value(s) from .agent-work/logs/opencode-output.log.
-.agent-work/logs/opencode-output.log: 0 JWT-like value(s) remaining
+[0m← [0mWrite .agent-work/outputs/issue-11-twingate-docker-fix.md
+Wrote file successfully.
 [0m
-[0m$ [0mpython3 - <<'PY'
-import re
-import subprocess
-from pathlib import Path
-
-files = subprocess.check_output(['git', 'status', '--porcelain'], text=True).splitlines()
-paths = []
-for line in files:
-    name = line[3:].strip()
-    if ' -> ' in name:
-        name = name.split(' -> ', 1)[1]
-    p = Path(name)
-    if p.is_file():
-        paths.append(p)
-
-patterns = {
-    'jwt': re.compile(rb'eyJ[A-Za-z0-9_-]+(?:\.[A-Za-z0-9_-]+){2,}'),
-    'github_pat': re.compile(rb'ghp_[A-Za-z0-9]{20,}|github_pat_[A-Za-z0-9_]{20,}'),
-}
-found = False
-for p in paths:
-    data = p.read_bytes()
-    for label, pattern in patterns.items():
-        for i, line in enumerate(data.splitlines(), 1):
-            if pattern.search(line):
-                print(f'{p}:{i}: possible {label} value')
-                found = True
-if not found:
-    print('No JWT or GitHub-token-like values in changed files.')
-PY
-No JWT or GitHub-token-like values in changed files.
-[0m
-[0m$ [0mgit add -A && git status --short && git commit -m "Enable Twingate automatically from connector secrets" && git log --oneline -3
-M  .agent-work/logs/opencode-output.log
-A  .agent-work/logs/test-twingate-connector-derived.log
-A  .agent-work/logs/test-twingate-connector-required.log
-M  .agent-work/logs/test-twingate-connector-result.log
-A  .agent-work/logs/test-twingate-connector-skip.log
-A  .agent-work/outputs/issue-10-twingate.md
-M  .agent-work/tests/test_twingate_connector.sh
-M  .github/workflows/run.yml
-M  README.md
-M  scripts/twingate-connector.sh
-Author identity unknown
-
-*** Please tell me who you are.
-
-Run
-
-  git config --global user.email "you@example.com"
-  git config --global user.name "Your Name"
-
-to set your account's default identity.
-Omit --global to set the identity only in this repository.
-
-fatal: empty ident name (for <runner@runnervmccnms.hoabpu31hpaupmk2ycwfr0t0ee.phxx.internal.cloudapp.net>) not allowed
-[0m
-[0m$ [0mgit config user.name "ultron" && git config user.email "ultron@users.noreply.github.com" && git commit -m "Enable Twingate automatically from connector secrets" && git log --oneline -3
-[main 944205b] Enable Twingate automatically from connector secrets
- 10 files changed, 2063 insertions(+), 3254 deletions(-)
- create mode 100644 .agent-work/logs/test-twingate-connector-derived.log
- create mode 100644 .agent-work/logs/test-twingate-connector-required.log
- create mode 100644 .agent-work/logs/test-twingate-connector-skip.log
- create mode 100644 .agent-work/outputs/issue-10-twingate.md
-944205b Enable Twingate automatically from connector secrets
-f24ae29 chore: recover OpenCode workspace [skip ci]
-68b928d Add optional Twingate connector with env-only secrets
-[0m
-[0m$ [0mgit push origin HEAD:main 2>&1
-To https://github.com/promikailamin/ultron_smp
-   f24ae29..944205b  HEAD -> main
-[0m
-[0m$ [0mgh issue comment 10 --repo promikailamin/ultron_smp --body 'Implemented in commit `944205b` (pushed to `main`).
-
-What changed:
-- `run.yml` now uses the `TWINGATE_ACCESS_TOKEN` and `TWINGATE_REFRESH_TOKEN` secrets automatically.
-- `TWINGATE_ENABLED` defaults to `auto`, so the connector starts when both secrets exist and skips cleanly when they do not. `false` disables it; `true` requires both secrets.
-- The connector step no longer has the old `TWINGATE_ENABLED == true` gate that prevented the new secrets from activating it.
-- `TWINGATE_NETWORK` is now optional: the script falls back to the access token JWT `aud` claim (the Twingate tenant/network slug). An explicit repository variable or secret still takes precedence.
-- Connector output is saved to `.agent-work/logs/twingate-connector.log`; token values are still passed only via environment and a mode-600 temp env file.
-- README setup instructions and the automated test were updated.
-
-Tests actually run and passed:
-- `bash -n scripts/twingate-connector.sh`
-- `bash -n .agent-work/tests/test_twingate_connector.sh`
-- Workflow YAML parse
-- `bash .agent-work/tests/test_twingate_connector.sh` — covers auto-start, auto-skip, explicit-required mode, network derivation from the token, token non-leakage, temp-file cleanup and stop/status handling.
-
-Remaining limitation: a real Twingate end-to-end connection was not tested because the actual connector tokens and Admin Console Resource are not available to this run. Create/assign the Minecraft Resource in the Twingate Admin Console for the private address. Public players should continue using the existing public tunnel.' 2>&1
-https://github.com/promikailamin/ultron_smp/issues/10#issuecomment-6977595192
-[0m
-[0m$ [0mgit status --short; echo '---'; git log --oneline -3; echo '---'; git rev-parse HEAD; git rev-parse origin/main; echo '---'; python3 - <<'PY'
-import re
-from pathlib import Path
-p = Path('.agent-work/logs/opencode-output.log')
-data = p.read_bytes()
-pattern = re.compile(rb'eyJ[A-Za-z0-9_-]+(?:\.[A-Za-z0-9_-]+){2,}')
-hits = pattern.findall(data)
-print(f'{p}: {len(hits)} JWT-like value(s)')
-PY
-M .agent-work/logs/opencode-output.log
----
-944205b Enable Twingate automatically from connector secrets
-f24ae29 chore: recover OpenCode workspace [skip ci]
-68b928d Add optional Twingate connector with env-only secrets
----
-944205b0ecd241d49e8fa4e7d61b5b1a93243fa7
-944205b0ecd241d49e8fa4e7d61b5b1a93243fa7
----
-.agent-work/logs/opencode-output.log: 0 JWT-like value(s)
-[0m
-[0m$ [0mgit add -A && git commit -m "chore: update agent log for issue 10" && git push origin HEAD:main 2>&1
-[main 928bd18] chore: update agent log for issue 10
- 1 file changed, 79 insertions(+)
-To https://github.com/promikailamin/ultron_smp
-   944205b..928bd18  HEAD -> main
-[0m
-[0m$ [0mgit status --short; if ! git diff --quiet || ! git diff --cached --quiet; then git add -A && git commit -m "chore: final agent log update for issue 10" && git push origin HEAD:main; fi; echo '---'; git rev-parse HEAD; git rev-parse origin/main
-M .agent-work/logs/opencode-output.log
-[main cfc212d] chore: final agent log update for issue 10
- 1 file changed, 6 insertions(+)
-To https://github.com/promikailamin/ultron_smp
-   928bd18..cfc212d  HEAD -> main
----
-cfc212d90fcc2a39a586a8607f8c7ff824f332b5
-cfc212d90fcc2a39a586a8607f8c7ff824f332b5
-[0m
-Implemented Twingate auto-start from the two new secrets and pushed to `main` (feature commit `944205b`, latest `cfc212d`).
-
-`TWINGATE_NETWORK` is now optional and derived from the access token when absent; `TWINGATE_ENABLED` supports `auto`, `true`, and `false`. Tests passed: script syntax, workflow YAML parse, and `test_twingate_connector.sh`. Issue #10 has been commented with details.

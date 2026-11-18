@@ -115,6 +115,13 @@ access token's `aud` claim when no explicit network is supplied. It never
 writes token values to the repository or logs. The connector is optional and
 a connector failure does not stop the public tunnel.
 
+Host networking allows the connector to reach the Minecraft server at
+`127.0.0.1:25565`, but Docker rejects the Twingate-recommended
+`net.ipv4.ping_group_range` sysctl in the host network namespace. The script
+therefore applies that sysctl only for non-host modes. Set
+`TWINGATE_DOCKER_NETWORK=bridge` only if your resource is reachable through
+the Docker bridge gateway instead of localhost.
+
 Do not paste Twingate tokens into issues, pull requests, chat or commits. A
 token that has been posted publicly must be revoked and regenerated in the
 Twingate Admin Console. The value pasted into issue 9 was not used or stored
@@ -273,6 +280,7 @@ bash .agent-work/tests/test_tunnl_tunnel.sh
 bash .agent-work/tests/test_tunnl_provider.sh
 bash .agent-work/tests/test_minekube_tunnel.sh
 bash .agent-work/tests/test_twingate_connector.sh
+bash .agent-work/tests/test_twingate_docker_host.sh
 bash .agent-work/tests/test_network_tune.sh
 bash .agent-work/tests/test_network_optimizer.sh
 ```

@@ -9,6 +9,7 @@ ENV_DIR="${TWINGATE_ENV_DIR:-$DEFAULT_TMP_DIR}"
 DOCKER_BIN="${TWINGATE_DOCKER_BIN:-docker}"
 CONTAINER_NAME="${TWINGATE_CONNECTOR_NAME:-ultron-twingate}"
 IMAGE="${TWINGATE_DOCKER_IMAGE:-twingate/connector:1}"
+NETWORK_MODE="${TWINGATE_DOCKER_NETWORK:-host}"
 READY_TIMEOUT="${TWINGATE_READY_TIMEOUT:-90}"
 NETWORK="${TWINGATE_NETWORK:-}"
 ACCESS_TOKEN="${TWINGATE_ACCESS_TOKEN:-}"
@@ -34,6 +35,8 @@ Optional:
   TWINGATE_CONNECTOR_NAME  Docker container name (default: ultron-twingate)
   TWINGATE_DOCKER_IMAGE    Connector image (default: twingate/connector:1)
   TWINGATE_DOCKER_BIN      Docker executable (default: docker)
+  TWINGATE_DOCKER_NETWORK  Docker network mode (default: host). Host mode lets the
+                           connector reach 127.0.0.1:25565 on the runner.
   TWINGATE_READY_TIMEOUT   Seconds to wait for the container (default: 90)
   TWINGATE_LOG_LEVEL       Connector log level (default: 3)
   TWINGATE_ENV_DIR         Directory for the temporary env file
@@ -203,13 +206,25 @@ start_connector() {
     stop_connector
     write_env_file
 
-    "$DOCKER_BIN" run -d \
-        --name "$CONTAINER_NAME" \
-        --restart unless-stopped \
-        --network host \
-        --sysctl net.ipv4.ping_group_range="0 2147483647" \
-        --env-file "$ENV_FILE" \
-        "$IMAGE" >/dev/null
+    local -a run_args=(
+        run -d
+        --name "$CONTAINER_NAME"
+        --restart unless-stopped
+        --network "$NETWORK_MODE"
+    )
+
+    # Twingate recommends this sysctl for its default bridge network, but the
+    # kernel rejects it when the container shares the host network namespace:
+    #   sysctl "net.ipv4.ping_group_range" not allowed in host network namespace
+    # Host networking is what lets the connector reach the Minecraft server on
+    # 127.0.0.1, so only add the sysctl for non-host network modes.
+    if [ "$NETWORK_MODE" != "host" ]; then
+        run_args+=(--sysctl net.ipv4.ping_group_range="0 2147483647")
+    fi
+
+    run_args+=(--env-file "$ENV_FILE" "$IMAGE")
+
+    "$DOCKER_BIN" "${run_args[@]}" >/dev/null
 
     local waited=0
     while [ "$waited" -lt "$READY_TIMEOUT" ]; do

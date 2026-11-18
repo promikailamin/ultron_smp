@@ -28,6 +28,8 @@ case "$command" in
     run)
         env_file=""
         name=""
+        network=""
+        sysctl_value=""
         while [ "$#" -gt 0 ]; do
             case "$1" in
                 --name)
@@ -38,7 +40,15 @@ case "$command" in
                     env_file="$2"
                     shift 2
                     ;;
-                --network | --sysctl | --restart)
+                --network)
+                    network="$2"
+                    shift 2
+                    ;;
+                --sysctl)
+                    sysctl_value="$2"
+                    shift 2
+                    ;;
+                --restart)
                     shift 2
                     ;;
                 -*)
@@ -52,6 +62,16 @@ case "$command" in
 
         [ -n "$name" ] || { echo "fake docker: missing name" >&2; exit 1; }
         [ -f "$env_file" ] || { echo "fake docker: env file missing" >&2; exit 1; }
+
+        # Reproduce the real kernel restriction that broke the connector:
+        # the ping_group_range sysctl cannot be set in the host netns.
+        if [ "$network" = "host" ] && [ -n "$sysctl_value" ]; then
+            echo "fake docker: sysctl \"net.ipv4.ping_group_range\" not allowed in host network namespace" >&2
+            exit 125
+        fi
+
+        printf '%s\n' "$network" >"$state_dir/run-network"
+        printf '%s\n' "$sysctl_value" >"$state_dir/run-sysctl"
 
         for key in TWINGATE_NETWORK TWINGATE_ACCESS_TOKEN TWINGATE_REFRESH_TOKEN; do
             value="$(sed -n "s/^${key}=//p" "$env_file")"
@@ -137,6 +157,15 @@ if grep -qF "$ACCESS_TOKEN" "$START_LOG" \
     || grep -qF "$REFRESH_TOKEN" "$START_LOG" \
     || grep -qF "$NETWORK" "$START_LOG"; then
     echo "ERROR: connector output leaked a token value." >&2
+    exit 1
+fi
+
+if [ "$(cat "$STATE_DIR/run-network")" != "host" ]; then
+    echo "ERROR: connector should default to host networking." >&2
+    exit 1
+fi
+if [ -n "$(cat "$STATE_DIR/run-sysctl")" ]; then
+    echo "ERROR: host networking must not pass the ping_group_range sysctl." >&2
     exit 1
 fi
 
@@ -231,6 +260,39 @@ if [ -e "$derived_env_file" ]; then
     echo "ERROR: temporary derived-network env file was not removed." >&2
     exit 1
 fi
+
+BRIDGE_STATE_DIR="$TEST_DIR/state-bridge"
+BRIDGE_ENV_DIR="$TEST_DIR/env-bridge"
+BRIDGE_LOG="$LOG_DIR/test-twingate-connector-bridge.log"
+mkdir -p "$BRIDGE_STATE_DIR" "$BRIDGE_ENV_DIR"
+
+TWINGATE_NETWORK="$NETWORK" \
+    TWINGATE_ACCESS_TOKEN="$ACCESS_TOKEN" \
+    TWINGATE_REFRESH_TOKEN="$REFRESH_TOKEN" \
+    TWINGATE_DOCKER_BIN="$FAKE_DOCKER" \
+    TWINGATE_DOCKER_NETWORK="bridge" \
+    TWINGATE_CONNECTOR_NAME="${CONTAINER_NAME}-bridge" \
+    TWINGATE_ENV_DIR="$BRIDGE_ENV_DIR" \
+    TWINGATE_READY_TIMEOUT="5" \
+    FAKE_DOCKER_STATE_DIR="$BRIDGE_STATE_DIR" \
+    bash "$ROOT_DIR/scripts/twingate-connector.sh" start \
+    >"$BRIDGE_LOG" 2>&1
+
+grep -q "is running" "$BRIDGE_LOG"
+if [ "$(cat "$BRIDGE_STATE_DIR/run-network")" != "bridge" ]; then
+    echo "ERROR: TWINGATE_DOCKER_NETWORK=bridge was not honoured." >&2
+    exit 1
+fi
+if [ -z "$(cat "$BRIDGE_STATE_DIR/run-sysctl")" ]; then
+    echo "ERROR: non-host networking should pass the ping_group_range sysctl." >&2
+    exit 1
+fi
+
+TWINGATE_DOCKER_BIN="$FAKE_DOCKER" \
+    TWINGATE_CONNECTOR_NAME="${CONTAINER_NAME}-bridge" \
+    FAKE_DOCKER_STATE_DIR="$BRIDGE_STATE_DIR" \
+    bash "$ROOT_DIR/scripts/twingate-connector.sh" stop \
+    >>"$BRIDGE_LOG" 2>&1
 
 SKIP_STATE_DIR="$TEST_DIR/state-skip"
 SKIP_ENV_DIR="$TEST_DIR/env-skip"
