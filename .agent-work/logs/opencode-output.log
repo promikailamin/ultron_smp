@@ -3603,3 +3603,86 @@ Tunnel is live at 127.0.0.1:25601
 HTTP/1.0 200 OK
 Tunnel end-to-end test passed: public TCP endpoint is reachable
 [0m
+[0m$ [0mgit status --short && git add -A && git status --short
+M .agent-work/logs/opencode-output.log
+ M .github/workflows/run.yml
+ M README.md
+?? .agent-work/logs/test-tunnel-after-twingate.log
+?? .agent-work/logs/test-twingate-connector-missing.log
+?? .agent-work/logs/test-twingate-connector-result.log
+?? .agent-work/logs/test-twingate-connector-start.log
+?? .agent-work/outputs/issue-9-twingate.md
+?? .agent-work/tests/test_twingate_connector.sh
+?? scripts/twingate-connector.sh
+M  .agent-work/logs/opencode-output.log
+A  .agent-work/logs/test-tunnel-after-twingate.log
+A  .agent-work/logs/test-twingate-connector-missing.log
+A  .agent-work/logs/test-twingate-connector-result.log
+A  .agent-work/logs/test-twingate-connector-start.log
+A  .agent-work/outputs/issue-9-twingate.md
+A  .agent-work/tests/test_twingate_connector.sh
+M  .github/workflows/run.yml
+M  README.md
+A  scripts/twingate-connector.sh
+[0m
+[0m$ [0mif git grep --cached -l -E 'eyJ[A-Za-z0-9_-]{10,}\.' >/tmp/opencode/secret-scan.txt 2>/dev/null; then echo 'Potential JWT found in staged files:'; cat /tmp/opencode/secret-scan.txt; else echo 'No JWT-like values staged.'; fi; if git grep --cached -l -E 'ghp_[A-Za-z0-9]{20,}|github_pat_[A-Za-z0-9_]{20,}' >/tmp/opencode/token-scan.txt 2>/dev/null; then echo 'Potential GitHub token found:'; cat /tmp/opencode/token-scan.txt; else echo 'No GitHub-token-like values staged.'; fi
+No JWT-like values staged.
+No GitHub-token-like values staged.
+[0m
+[0m$ [0mgit commit -m "Add optional Twingate connector with env-only secrets" && git log --oneline -3
+Author identity unknown
+
+*** Please tell me who you are.
+
+Run
+
+  git config --global user.email "you@example.com"
+  git config --global user.name "Your Name"
+
+to set your account's default identity.
+Omit --global to set the identity only in this repository.
+
+fatal: empty ident name (for <runner@runnervmccnms.w5kyndb1gvhehekumsuunpfd1d.bx.internal.cloudapp.net>) not allowed
+[0m
+[0m$ [0mgit config user.name "ultron" && git config user.email "ultron@users.noreply.github.com" && git commit -m "Add optional Twingate connector with env-only secrets" && git log --oneline -3
+[main 68b928d] Add optional Twingate connector with env-only secrets
+ 10 files changed, 3379 insertions(+), 4399 deletions(-)
+ create mode 100644 .agent-work/logs/test-tunnel-after-twingate.log
+ create mode 100644 .agent-work/logs/test-twingate-connector-missing.log
+ create mode 100644 .agent-work/logs/test-twingate-connector-result.log
+ create mode 100644 .agent-work/logs/test-twingate-connector-start.log
+ create mode 100644 .agent-work/outputs/issue-9-twingate.md
+ create mode 100755 .agent-work/tests/test_twingate_connector.sh
+ create mode 100755 scripts/twingate-connector.sh
+68b928d Add optional Twingate connector with env-only secrets
+9ad6530 Final Minecraft server backup
+53b6635 Auto-save Minecraft server data
+[0m
+[0m$ [0mgit push origin HEAD:main 2>&1
+To https://github.com/promikailamin/ultron_smp
+   9ad6530..68b928d  HEAD -> main
+[0m
+[0m$ [0mgh issue comment 9 --repo promikailamin/ultron_smp --body $'Implemented optional Twingate private access in commit `68b928d` (pushed to `main`).\n\nWhat changed:\n- Added `scripts/twingate-connector.sh` to start/stop/check the pinned `twingate/connector:1` container.\n- Connector credentials are read only from repository secrets/variables (`TWINGATE_NETWORK`, `TWINGATE_ACCESS_TOKEN`, `TWINGATE_REFRESH_TOKEN`) and are never written to the repo or logs.\n- `run.yml` starts the connector only when `TWINGATE_ENABLED=true`; a connector failure is non-fatal so the public tunnel keeps working.\n- Added README setup steps and automated test coverage.\n\nImportant security note: the JWT pasted in this issue was not used or stored anywhere. It appears to be a short-lived client/device token, not a Connector access+refresh token pair, so it cannot configure a Connector. Because it was posted publicly, please revoke/regenerate it in the Twingate Admin Console.\n\nTests actually run:\n- `bash .agent-work/tests/test_twingate_connector.sh` — PASS\n- `bash .agent-work/tests/test_tunnel.sh` — PASS\n- Workflow YAML parse — PASS\n\nRemaining limitation: a real Twingate end-to-end connection could not be tested here because it requires a valid connector token pair, tenant network slug, and an Admin Console Resource. Twingate is private access, not a public Minecraft tunnel; public players should keep using the existing tunnel providers.' 2>&1
+https://github.com/promikailamin/ultron_smp/issues/9#issuecomment-6977259667
+[0m
+[0m$ [0mgit status --short; git log --oneline -2; git rev-parse HEAD
+M .agent-work/logs/opencode-output.log
+68b928d Add optional Twingate connector with env-only secrets
+9ad6530 Final Minecraft server backup
+68b928d40e6aad755d0cf8ff66a538156dc1d511
+[0m
+[0m# [0mTodos
+[✓] Review repo architecture and Twingate requirements
+[✓] Add secure Twingate connector script (env-only secrets)
+[✓] Wire optional Twingate connector into run workflow
+[✓] Add automated test and documentation
+[✓] Run tests, commit and push, comment on issue
+[0m
+Implemented optional Twingate private access and pushed commit `68b928d` to `main`.
+
+- Added `scripts/twingate-connector.sh` with env-only connector secrets, no token logging.
+- Wired `TWINGATE_ENABLED` into `.github/workflows/run.yml`; failures are non-fatal.
+- Added README docs, issue report, and `test_twingate_connector.sh` (PASS); `test_tunnel.sh` also PASS.
+- The pasted JWT was not used or stored. It should be revoked and replaced with proper Connector tokens.
+
+Comment posted: https://github.com/promikailamin/ultron_smp/issues/9#issuecomment-6977259667
