@@ -1,0 +1,10 @@
+Live workflow verification for issue 11
+Workflow run: https://github.com/promikailamin/ultron_smp/actions/runs/44300269116
+Commit: 21ffba3 (Fix Twingate connector host-network sysctl startup failure)
+
+start_twingate_connector step conclusion: success
+
+Relevant step log:
+server	start_twingate_connector	2026-11-18T12:04:07.1064166Z Digest: sha256:f02bcac59a7cd1617fcfb63a462b1ac6bcea81c55a54b295ba79373945c7e83a
+server	start_twingate_connector	2026-11-18T12:04:07.1064537Z Status: Downloaded newer image for twingate/connector:1
+server	start_twingate_connector	2026-11-18T12:04:08.2060447Z Twingate connector 'ultron-twingate' is running.

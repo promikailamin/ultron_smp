@@ -54,7 +54,16 @@ connector image starting successfully without the sysctl. With fake
 credentials the connector reports `State: Authentication` / `State: Error`,
 as expected; a real token pair is still required for an end-to-end tunnel.
 
+Live verification in the actual workflow:
+
+- Run `44300269116` (commit `21ffba3`) completed the
+  `start_twingate_connector` step successfully and logged
+  `Twingate connector 'ultron-twingate' is running.` with no sysctl error.
+  That verification run was cancelled after the check; a fresh run
+  (`44301134244`) was dispatched and left running with the fixed commit.
+
 Logs:
 
 - `.agent-work/logs/test-twingate-connector-*.log`
 - `.agent-work/logs/test-twingate-docker-host-sysctl.log`
+- `.agent-work/logs/run-44300269116-twingate-verification.log`
