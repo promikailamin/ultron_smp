@@ -1,0 +1,13 @@
+# Ensure Twingate Resource run 44315652553
+ensure	checkout_repo	2026-11-18T13:37:54.3827748Z   TWINGATE_RESOURCE_ALIAS: minecraft.ultronsmp.internal
+ensure	ensure_minecraft_resource	2026-11-18T13:38:02.6493891Z   TWINGATE_RESOURCE_ALIAS: minecraft.ultronsmp.internal
+ensure	ensure_minecraft_resource	2026-11-18T13:38:05.2741214Z Twingate resource 'minecraft' updated to 127.0.0.1:25565.
+ensure	ensure_minecraft_resource	2026-11-18T13:38:05.2741943Z Resource alias set to 'minecraft.ultronsmp.internal'.
+ensure	ensure_minecraft_resource	2026-11-18T13:38:05.2742925Z Resource id: UmVzb3VyY2U6OTk1OA==. Assign users or groups to it in the Twingate Admin Console.
+ensure	ensure_minecraft_resource	2026-11-18T13:38:05.2828037Z Twingate clients must connect to minecraft.ultronsmp.internal:25565 (not 127.0.0.1:25565); 127.0.0.1 is the loopback address of the client device.
+ensure	upload_resource_log	2026-11-18T13:38:05.2961597Z   TWINGATE_RESOURCE_ALIAS: minecraft.ultronsmp.internal
+
+# Twingate Admin status run 44315749256
+admin	twingate_admin	2026-11-18T13:38:36.1133842Z Twingate tenant: ***
+admin	twingate_admin	2026-11-18T13:38:36.1137394Z Resources (1):
+admin	twingate_admin	2026-11-18T13:38:36.1137908Z   - minecraft | id=UmVzb3VyY2U6OTk1OA== | address=127.0.0.1 | alias=minecraft.ultronsmp.internal | network=Ultron SMP (UmVtb3RlTmV0d29yazo0NjQ5) | groups=Everyone

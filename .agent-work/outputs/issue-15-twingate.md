@@ -69,6 +69,17 @@ The resource test covers resource creation with the alias, idempotent reruns,
 adding the alias to a pre-existing Resource that has none, group assignment,
 network selection and token secrecy.
 
+Live verification after pushing the fix:
+
+- **Ensure Twingate Resource** run `44315652553` updated the existing
+  `minecraft` Resource and logged
+  `Resource alias set to 'minecraft.ultronsmp.internal'.`
+- **Twingate Admin** status run `44315749256` shows:
+  `minecraft | address=127.0.0.1 | alias=minecraft.ultronsmp.internal | groups=Everyone`
+
+The captured output is in
+`.agent-work/logs/issue-15-live-verification.log`.
+
 ## How to apply
 
 1. Run the **Ensure Twingate Resource** workflow once (or restart **Run
