@@ -36,6 +36,7 @@ mode-600 temporary file that was deleted at the end of the workflow run.
 | Verify Twingate Connector `44309522392` | Connector container healthy, log `State: Online`, API state `ALIVE` |
 | Twingate Admin `44310470316` | Idempotent provisioning; assigned `Everyone` to the resource |
 | Run UltronSMP `44310694698` | `start_twingate_connector` and `ensure_twingate_resource` passed; run cancelled after validation |
+| Twingate Admin `44311505431` (final status) | Resource shows `groups=Everyone`; connector is `DEAD_HEARTBEAT_TOO_OLD` because the verification runner has stopped |
 
 `Run UltronSMP` was deliberately cancelled after the Twingate steps so the
 long-lived server loop did not stay online. The Twingate steps themselves
@@ -80,7 +81,9 @@ python3 -m py_compile scripts/twingate-resource.py scripts/twingate-admin.py
 ## Remaining notes
 
 - Twingate is a private-access service, not a public tunnel. The connector is
-  online only while `run.yml` is running on the ephemeral GitHub runner.
+  online only while `run.yml` is running on the ephemeral GitHub runner. It
+  therefore shows `DEAD_HEARTBEAT_TOO_OLD` whenever no run is active; start
+  `run.yml` and it returns to `ALIVE` (verified in run `44309522392`).
 - Each user who needs access must have the Twingate client installed and be a
   member of the `Everyone` group (or another group added to the resource).
 - The public Minecraft tunnel is unchanged and remains the path for players
