@@ -4415,3 +4415,88 @@ index d1b8550..f88a3d4 100755
      pinggy | low-latency)
          default_pid_dir="${RUNNER_TEMP:-$ROOT_DIR/.agent-work/tmp}"
 [0m
+[0m$ [0mgit add .github/workflows/run.yml .gitignore README.md scripts/tunnel.sh scripts/cloudflare-tunnel.sh .agent-work/tests/test_cloudflare_tunnel.sh .agent-work/outputs/issue-19-cloudflare.md .agent-work/logs/issue-19-cloudflare-real-test.log .agent-work/logs/test-cloudflare-tunnel-run.log .agent-work/logs/issue-19-test-tunnel.log .agent-work/logs/opencode-output.log && git status --short && git diff --cached --stat
+A  .agent-work/logs/issue-19-cloudflare-real-test.log
+A  .agent-work/logs/issue-19-test-tunnel.log
+M  .agent-work/logs/opencode-output.log
+A  .agent-work/logs/test-cloudflare-tunnel-run.log
+A  .agent-work/outputs/issue-19-cloudflare.md
+A  .agent-work/tests/test_cloudflare_tunnel.sh
+M  .github/workflows/run.yml
+M  .gitignore
+M  README.md
+A  scripts/cloudflare-tunnel.sh
+M  scripts/tunnel.sh
+?? .agent-work/logs/issue-19-test-serveo.log
+ .agent-work/logs/issue-19-cloudflare-real-test.log |    1 +
+ .agent-work/logs/issue-19-test-tunnel.log          |    3 +
+ .agent-work/logs/opencode-output.log               | 7390 ++++++++++----------
+ .agent-work/logs/test-cloudflare-tunnel-run.log    |   11 +
+ .agent-work/outputs/issue-19-cloudflare.md         |  111 +
+ .agent-work/tests/test_cloudflare_tunnel.sh        |  240 +
+ .github/workflows/run.yml                          |   35 +-
+ .gitignore                                         |    8 +
+ README.md                                          |   75 +-
+ scripts/cloudflare-tunnel.sh                       |  414 ++
+ scripts/tunnel.sh                                  |    8 +-
+ 11 files changed, 4631 insertions(+), 3665 deletions(-)
+[0m
+[0m$ [0mgit add .agent-work/logs/issue-19-test-serveo.log && git commit -m "Add Cloudflare Tunnel provider to run workflow" && git push origin HEAD:main
+Author identity unknown
+
+*** Please tell me who you are.
+
+Run
+
+  git config --global user.email "you@example.com"
+  git config --global user.name "Your Name"
+
+to set your account's default identity.
+Omit --global to set the identity only in this repository.
+
+fatal: empty ident name (for <runner@ip-10-0-131-96.us-west-2.compute.internal>) not allowed
+[0m
+[0m$ [0mgit config user.name "ultron" && git config user.email "ultron@users.noreply.github.com" && git commit -m "Add Cloudflare Tunnel provider to run workflow" && git push origin HEAD:main
+[main 0427ee2] Add Cloudflare Tunnel provider to run workflow
+ 12 files changed, 4634 insertions(+), 3665 deletions(-)
+ create mode 100644 .agent-work/logs/issue-19-cloudflare-real-test.log
+ create mode 100644 .agent-work/logs/issue-19-test-serveo.log
+ create mode 100644 .agent-work/logs/issue-19-test-tunnel.log
+ create mode 100644 .agent-work/logs/test-cloudflare-tunnel-run.log
+ create mode 100644 .agent-work/outputs/issue-19-cloudflare.md
+ create mode 100755 .agent-work/tests/test_cloudflare_tunnel.sh
+ create mode 100755 scripts/cloudflare-tunnel.sh
+To https://github.com/promikailamin/ultron_smp
+   d63e236..0427ee2  HEAD -> main
+[0m
+[0m$ [0mgh issue comment 19 --repo promikailamin/ultron_smp --body "Implemented Cloudflare Tunnel support for the **Run UltronSMP** workflow.
+
+Changes in commit \`0427ee2\` (pushed to main):
+- Added \`cloudflare\` and \`cloudflared\` choices to the workflow's **Public tunnel provider** input.
+- Added \`scripts/cloudflare-tunnel.sh\` with two modes:
+  - **Quick tunnel:** works with no account/token and publishes a random \`*.trycloudflare.com\` hostname.
+  - **Named tunnel:** uses secret \`CLOUDFLARE_TUNNEL_TOKEN\` and variable \`CLOUDFLARE_TUNNEL_HOSTNAME\` for a stable hostname.
+- Added optional config/fallback/access settings in \`run.yml\` and README.
+- The workflow verifies the route through a local \`cloudflared access tcp\` proxy, since Cloudflare TCP tunnels are not plain public TCP ports.
+- Added \`.agent-work/tests/test_cloudflare_tunnel.sh\` and documentation in \`.agent-work/outputs/issue-19-cloudflare.md\`.
+
+Validation actually run:
+- \`bash -n\` on the new/changed shell scripts: PASS
+- YAML parse of \`.github/workflows/run.yml\`: PASS
+- \`shellcheck\` on the new/changed scripts: PASS
+- Fake quick/named tunnel end-to-end test: PASS
+- Existing LocalXpose and Serveo tunnel tests: PASS
+- Live Cloudflare quick-tunnel test through the access proxy: \`HTTP/1.0 200 OK\`
+
+Important limitation: Cloudflare TCP tunnels require each player to use the **Modflared** mod or run \`cloudflared access tcp --hostname <hostname> --url localhost:25565\`, then join \`localhost:25565\`. A vanilla Minecraft client cannot join \`hostname:25565\` directly. For a no-client public address, keep using Minekube, LocalXpose, bore, Serveo or Pinggy.
+
+Logs are in \`.agent-work/logs/issue-19-*\` and \`.agent-work/logs/test-cloudflare-tunnel-run.log\`."
+https://github.com/promikailamin/ultron_smp/issues/19#issuecomment-6984101756
+[0m
+[0m$ [0mgit status --short && git log --oneline -3 && git rev-parse HEAD
+M .agent-work/logs/opencode-output.log
+0427ee2 Add Cloudflare Tunnel provider to run workflow
+d63e236 Record issue 18 agent execution log
+08594c7 Document issue 18 network diagnostic results
+0427ee2efd187a1bfb4763a2b4f2443ba41c5a73
+[0m
