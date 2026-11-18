@@ -133,3 +133,18 @@ WARNING: Creating MineSkinClient without API key - Please get an API key from ht
 [32m[11:09:26] [Server thread/INFO]: System chat: MIKAILAMIN joined the game[m
 [32m[11:09:49] [Server thread/INFO]: System chat: Saving the game (this may take a moment!)[m
 [32m[11:09:49] [Server thread/INFO]: System chat: Saved the game[m
+[32m[11:09:54] [Server thread/INFO]: Player MIKAILAMIN standing on air - force-sending blocks below[m
+[32m[11:10:18] [Server thread/INFO]: MIKAILAMIN lost connection: Disconnected[m
+[32m[11:10:18] [Server thread/INFO]: System chat: MIKAILAMIN left the game[m
+[32m[11:10:52] [Server thread/INFO]: System chat: Saving the game (this may take a moment!)[m
+[32m[11:10:52] [Server thread/INFO]: System chat: Saved the game[m
+[32m[11:10:52] [Server thread/INFO]: System chat: Saving the game (this may take a moment!)[m
+[32m[11:10:52] [Server thread/INFO]: System chat: Saved the game[m
+[32m[11:10:54] [Server thread/INFO]: System chat: Stopping the server[m
+[32m[11:10:54] [Server thread/INFO]: 存档数据已保存[m
+[32m[11:10:54] [Server thread/INFO]: Stopping server[m
+[32m[11:10:54] [Server thread/INFO]: Saving players[m
+[32m[11:10:54] [Server thread/INFO]: Saving worlds[m
+[32m[11:10:54] [Server thread/INFO]: Saving chunks for level 'ServerLevel[world]'/minecraft:overworld[m
+[32m[11:10:54] [Server thread/INFO]: Saving chunks for level 'ServerLevel[world]'/minecraft:the_end[m
+[32m[11:10:54] [Server thread/INFO]: Saving chunks for level 'ServerLevel[world]'/minecraft:the_nether[m
