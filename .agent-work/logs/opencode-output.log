@@ -4752,3 +4752,87 @@ index 31a3ad5..687768c 100755
 +PLAYER_REGION="${PLAYER_REGION:-auto}"
 +BANGLADESH_RELAY_MARGIN_MS="${BANGLADESH_RELAY_MARGIN_MS:-75}"
 [0m
+[0m$ [0mgit add -A && git status --short && git commit -m "Add tunnl.gg status tunnel and Bangladesh-prioritised relay"
+A  .agent-work/logs/issue-6-fix.log
+M  .agent-work/logs/low-latency-tunnel-test.log
+M  .agent-work/logs/opencode-output.log
+M  .agent-work/logs/serveo-tunnel-test.log
+M  .agent-work/logs/test-serveo-http.log
+A  .agent-work/logs/test-tunnl-provider-result.log
+A  .agent-work/logs/test-tunnl-tunnel-result.log
+A  .agent-work/logs/tunnl-real-test.log
+M  .agent-work/tests/test_serveo_tunnel.sh
+M  .agent-work/tests/test_tunnel.sh
+A  .agent-work/tests/test_tunnl_provider.sh
+A  .agent-work/tests/test_tunnl_tunnel.sh
+M  .github/workflows/run.yml
+M  .gitignore
+M  README.md
+M  scripts/low-latency-tunnel.sh
+M  scripts/tunnel.sh
+A  scripts/tunnl-status-server.py
+A  scripts/tunnl-tunnel.sh
+Author identity unknown
+
+*** Please tell me who you are.
+
+Run
+
+  git config --global user.email "you@example.com"
+  git config --global user.name "Your Name"
+
+to set your account's default identity.
+Omit --global to set the identity only in this repository.
+
+fatal: empty ident name (for <runner@runnervmccnms.3wkds4ra13yelgbzh13xl21hjh.gx.internal.cloudapp.net>) not allowed
+[0m
+[0m$ [0mgit -c user.name="ultron" -c user.email="ultron@users.noreply.github.com" commit -m "Add tunnl.gg status tunnel and Bangladesh-prioritised relay"
+[main 7616c75] Add tunnl.gg status tunnel and Bangladesh-prioritised relay
+ 19 files changed, 5344 insertions(+), 2796 deletions(-)
+ create mode 100644 .agent-work/logs/issue-6-fix.log
+ create mode 100644 .agent-work/logs/test-tunnl-provider-result.log
+ create mode 100644 .agent-work/logs/test-tunnl-tunnel-result.log
+ create mode 100644 .agent-work/logs/tunnl-real-test.log
+ create mode 100755 .agent-work/tests/test_tunnl_provider.sh
+ create mode 100755 .agent-work/tests/test_tunnl_tunnel.sh
+ create mode 100755 scripts/tunnl-status-server.py
+ create mode 100755 scripts/tunnl-tunnel.sh
+[0m
+[0m$ [0mgit push origin HEAD:main
+To https://github.com/promikailamin/ultron_smp
+   f9bcb54..7616c75  HEAD -> main
+[0m
+[0m$ [0mgit status --short; git log --oneline -3
+M .agent-work/logs/opencode-output.log
+7616c75 Add tunnl.gg status tunnel and Bangladesh-prioritised relay
+f9bcb54 Final Minecraft server backup
+13990d6 Final Minecraft server backup
+[0m
+[0m$ [0mgh issue comment 6 --repo "promikailamin/ultron_smp" --body "Implemented and pushed in commit 7616c75.
+
+What changed:
+- Added a tunnl.gg provider (scripts/tunnl-tunnel.sh) with JSON URL parsing, automatic reconnects, pinned host key, and SERVER_STATUS_URL.txt output.
+- Added a small status page (scripts/tunnl-status-server.py) exposed over tunnl.gg. It shows the current Minecraft address and provides /healthz and /status.json.
+- Added TUNNEL_PROVIDER=tunnl to scripts/tunnel.sh: it keeps Minecraft on a Bangladesh-prioritised Pinggy Asia-Pacific TCP relay (bore.pub fallback) and adds the tunnl.gg status page.
+- Added a pinggy provider and PLAYER_REGION=bangladesh support, with BANGLADESH_RELAY_MARGIN_MS to prefer the Asia-Pacific relay for South Asian players.
+- Updated the Run UltronSMP workflow choices, publishing of SERVER_STATUS_URL.txt, step summary, and issue comments.
+- Updated README, .gitignore, and added tests.
+
+Important limitation:
+tunnl.gg only carries HTTP/WebSocket traffic (its relay is in Finland), so it cannot carry Minecraft's raw TCP on port 25565. A tunnl.gg URL alone cannot be joined in Minecraft. The implementation therefore uses tunnl.gg for a browser status page while the game stays on a low-latency TCP relay.
+
+Validation actually run:
+- bash -n and shellcheck passed for all changed shell scripts.
+- python3 -m py_compile passed for the status server.
+- Both workflows parse as valid YAML.
+- .agent-work/tests/test_tunnl_tunnel.sh passed.
+- .agent-work/tests/test_tunnl_provider.sh passed (game TCP relay + tunnl.gg status page).
+- .agent-work/tests/test_tunnel.sh and test_serveo_tunnel.sh passed.
+- .agent-work/tests/test_low_latency_tunnel.sh passed against the real Pinggy relay.
+- A real tunnl.gg tunnel was created; its public HTTPS URL served /healthz (ok) and /status.json successfully.
+
+Remaining notes:
+- For a tunnl.gg URL that stays the same across separate workflow runs, provide TUNNL_SSH_KEY through runner secret handling; otherwise a temporary key is generated and the URL can change between runs.
+- Logs are in .agent-work/logs/issue-6-fix.log and the test result logs."
+https://github.com/promikailamin/ultron_smp/issues/6#issuecomment-6973997200
+[0m
