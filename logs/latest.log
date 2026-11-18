@@ -117,3 +117,15 @@
 [16:09:49] [Server thread/INFO]: Auction Management Engine initialized: 0 lot(s) managed in 1 ms.
 [16:14:24] [Server thread/INFO]: System chat: Saving the game (this may take a moment!)
 [16:14:24] [Server thread/INFO]: System chat: Saved the game
+[16:16:34] [Server thread/INFO]: System chat: Saving the game (this may take a moment!)
+[16:16:34] [Server thread/INFO]: System chat: Saved the game
+[16:16:34] [Server thread/INFO]: System chat: Saving the game (this may take a moment!)
+[16:16:34] [Server thread/INFO]: System chat: Saved the game
+[16:16:36] [Server thread/INFO]: System chat: Stopping the server
+[16:16:36] [Server thread/INFO]: 存档数据已保存
+[16:16:36] [Server thread/INFO]: Stopping server
+[16:16:36] [Server thread/INFO]: Saving players
+[16:16:36] [Server thread/INFO]: Saving worlds
+[16:16:36] [Server thread/INFO]: Saving chunks for level 'ServerLevel[world]'/minecraft:overworld
+[16:16:36] [Server thread/INFO]: Saving chunks for level 'ServerLevel[world]'/minecraft:the_end
+[16:16:36] [Server thread/INFO]: Saving chunks for level 'ServerLevel[world]'/minecraft:the_nether
