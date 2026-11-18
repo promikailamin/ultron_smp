@@ -1,7 +1,11 @@
 # Ultron SMP public server address
-# Updated: 2026-11-18 15:16:02 UTC
+# Updated: 2026-11-18 16:09:57 UTC
+# Provider: Cloudflare Tunnel (quick)
+# Cloudflare TCP tunnels require the Modflared mod or a local proxy:
+#   cloudflared access tcp --hostname every-seminar-within-features.trycloudflare.com --url localhost:25565
+# Then join localhost:25565 in Minecraft.
 # Add this server in Minecraft (host and port):
-bore.pub:25568
+every-seminar-within-features.trycloudflare.com:25565
 #
-# Host: bore.pub
-# Port: 25568
+# Host: every-seminar-within-features.trycloudflare.com
+# Port: 25565
