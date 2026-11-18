@@ -12,6 +12,7 @@ Credentials are read from the environment and are never printed.
 
 import json
 import os
+import socket
 import sys
 import time
 import urllib.error
@@ -161,28 +162,41 @@ class Client:
             method="POST",
         )
 
+        # Some GitHub-hosted runners advertise IPv6 through DNS but have no
+        # working IPv6 route. Prefer IPv4 while the request is in flight.
+        original_getaddrinfo = socket.getaddrinfo
+
+        def ipv4_getaddrinfo(host, port, family=0, type=0, proto=0, flags=0):
+            return original_getaddrinfo(
+                host, port, socket.AF_INET, type, proto, flags
+            )
+
         last_network_error = None
-        for attempt in range(3):
-            try:
-                with urllib.request.urlopen(request, timeout=30) as response:
-                    body = response.read().decode("utf-8", errors="replace")
-                last_network_error = None
-                break
-            except urllib.error.HTTPError as exc:
-                detail = exc.read().decode("utf-8", errors="replace")
-                message = "Twingate Admin API returned HTTP {}.".format(exc.code)
-                if exc.code in (401, 403):
-                    message += (
-                        " Authentication failed. Set TWINGATE_API_TOKEN to a "
-                        "Read & Write Admin API token from Settings > API."
-                    )
-                elif detail:
-                    message += " {}".format(redact(detail))
-                raise TwingateError(message)
-            except urllib.error.URLError as exc:
-                last_network_error = exc
-                if attempt < 2:
-                    time.sleep(2)
+        socket.getaddrinfo = ipv4_getaddrinfo
+        try:
+            for attempt in range(3):
+                try:
+                    with urllib.request.urlopen(request, timeout=30) as response:
+                        body = response.read().decode("utf-8", errors="replace")
+                    last_network_error = None
+                    break
+                except urllib.error.HTTPError as exc:
+                    detail = exc.read().decode("utf-8", errors="replace")
+                    message = "Twingate Admin API returned HTTP {}.".format(exc.code)
+                    if exc.code in (401, 403):
+                        message += (
+                            " Authentication failed. Set TWINGATE_API_TOKEN to a "
+                            "Read & Write Admin API token from Settings > API."
+                        )
+                    elif detail:
+                        message += " {}".format(redact(detail))
+                    raise TwingateError(message)
+                except urllib.error.URLError as exc:
+                    last_network_error = exc
+                    if attempt < 2:
+                        time.sleep(2)
+        finally:
+            socket.getaddrinfo = original_getaddrinfo
 
         if last_network_error is not None:
             raise TwingateError(
