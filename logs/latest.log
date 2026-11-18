@@ -122,3 +122,36 @@
 [14:26:38] [Server thread/INFO]: System chat: Saved the game
 [14:28:10] [Server thread/INFO]: System chat: Saving the game (this may take a moment!)
 [14:28:10] [Server thread/INFO]: System chat: Saved the game
+[14:29:05] [SkinRestorer-Fetch-1/WARN]: Failed to fetch skin 'mojang:MIKAILAMIN'
+java.lang.IllegalStateException: too many requests
+	at knot//net.lionarius.skinrestorer.util.WebUtils.throwOnClientErrors(WebUtils.java:141)
+	at knot//net.lionarius.skinrestorer.skin.provider.base.YggdrasilSkinProvider.fetchProfileWithProperties(YggdrasilSkinProvider.java:32)
+	at knot//net.lionarius.skinrestorer.skin.provider.base.ProfileSkinProvider.loadSkin(ProfileSkinProvider.java:49)
+	at knot//net.lionarius.skinrestorer.skin.provider.base.ProfileSkinProvider.loadSkin(ProfileSkinProvider.java:17)
+	at knot//net.lionarius.skinrestorer.skin.provider.base.AbstractSkinProvider$1.load(AbstractSkinProvider.java:43)
+	at knot//net.lionarius.skinrestorer.skin.provider.base.AbstractSkinProvider$1.load(AbstractSkinProvider.java:40)
+	at knot//com.google.common.cache.LocalCache$LoadingValueReference.loadFuture(LocalCache.java:3556)
+	at knot//com.google.common.cache.LocalCache$Segment.loadSync(LocalCache.java:2307)
+	at knot//com.google.common.cache.LocalCache$Segment.lockedGetOrLoad(LocalCache.java:2180)
+	at knot//com.google.common.cache.LocalCache$Segment.get(LocalCache.java:2071)
+	at knot//com.google.common.cache.LocalCache.get(LocalCache.java:3985)
+	at knot//com.google.common.cache.LocalCache.getOrLoad(LocalCache.java:4006)
+	at knot//com.google.common.cache.LocalCache$LocalLoadingCache.get(LocalCache.java:4946)
+	at knot//net.lionarius.skinrestorer.skin.provider.base.AbstractSkinProvider.fetchSkin(AbstractSkinProvider.java:53)
+	at knot//net.minecraft.server.network.ServerLoginPacketListenerImpl.md9d5de5$skinrestorer$lambda$skinrestorer$fetchSkin$0$1(ServerLoginPacketListenerImpl.java:2148)
+	at java.base/java.util.Optional.map(Optional.java:260)
+	at knot//net.minecraft.server.network.ServerLoginPacketListenerImpl.skinrestorer$fetchSkin(ServerLoginPacketListenerImpl.java:2148)
+	at knot//net.minecraft.server.network.ServerLoginPacketListenerImpl.md9d5de5$skinrestorer$lambda$waitForSkin$0$4(ServerLoginPacketListenerImpl.java:2064)
+	at java.base/java.util.concurrent.CompletableFuture$AsyncSupply.run(CompletableFuture.java:1789)
+	at java.base/java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1090)
+	at java.base/java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:614)
+	at java.base/java.lang.Thread.run(Thread.java:1474)
+[14:29:07] [Server thread/INFO]: MIKAILAMIN[/127.0.0.1:39512] logged in with entity id 31 at (82.09339168159208, 126.0, 353.8640457204081)
+[14:29:07] [Server thread/INFO]: System chat: MIKAILAMIN joined the game
+[14:29:10] [Server thread/INFO]: MIKAILAMIN lost connection: Disconnected
+[14:29:10] [Server thread/INFO]: System chat: MIKAILAMIN left the game
+[14:29:15] [Server thread/INFO]: MIKAILAMIN[/127.0.0.1:45814] logged in with entity id 160 at (82.09339168159208, 126.0, 353.8640457204081)
+[14:29:15] [Server thread/INFO]: System chat: MIKAILAMIN joined the game
+[14:29:42] [Server thread/INFO]: Player MIKAILAMIN standing on air - force-sending blocks below
+[14:29:43] [Server thread/INFO]: System chat: Saving the game (this may take a moment!)
+[14:29:43] [Server thread/INFO]: System chat: Saved the game
