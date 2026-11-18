@@ -1,7 +1,7 @@
 ==============================================================================
 Network diagnostic: local-test
 ==============================================================================
-Time:            2026-11-18T15:36:29Z
+Time:            2026-11-18T15:43:07Z
 Public IP:       skipped
 Host / platform: runnervmccnms / Linux-7.0.0-1019-azure-x86_64-with-glibc2.43
 CPU / memory:    4 vCPU / 15.6 GiB
@@ -9,17 +9,17 @@ Default route:   default via 10.1.0.1 dev eth0 proto dhcp src 10.1.1.98 metric 1
 TCP tuning:      congestion=cubic qdisc=fq_codel
 Link speeds:     {'docker0': '-1', 'ens1': '16000', 'eth0': '16000'}
 
-Download: avg 887.0 Mbps (min 138.59, max 1635.4) over 2/2 rounds
-  round 1: 0.095 MiB in 0.006s = 138.59 Mbps
-  round 2: 0.095 MiB in 0.000s = 1635.4 Mbps
-Upload: avg 1253.01 Mbps (min 1110.36, max 1395.66) over 2/2 rounds
-  round 1: 0.048 MiB in 0.000s = 1110.36 Mbps
-  round 2: 0.048 MiB in 0.000s = 1395.66 Mbps
+Download: avg 933.63 Mbps (min 141.97, max 1725.29) over 2/2 rounds
+  round 1: 0.095 MiB in 0.006s = 141.97 Mbps
+  round 2: 0.095 MiB in 0.000s = 1725.29 Mbps
+Upload: avg 1284.53 Mbps (min 1196.27, max 1372.78) over 2/2 rounds
+  round 1: 0.048 MiB in 0.000s = 1196.27 Mbps
+  round 2: 0.048 MiB in 0.000s = 1372.78 Mbps
 
 TCP connect latency (3 probes each):
-  127.0.0.1:42425  avg=0.02 ms  median=0.02 ms  p95=0.02 ms  jitter=0.0 ms  loss=0.0%
+  127.0.0.1:38441  avg=0.02 ms  median=0.02 ms  p95=0.02 ms  jitter=0.0 ms  loss=0.0%
 
-Soak (4s, 4 samples): success=100.0%  download avg=205.66 Mbps (min 168.52/max 309.02)  latency avg=0.03 ms (min 0.03/max 0.03)
+Soak (4s, 4 samples): success=100.0%  download avg=227.41 Mbps (min 179.79/max 354.27)  latency avg=0.03 ms (min 0.03/max 0.03)
 
 Twingate connector monitor: skipped (monitor duration is zero)
 
