@@ -1,1 +1,1 @@
-ERROR: Multiple Twingate Remote Networks exist (Home, Ultron). Set TWINGATE_REMOTE_NETWORK or TWINGATE_REMOTE_NETWORK_ID.
+ERROR: Multiple Twingate Remote Networks exist (Home, Ultron). Set TWINGATE_REMOTE_NETWORK or TWINGATE_REMOTE_NETWORK_ID. Network name length 7 (1 labels).

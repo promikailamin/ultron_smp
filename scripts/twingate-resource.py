@@ -57,8 +57,23 @@ def api_token():
     return ""
 
 
+def normalize_network(value):
+    value = value.strip()
+    if "://" in value:
+        value = value.split("://", 1)[1]
+    value = value.split("/", 1)[0].rstrip(".")
+    if value.endswith(".twingate.com"):
+        value = value[: -len(".twingate.com")]
+    return value.strip(".")
+
+
 def valid_network(value):
-    return bool(value) and all(ch.isalnum() or ch in ".-_" for ch in value)
+    return (
+        bool(value)
+        and len(value) <= 253
+        and all(ch.isalnum() or ch in ".-_" for ch in value)
+        and all(len(part) <= 63 for part in value.split("."))
+    )
 
 
 def derive_network_from_token(token):
@@ -82,16 +97,16 @@ def derive_network_from_token(token):
     if not isinstance(audience, str):
         return ""
 
-    audience = audience.strip()
+    audience = normalize_network(audience)
     return audience if valid_network(audience) else ""
 
 
 def network_candidates(token):
     candidates = []
-    configured = env("TWINGATE_NETWORK")
+    configured = normalize_network(env("TWINGATE_NETWORK"))
     if configured:
         if not valid_network(configured):
-            raise TwingateError("TWINGATE_NETWORK contains invalid characters.")
+            raise TwingateError("TWINGATE_NETWORK is not a valid network slug.")
         candidates.append(configured)
 
     for value in (
@@ -422,7 +437,15 @@ def ensure_resource():
                 continue
             break
 
-    raise last_error or TwingateError("Twingate Admin API request failed.")
+    if last_error:
+        raise TwingateError(
+            "{} Network name length {} ({} labels).".format(
+                last_error,
+                len(candidates[0]),
+                len(candidates[0].split(".")),
+            )
+        )
+    raise TwingateError("Twingate Admin API request failed.")
 
 
 def main(argv):
