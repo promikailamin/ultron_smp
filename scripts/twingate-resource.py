@@ -440,6 +440,27 @@ def ensure_resource():
     candidates = network_candidates(token)
     last_error = None
 
+    if env("TWINGATE_DEBUG"):
+        import socket
+
+        for candidate in candidates:
+            host = candidate + ".twingate.com"
+            try:
+                addresses = socket.getaddrinfo(host, 443)
+                print(
+                    "debug host suffix {} resolves ({} records)".format(
+                        host.split(".", 1)[-1], len(addresses)
+                    ),
+                    file=sys.stderr,
+                )
+            except Exception as exc:
+                print(
+                    "debug host suffix {} resolution error {}".format(
+                        host.split(".", 1)[-1], type(exc).__name__
+                    ),
+                    file=sys.stderr,
+                )
+
     for tenant in candidates:
         try:
             client = Client(token, tenant)
