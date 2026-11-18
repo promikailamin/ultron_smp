@@ -11,7 +11,10 @@
 .agent-work/logs/test-http.log
 .agent-work/logs/pinggy-tunnel.log
 .agent-work/logs/pinggy-attempt.log
+.agent-work/logs/serveo-tunnel.log
+.agent-work/logs/serveo-attempt.log
 .agent-work/logs/low-latency-tunnel-start.log
 .agent-work/logs/low-latency-tunnel-restarts.log
 .agent-work/logs/test-latency-http.log
 .agent-work/tmp/pinggy_known_hosts
+.agent-work/tmp/serveo_known_hosts

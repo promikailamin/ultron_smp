@@ -14,7 +14,14 @@
 # running in the background. The PID is stored in:
 #   ${TUNNEL_PID_FILE:-${RUNNER_TEMP:-<repo>/.agent-work/tmp}/ultron-tunnel.pid}
 #
+# TUNNEL_PROVIDER selects the provider used by the workflow:
+#   auto        Use LocalXpose, then fall back to bore.pub (default)
+#   localxpose  Force the LocalXpose tunnel
+#   bore        Force the bore.pub tunnel
+#   serveo      Force the Serveo SSH tunnel
+#
 # Optional environment variables:
+#   TUNNEL_PROVIDER             Tunnel provider (default: auto)
 #   LOCALXPOSE_ACCESS_TOKEN     LocalXpose access token (required)
 #   ACCESS_TOKEN                Alternative token variable name
 #   MINECRAFT_PORT              Local Minecraft port (default: 25565)
@@ -32,6 +39,30 @@
 set -euo pipefail
 
 ROOT_DIR="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")/.." && pwd)"
+
+PROVIDER="$(printf '%s' "${TUNNEL_PROVIDER:-auto}" | tr '[:upper:]' '[:lower:]')"
+case "$PROVIDER" in
+    "" | auto)
+        ;;
+    localxpose | loclx)
+        # An explicit provider choice should not silently switch to bore.pub.
+        # Set LOCALXPOSE_BORE_FALLBACK=true to opt back into the fallback.
+        if [ -z "${LOCALXPOSE_BORE_FALLBACK:-}" ]; then
+            export LOCALXPOSE_BORE_FALLBACK=false
+        fi
+        ;;
+    bore | bore.pub)
+        exec bash "$ROOT_DIR/scripts/bore-tunnel.sh"
+        ;;
+    serveo)
+        exec bash "$ROOT_DIR/scripts/serveo-tunnel.sh"
+        ;;
+    *)
+        echo "ERROR: unsupported TUNNEL_PROVIDER '${PROVIDER}' (use auto, localxpose, bore or serveo)." >&2
+        exit 2
+        ;;
+esac
+
 TOOLS_DIR="$ROOT_DIR/.agent-work/tools"
 LOGS_DIR="$ROOT_DIR/.agent-work/logs"
 ADDRESS_FILE="$ROOT_DIR/SERVER_ADDRESS.txt"
