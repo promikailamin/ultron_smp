@@ -27,6 +27,33 @@ jobs:
             - name: checkout_repo
               uses: actions/checkout@v4
 
+            - name: diagnose_api_reachability
+              run: |
+                  set -euo pipefail
+                  url="https://${TWINGATE_NETWORK}.twingate.com/api/graphql/"
+                  echo "curl status:"
+                  curl -sS -o /dev/null -w '%{http_code}\n' "$url" || true
+                  echo "python urllib:"
+                  python3 - <<'PY'
+                  import os
+                  import traceback
+                  import urllib.request
+
+                  url = "https://{}.twingate.com/api/graphql/".format(
+                      os.environ.get("TWINGATE_NETWORK", "")
+                  )
+                  request = urllib.request.Request(
+                      url,
+                      data=b'{"query":"{__typename}"}',
+                      headers={"Content-Type": "application/json"},
+                  )
+                  try:
+                      with urllib.request.urlopen(request, timeout=15) as response:
+                          print("status", response.status)
+                  except Exception:
+                      traceback.print_exc()
+                  PY
+
             - name: ensure_minecraft_resource
               run: |
                   set -euo pipefail
