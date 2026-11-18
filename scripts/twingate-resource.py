@@ -13,6 +13,7 @@ Credentials are read from the environment and are never printed.
 import json
 import os
 import sys
+import time
 import urllib.error
 import urllib.request
 
@@ -64,7 +65,8 @@ def normalize_network(value):
     value = value.split("/", 1)[0].rstrip(".")
     if value.endswith(".twingate.com"):
         value = value[: -len(".twingate.com")]
-    return value.strip(".")
+    value = value.strip(".").replace("_", "-")
+    return value
 
 
 def valid_network(value):
@@ -159,23 +161,34 @@ class Client:
             method="POST",
         )
 
-        try:
-            with urllib.request.urlopen(request, timeout=30) as response:
-                body = response.read().decode("utf-8", errors="replace")
-        except urllib.error.HTTPError as exc:
-            detail = exc.read().decode("utf-8", errors="replace")
-            message = "Twingate Admin API returned HTTP {}.".format(exc.code)
-            if exc.code in (401, 403):
-                message += (
-                    " Authentication failed. Set TWINGATE_API_TOKEN to a "
-                    "Read & Write Admin API token from Settings > API."
-                )
-            elif detail:
-                message += " {}".format(redact(detail))
-            raise TwingateError(message)
-        except urllib.error.URLError as exc:
+        last_network_error = None
+        for attempt in range(3):
+            try:
+                with urllib.request.urlopen(request, timeout=30) as response:
+                    body = response.read().decode("utf-8", errors="replace")
+                last_network_error = None
+                break
+            except urllib.error.HTTPError as exc:
+                detail = exc.read().decode("utf-8", errors="replace")
+                message = "Twingate Admin API returned HTTP {}.".format(exc.code)
+                if exc.code in (401, 403):
+                    message += (
+                        " Authentication failed. Set TWINGATE_API_TOKEN to a "
+                        "Read & Write Admin API token from Settings > API."
+                    )
+                elif detail:
+                    message += " {}".format(redact(detail))
+                raise TwingateError(message)
+            except urllib.error.URLError as exc:
+                last_network_error = exc
+                if attempt < 2:
+                    time.sleep(2)
+
+        if last_network_error is not None:
             raise TwingateError(
-                "Could not reach the Twingate Admin API: {}.".format(exc.reason)
+                "Could not reach the Twingate Admin API: {}.".format(
+                    last_network_error.reason
+                )
             )
 
         try:
