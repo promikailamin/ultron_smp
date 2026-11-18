@@ -1,0 +1,1 @@
+ERROR: missing Twingate connector configuration: TWINGATE_ACCESS_TOKEN. Set these as GitHub Actions secrets/variables; never paste tokens into issues or commit them.

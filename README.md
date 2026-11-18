@@ -84,6 +84,35 @@ The token is never stored in the repository. Add or rotate it under
 **Settings > Secrets and variables > Actions > Secrets** as
 `LOCALXPOSE_ACCESS_TOKEN`.
 
+## Twingate private access (optional)
+
+Twingate is not a public tunnel and does not replace the addresses above. It
+is a zero-trust access service, so the Minecraft server stays private and only
+authorized Twingate users can reach it. Public players should keep using
+Minekube, LocalXpose, bore, Serveo, Pinggy or tunnl.
+
+The server can run a Twingate Connector alongside the public tunnel:
+
+1. In the Twingate Admin Console, add a Connector to the remote network and
+   generate its **Access Token** and **Refresh Token**.
+2. Add the network slug as the repository variable `TWINGATE_NETWORK`, and the
+   two connector tokens as repository secrets `TWINGATE_ACCESS_TOKEN` and
+   `TWINGATE_REFRESH_TOKEN`.
+3. Set the repository variable `TWINGATE_ENABLED=true`.
+4. Create a Resource in the Twingate Admin Console for the Minecraft port and
+   assign it to the users or groups that should have access.
+
+`scripts/twingate-connector.sh` runs the pinned
+`twingate/connector:1` container with host networking and reads the connector
+tokens only from the environment. It never writes token values to the
+repository or logs. The connector is optional and a connector failure does
+not stop the public tunnel.
+
+Do not paste Twingate tokens into issues, pull requests, chat or commits. A
+token that has been posted publicly must be revoked and regenerated in the
+Twingate Admin Console. The value pasted into issue 9 was not used or stored
+by this repository.
+
 ## Tunnel settings
 
 - `LOCALXPOSE_REGION` (repository variable) - relay region: `ap`, `us`, `eu`,
@@ -236,6 +265,7 @@ bash .agent-work/tests/test_serveo_tunnel.sh
 bash .agent-work/tests/test_tunnl_tunnel.sh
 bash .agent-work/tests/test_tunnl_provider.sh
 bash .agent-work/tests/test_minekube_tunnel.sh
+bash .agent-work/tests/test_twingate_connector.sh
 bash .agent-work/tests/test_network_tune.sh
 bash .agent-work/tests/test_network_optimizer.sh
 ```

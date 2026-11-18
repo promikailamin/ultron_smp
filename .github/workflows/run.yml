@@ -41,6 +41,11 @@ jobs:
             MINEKUBE_CONNECT_TOKEN: ${{ secrets.MINEKUBE_CONNECT_TOKEN }}
             MINEKUBE_GATE_VERSION: ${{ vars.MINEKUBE_GATE_VERSION || '0.81.1' }}
             MINEKUBE_AUTO: ${{ vars.MINEKUBE_AUTO || 'true' }}
+            TWINGATE_ENABLED: ${{ vars.TWINGATE_ENABLED || 'false' }}
+            TWINGATE_NETWORK: ${{ vars.TWINGATE_NETWORK }}
+            TWINGATE_CONNECTOR_NAME: ${{ vars.TWINGATE_CONNECTOR_NAME || 'ultron-twingate' }}
+            TWINGATE_ACCESS_TOKEN: ${{ secrets.TWINGATE_ACCESS_TOKEN }}
+            TWINGATE_REFRESH_TOKEN: ${{ secrets.TWINGATE_REFRESH_TOKEN }}
 
         steps:
             - name: checkout_repo
@@ -144,6 +149,13 @@ jobs:
                       pass
                   print(f"Minecraft TCP port {port} is reachable locally!")
                   PY
+
+            - name: start_twingate_connector
+              if: ${{ vars.TWINGATE_ENABLED == 'true' }}
+              continue-on-error: true
+              run: |
+                  set -euo pipefail
+                  bash scripts/twingate-connector.sh start
 
             - name: expose_server
               id: expose-tunnel
@@ -383,6 +395,7 @@ jobs:
               run: |
                   set -euo pipefail
                   echo "Stopping the server and flushing the world before the final backup..."
+                  bash scripts/twingate-connector.sh stop >/dev/null 2>&1 || true
                   bash scripts/server-control.sh save >/dev/null 2>&1 || true
                   bash scripts/server-control.sh stop 45 || true
 
