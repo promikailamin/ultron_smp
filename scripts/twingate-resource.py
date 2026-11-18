@@ -12,10 +12,8 @@ Credentials are read from the environment and are never printed.
 
 import json
 import os
-import socket
 import sys
 import time
-import traceback
 import urllib.error
 import urllib.parse
 import urllib.request
@@ -153,87 +151,73 @@ class Client:
             payload["variables"] = variables
 
         url = self.endpoint
-        last_network_error = None
+        body = None
 
-        # Some GitHub-hosted runners advertise IPv6 through DNS but have no
-        # working IPv6 route. Prefer IPv4 while the request is in flight.
-        original_getaddrinfo = socket.getaddrinfo
-
-        def ipv4_getaddrinfo(host, port, family=0, type=0, proto=0, flags=0):
-            return original_getaddrinfo(
-                host, port, socket.AF_INET, type, proto, flags
+        for _ in range(4):
+            request = urllib.request.Request(
+                url,
+                data=json.dumps(payload).encode("utf-8"),
+                headers={
+                    "X-API-KEY": self.token,
+                    "Content-Type": "application/json",
+                    "Accept": "application/json",
+                    "User-Agent": "ultron-smp-twingate-resource/1.0",
+                },
+                method="POST",
             )
 
-        socket.getaddrinfo = ipv4_getaddrinfo
-        try:
-            for _ in range(4):
-                request = urllib.request.Request(
-                    url,
-                    data=json.dumps(payload).encode("utf-8"),
-                    headers={
-                        "X-API-KEY": self.token,
-                        "Content-Type": "application/json",
-                        "Accept": "application/json",
-                        "User-Agent": "ultron-smp-twingate-resource/1.0",
-                    },
-                    method="POST",
-                )
-
-                for attempt in range(3):
-                    try:
-                        with urllib.request.urlopen(request, timeout=30) as response:
-                            body = response.read().decode("utf-8", errors="replace")
-                        last_network_error = None
-                        break
-                    except urllib.error.HTTPError as exc:
-                        last_network_error = None
-                        location = exc.headers.get("Location")
-                        if exc.code in (301, 302, 303, 307, 308) and location:
-                            redirected = urllib.parse.urljoin(url, location)
-                            parsed = urllib.parse.urlparse(redirected)
-                            host = (parsed.hostname or "").lower()
-                            if (
-                                parsed.scheme == "https"
-                                and (host == "twingate.com" or host.endswith(".twingate.com"))
-                            ):
-                                url = redirected
-                                break
-                            raise TwingateError(
-                                "Twingate Admin API redirected to an unexpected host."
+            for attempt in range(3):
+                try:
+                    with urllib.request.urlopen(request, timeout=30) as response:
+                        body = response.read().decode("utf-8", errors="replace")
+                    break
+                except urllib.error.HTTPError as exc:
+                    location = exc.headers.get("Location")
+                    if exc.code in (301, 302, 303, 307, 308) and location:
+                        redirected = urllib.parse.urljoin(url, location)
+                        parsed = urllib.parse.urlparse(redirected)
+                        host = (parsed.hostname or "").lower()
+                        if (
+                            parsed.scheme == "https"
+                            and (
+                                host == "twingate.com"
+                                or host.endswith(".twingate.com")
                             )
-
-                        detail = exc.read().decode("utf-8", errors="replace")
-                        message = "Twingate Admin API returned HTTP {}.".format(
-                            exc.code
+                            and redirected != url
+                        ):
+                            url = redirected
+                            break
+                        raise TwingateError(
+                            "Twingate Admin API redirected to an unexpected host."
                         )
-                        if exc.code in (401, 403):
-                            message += (
-                                " Authentication failed. Set TWINGATE_API_TOKEN to a "
-                                "Read & Write Admin API token from Settings > API."
-                            )
-                        elif detail:
-                            message += " {}".format(redact(detail))
-                        raise TwingateError(message)
-                    except urllib.error.URLError as exc:
-                        last_network_error = exc
-                        if env("TWINGATE_DEBUG"):
-                            print(traceback.format_exc(), file=sys.stderr)
-                        if attempt < 2:
-                            time.sleep(2)
 
-                if last_network_error is not None:
+                    detail = exc.read().decode("utf-8", errors="replace")
+                    message = "Twingate Admin API returned HTTP {}.".format(exc.code)
+                    if exc.code in (401, 403):
+                        message += (
+                            " Authentication failed. Set TWINGATE_API_TOKEN to a "
+                            "Read & Write Admin API token from Settings > API."
+                        )
+                    elif detail:
+                        message += " {}".format(redact(detail))
+                    raise TwingateError(message)
+                except urllib.error.URLError as exc:
+                    if attempt < 2:
+                        time.sleep(2)
+                        continue
                     raise TwingateError(
                         "Could not reach the Twingate Admin API: {}.".format(
-                            last_network_error.reason
+                            exc.reason
                         )
                     )
-                if "body" in locals():
-                    break
-        finally:
-            socket.getaddrinfo = original_getaddrinfo
 
-        if "body" not in locals():
+            if body is not None:
+                break
+        else:
             raise TwingateError("Twingate Admin API redirected too many times.")
+
+        if body is None:
+            raise TwingateError("Twingate Admin API returned an empty response.")
 
         try:
             result = json.loads(body)
