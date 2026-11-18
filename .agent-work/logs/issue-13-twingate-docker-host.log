@@ -1,0 +1,15 @@
+Testing Docker host-networking sysctl compatibility
+Date: 2026-11-18T12:51:34Z
+Docker server: 29.4.2
+Image: twingate/connector:1
+
+1. Reproducing the original failure (host networking + ping_group_range sysctl):
+   Reproduced as expected: docker rejected the sysctl in the host netns.
+
+2. Starting the connector image with host networking WITHOUT the sysctl:
+   Container state: running
+   Recent container logs (fake credentials are expected to be rejected):
+State: Offline
+State: Authentication
+State: Error
+Twingate Docker host-networking test passed; log: /home/runner/work/ultron_smp/ultron_smp/.agent-work/logs/test-twingate-docker-host-sysctl.log

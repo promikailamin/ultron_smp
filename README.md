@@ -97,9 +97,10 @@ The server can run a Twingate Connector alongside the public tunnel:
    generate its **Access Token** and **Refresh Token**.
 2. Add the two connector tokens as repository secrets
    `TWINGATE_ACCESS_TOKEN` and `TWINGATE_REFRESH_TOKEN`.
-3. Optional: if your access token does not contain the tenant name in its
-   `aud` claim, add the network slug as the repository variable or secret
-   `TWINGATE_NETWORK`.
+3. The connector network defaults to `mikailamin`. Override it with the
+   repository variable or secret `TWINGATE_NETWORK` if your tenant uses a
+   different slug. When the script is run outside the workflow it falls back
+   to the access token's `aud` claim.
 4. In the Twingate Admin Console, open **Settings > API**, generate an Admin
    API token with **Read & Write**, and add it as the repository secret
    `TWINGATE_API_TOKEN`. Connector access/refresh tokens cannot create
@@ -133,18 +134,28 @@ compatibility the script falls back to `TWINGATE_ACCESS_TOKEN` when
 actually an Admin API token rather than a Connector token.
 
 `scripts/twingate-connector.sh` runs the pinned
-`twingate/connector:1` container with host networking and reads the connector
-credentials only from the environment. It reads `TWINGATE_NETWORK` from the
-access token's `aud` claim when no explicit network is supplied. It never
-writes token values to the repository or logs. The connector is optional and
-a connector failure does not stop the public tunnel.
+`twingate/connector:1` container with the settings Twingate prints in its
+Admin Console: container name `twingate-mccon`, `--restart unless-stopped`,
+`--pull always`, and the `TWINGATE_LABEL_HOSTNAME=ultronsmp.net` /
+`TWINGATE_LABEL_DEPLOYED_BY=docker` labels. It reads the connector
+credentials only from the environment and never writes token values to the
+repository or logs. When no explicit network is supplied it reads
+`TWINGATE_NETWORK` from the access token's `aud` claim. The connector is
+optional and a connector failure does not stop the public tunnel.
 
 Host networking allows the connector to reach the Minecraft server at
 `127.0.0.1:25565`, but Docker rejects the Twingate-recommended
 `net.ipv4.ping_group_range` sysctl in the host network namespace. The script
 therefore applies that sysctl only for non-host modes. Set
-`TWINGATE_DOCKER_NETWORK=bridge` only if your resource is reachable through
-the Docker bridge gateway instead of localhost.
+`TWINGATE_DOCKER_NETWORK=bridge` if your resource is reachable through the
+Docker bridge gateway. Use `TWINGATE_DOCKER_NETWORK=default` to omit
+`--network` entirely and reproduce Twingate's default-bridge command; the
+sysctl is applied in that mode.
+
+The container name, image, pull policy and labels can be overridden with
+`TWINGATE_CONNECTOR_NAME`, `TWINGATE_DOCKER_IMAGE`, `TWINGATE_DOCKER_PULL`,
+`TWINGATE_LABEL_HOSTNAME` and `TWINGATE_LABEL_DEPLOYED_BY`. The workflow sets
+the values from the matching repository variables when present.
 
 Do not paste Twingate tokens into issues, pull requests, chat or commits. A
 token that has been posted publicly must be revoked and regenerated in the

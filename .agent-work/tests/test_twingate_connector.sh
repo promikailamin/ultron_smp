@@ -30,6 +30,7 @@ case "$command" in
         name=""
         network=""
         sysctl_value=""
+        pull_policy=""
         while [ "$#" -gt 0 ]; do
             case "$1" in
                 --name)
@@ -46,6 +47,10 @@ case "$command" in
                     ;;
                 --sysctl)
                     sysctl_value="$2"
+                    shift 2
+                    ;;
+                --pull)
+                    pull_policy="$2"
                     shift 2
                     ;;
                 --restart)
@@ -72,8 +77,11 @@ case "$command" in
 
         printf '%s\n' "$network" >"$state_dir/run-network"
         printf '%s\n' "$sysctl_value" >"$state_dir/run-sysctl"
+        printf '%s\n' "$pull_policy" >"$state_dir/run-pull"
+        printf '%s\n' "$(sed -n 's/^TWINGATE_LABEL_HOSTNAME=//p' "$env_file")" >"$state_dir/run-label-hostname"
+        printf '%s\n' "$(sed -n 's/^TWINGATE_LABEL_DEPLOYED_BY=//p' "$env_file")" >"$state_dir/run-label-deployed-by"
 
-        for key in TWINGATE_NETWORK TWINGATE_ACCESS_TOKEN TWINGATE_REFRESH_TOKEN; do
+        for key in TWINGATE_NETWORK TWINGATE_ACCESS_TOKEN TWINGATE_REFRESH_TOKEN TWINGATE_LABEL_HOSTNAME TWINGATE_LABEL_DEPLOYED_BY; do
             value="$(sed -n "s/^${key}=//p" "$env_file")"
             [ -n "$value" ] || { echo "fake docker: ${key} is empty" >&2; exit 1; }
         done
@@ -166,6 +174,18 @@ if [ "$(cat "$STATE_DIR/run-network")" != "host" ]; then
 fi
 if [ -n "$(cat "$STATE_DIR/run-sysctl")" ]; then
     echo "ERROR: host networking must not pass the ping_group_range sysctl." >&2
+    exit 1
+fi
+if [ "$(cat "$STATE_DIR/run-pull")" != "always" ]; then
+    echo "ERROR: connector should default to --pull always." >&2
+    exit 1
+fi
+if [ "$(cat "$STATE_DIR/run-label-hostname")" != "ultronsmp.net" ]; then
+    echo "ERROR: connector should default to the ultronsmp.net hostname label." >&2
+    exit 1
+fi
+if [ "$(cat "$STATE_DIR/run-label-deployed-by")" != "docker" ]; then
+    echo "ERROR: connector should default to the docker deployed-by label." >&2
     exit 1
 fi
 
@@ -293,6 +313,39 @@ TWINGATE_DOCKER_BIN="$FAKE_DOCKER" \
     FAKE_DOCKER_STATE_DIR="$BRIDGE_STATE_DIR" \
     bash "$ROOT_DIR/scripts/twingate-connector.sh" stop \
     >>"$BRIDGE_LOG" 2>&1
+
+DEFAULT_STATE_DIR="$TEST_DIR/state-default"
+DEFAULT_ENV_DIR="$TEST_DIR/env-default"
+DEFAULT_LOG="$LOG_DIR/test-twingate-connector-default-network.log"
+mkdir -p "$DEFAULT_STATE_DIR" "$DEFAULT_ENV_DIR"
+
+TWINGATE_NETWORK="$NETWORK" \
+    TWINGATE_ACCESS_TOKEN="$ACCESS_TOKEN" \
+    TWINGATE_REFRESH_TOKEN="$REFRESH_TOKEN" \
+    TWINGATE_DOCKER_BIN="$FAKE_DOCKER" \
+    TWINGATE_DOCKER_NETWORK="default" \
+    TWINGATE_CONNECTOR_NAME="${CONTAINER_NAME}-default" \
+    TWINGATE_ENV_DIR="$DEFAULT_ENV_DIR" \
+    TWINGATE_READY_TIMEOUT="5" \
+    FAKE_DOCKER_STATE_DIR="$DEFAULT_STATE_DIR" \
+    bash "$ROOT_DIR/scripts/twingate-connector.sh" start \
+    >"$DEFAULT_LOG" 2>&1
+
+grep -q "is running" "$DEFAULT_LOG"
+if [ -n "$(cat "$DEFAULT_STATE_DIR/run-network")" ]; then
+    echo "ERROR: TWINGATE_DOCKER_NETWORK=default should omit --network." >&2
+    exit 1
+fi
+if [ -z "$(cat "$DEFAULT_STATE_DIR/run-sysctl")" ]; then
+    echo "ERROR: Docker's default bridge network should keep the ping_group_range sysctl." >&2
+    exit 1
+fi
+
+TWINGATE_DOCKER_BIN="$FAKE_DOCKER" \
+    TWINGATE_CONNECTOR_NAME="${CONTAINER_NAME}-default" \
+    FAKE_DOCKER_STATE_DIR="$DEFAULT_STATE_DIR" \
+    bash "$ROOT_DIR/scripts/twingate-connector.sh" stop \
+    >>"$DEFAULT_LOG" 2>&1
 
 SKIP_STATE_DIR="$TEST_DIR/state-skip"
 SKIP_ENV_DIR="$TEST_DIR/env-skip"

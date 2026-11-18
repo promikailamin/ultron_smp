@@ -7,9 +7,12 @@ DEFAULT_TMP_DIR="${RUNNER_TEMP:-$ROOT_DIR/.agent-work/tmp}"
 ENV_DIR="${TWINGATE_ENV_DIR:-$DEFAULT_TMP_DIR}"
 
 DOCKER_BIN="${TWINGATE_DOCKER_BIN:-docker}"
-CONTAINER_NAME="${TWINGATE_CONNECTOR_NAME:-ultron-twingate}"
+CONTAINER_NAME="${TWINGATE_CONNECTOR_NAME:-twingate-mccon}"
 IMAGE="${TWINGATE_DOCKER_IMAGE:-twingate/connector:1}"
 NETWORK_MODE="${TWINGATE_DOCKER_NETWORK:-host}"
+PULL_POLICY="${TWINGATE_DOCKER_PULL:-always}"
+LABEL_HOSTNAME="${TWINGATE_LABEL_HOSTNAME:-ultronsmp.net}"
+LABEL_DEPLOYED_BY="${TWINGATE_LABEL_DEPLOYED_BY:-docker}"
 READY_TIMEOUT="${TWINGATE_READY_TIMEOUT:-90}"
 NETWORK="${TWINGATE_NETWORK:-}"
 ACCESS_TOKEN="${TWINGATE_ACCESS_TOKEN:-}"
@@ -32,11 +35,17 @@ Optional:
                            auto starts only when both connector tokens are set.
   TWINGATE_NETWORK         Twingate network slug. If omitted, it is read from
                            the access token's "aud" claim.
-  TWINGATE_CONNECTOR_NAME  Docker container name (default: ultron-twingate)
+  TWINGATE_CONNECTOR_NAME  Docker container name (default: twingate-mccon)
   TWINGATE_DOCKER_IMAGE    Connector image (default: twingate/connector:1)
   TWINGATE_DOCKER_BIN      Docker executable (default: docker)
   TWINGATE_DOCKER_NETWORK  Docker network mode (default: host). Host mode lets the
                            connector reach 127.0.0.1:25565 on the runner.
+                           Use "default" to omit --network and let Docker choose
+                           its usual bridge network.
+  TWINGATE_DOCKER_PULL     Image pull policy (default: always)
+  TWINGATE_LABEL_HOSTNAME  Connector hostname label (default: ultronsmp.net)
+  TWINGATE_LABEL_DEPLOYED_BY
+                           Deployed-by label (default: docker)
   TWINGATE_READY_TIMEOUT   Seconds to wait for the container (default: 90)
   TWINGATE_LOG_LEVEL       Connector log level (default: 3)
   TWINGATE_ENV_DIR         Directory for the temporary env file
@@ -159,6 +168,9 @@ require_tokens() {
     fi
 
     validate_value TWINGATE_NETWORK "$NETWORK"
+    validate_value TWINGATE_LABEL_HOSTNAME "$LABEL_HOSTNAME"
+    validate_value TWINGATE_LABEL_DEPLOYED_BY "$LABEL_DEPLOYED_BY"
+    validate_value TWINGATE_DOCKER_PULL "$PULL_POLICY"
 }
 
 require_docker() {
@@ -182,6 +194,8 @@ write_env_file() {
             printf 'TWINGATE_ACCESS_TOKEN=%s\n' "$ACCESS_TOKEN"
             printf 'TWINGATE_REFRESH_TOKEN=%s\n' "$REFRESH_TOKEN"
             printf 'TWINGATE_LOG_LEVEL=%s\n' "$LOG_LEVEL"
+            printf 'TWINGATE_LABEL_HOSTNAME=%s\n' "$LABEL_HOSTNAME"
+            printf 'TWINGATE_LABEL_DEPLOYED_BY=%s\n' "$LABEL_DEPLOYED_BY"
         } >"$ENV_FILE"
     )
 }
@@ -210,8 +224,16 @@ start_connector() {
         run -d
         --name "$CONTAINER_NAME"
         --restart unless-stopped
-        --network "$NETWORK_MODE"
+        --pull "$PULL_POLICY"
     )
+
+    # Omitting --network reproduces the command Twingate prints in its Admin
+    # Console, which relies on Docker's default bridge network. The repository
+    # keeps host networking by default so the connector can reach the Minecraft
+    # server on 127.0.0.1.
+    if [ "$NETWORK_MODE" != "default" ]; then
+        run_args+=(--network "$NETWORK_MODE")
+    fi
 
     # Twingate recommends this sysctl for its default bridge network, but the
     # kernel rejects it when the container shares the host network namespace:

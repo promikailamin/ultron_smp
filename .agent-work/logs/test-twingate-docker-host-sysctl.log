@@ -1,5 +1,5 @@
 Testing Docker host-networking sysctl compatibility
-Date: 2026-11-18T12:02:38Z
+Date: 2026-11-18T12:51:34Z
 Docker server: 29.4.2
 Image: twingate/connector:1
 

@@ -42,8 +42,11 @@ jobs:
             MINEKUBE_GATE_VERSION: ${{ vars.MINEKUBE_GATE_VERSION || '0.81.1' }}
             MINEKUBE_AUTO: ${{ vars.MINEKUBE_AUTO || 'true' }}
             TWINGATE_ENABLED: ${{ vars.TWINGATE_ENABLED || 'auto' }}
-            TWINGATE_NETWORK: ${{ vars.TWINGATE_NETWORK || secrets.TWINGATE_NETWORK }}
-            TWINGATE_CONNECTOR_NAME: ${{ vars.TWINGATE_CONNECTOR_NAME || 'ultron-twingate' }}
+            TWINGATE_NETWORK: ${{ vars.TWINGATE_NETWORK || secrets.TWINGATE_NETWORK || 'mikailamin' }}
+            TWINGATE_CONNECTOR_NAME: ${{ vars.TWINGATE_CONNECTOR_NAME || 'twingate-mccon' }}
+            TWINGATE_DOCKER_PULL: ${{ vars.TWINGATE_DOCKER_PULL || 'always' }}
+            TWINGATE_LABEL_HOSTNAME: ${{ vars.TWINGATE_LABEL_HOSTNAME || 'ultronsmp.net' }}
+            TWINGATE_LABEL_DEPLOYED_BY: ${{ vars.TWINGATE_LABEL_DEPLOYED_BY || 'docker' }}
             TWINGATE_ACCESS_TOKEN: ${{ secrets.TWINGATE_ACCESS_TOKEN }}
             TWINGATE_REFRESH_TOKEN: ${{ secrets.TWINGATE_REFRESH_TOKEN }}
             TWINGATE_API_TOKEN: ${{ secrets.TWINGATE_API_TOKEN }}
