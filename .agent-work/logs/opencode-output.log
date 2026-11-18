@@ -4847,3 +4847,15 @@ To https://github.com/promikailamin/ultron_smp
 [0m$ [0mgit status --short || true
 M .agent-work/logs/opencode-output.log
 [0m
+[0m$ [0mgit add -A && git -c user.name="ultron" -c user.email="ultron@users.noreply.github.com" commit -m "Update tunnel execution log" >/dev/null && git push origin HEAD:main >/dev/null && echo "pushed $(git rev-parse --short HEAD)"
+To https://github.com/promikailamin/ultron_smp
+   12d9c16..a35023d  HEAD -> main
+pushed a35023d
+[0m
+Implemented tunnl.gg support and pushed to `main`.
+
+- Added `tunnl` and `pinggy` providers with Bangladesh-prioritised Pinggy Asia-Pacific routing and `bore.pub` fallback.
+- Added a tunnl.gg HTTP status page (`SERVER_STATUS_URL.txt`) with `/healthz` and `/status.json`.
+- tunnl.gg cannot carry Minecraft's raw TCP, so gameplay stays on a TCP relay while tunnl.gg serves the status page.
+- Tests passed: tunnl script/provider, existing tunnel/Serveo tests, real Pinggy relay, and a live tunnl.gg HTTPS check.
+- Issue commented with details and limitation: https://github.com/promikailamin/ultron_smp/issues/6#issuecomment-6973997200
