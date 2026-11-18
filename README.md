@@ -95,18 +95,25 @@ The server can run a Twingate Connector alongside the public tunnel:
 
 1. In the Twingate Admin Console, add a Connector to the remote network and
    generate its **Access Token** and **Refresh Token**.
-2. Add the network slug as the repository variable `TWINGATE_NETWORK`, and the
-   two connector tokens as repository secrets `TWINGATE_ACCESS_TOKEN` and
-   `TWINGATE_REFRESH_TOKEN`.
-3. Set the repository variable `TWINGATE_ENABLED=true`.
+2. Add the two connector tokens as repository secrets
+   `TWINGATE_ACCESS_TOKEN` and `TWINGATE_REFRESH_TOKEN`.
+3. Optional: if your access token does not contain the tenant name in its
+   `aud` claim, add the network slug as the repository variable or secret
+   `TWINGATE_NETWORK`.
 4. Create a Resource in the Twingate Admin Console for the Minecraft port and
    assign it to the users or groups that should have access.
 
+The connector starts automatically when both token secrets are present. Set
+the repository variable `TWINGATE_ENABLED=false` to disable it, or `true` to
+require both secrets. The default `auto` mode skips the connector when the
+secrets are not configured.
+
 `scripts/twingate-connector.sh` runs the pinned
 `twingate/connector:1` container with host networking and reads the connector
-tokens only from the environment. It never writes token values to the
-repository or logs. The connector is optional and a connector failure does
-not stop the public tunnel.
+credentials only from the environment. It reads `TWINGATE_NETWORK` from the
+access token's `aud` claim when no explicit network is supplied. It never
+writes token values to the repository or logs. The connector is optional and
+a connector failure does not stop the public tunnel.
 
 Do not paste Twingate tokens into issues, pull requests, chat or commits. A
 token that has been posted publicly must be revoked and regenerated in the

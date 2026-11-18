@@ -1,1 +1,1 @@
-Twingate connector test passed: env-only tokens, cleanup and status handling validated.
+Twingate connector test passed: auto-detection, env-only tokens, cleanup and status handling validated.

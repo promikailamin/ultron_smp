@@ -41,8 +41,8 @@ jobs:
             MINEKUBE_CONNECT_TOKEN: ${{ secrets.MINEKUBE_CONNECT_TOKEN }}
             MINEKUBE_GATE_VERSION: ${{ vars.MINEKUBE_GATE_VERSION || '0.81.1' }}
             MINEKUBE_AUTO: ${{ vars.MINEKUBE_AUTO || 'true' }}
-            TWINGATE_ENABLED: ${{ vars.TWINGATE_ENABLED || 'false' }}
-            TWINGATE_NETWORK: ${{ vars.TWINGATE_NETWORK }}
+            TWINGATE_ENABLED: ${{ vars.TWINGATE_ENABLED || 'auto' }}
+            TWINGATE_NETWORK: ${{ vars.TWINGATE_NETWORK || secrets.TWINGATE_NETWORK }}
             TWINGATE_CONNECTOR_NAME: ${{ vars.TWINGATE_CONNECTOR_NAME || 'ultron-twingate' }}
             TWINGATE_ACCESS_TOKEN: ${{ secrets.TWINGATE_ACCESS_TOKEN }}
             TWINGATE_REFRESH_TOKEN: ${{ secrets.TWINGATE_REFRESH_TOKEN }}
@@ -151,11 +151,14 @@ jobs:
                   PY
 
             - name: start_twingate_connector
-              if: ${{ vars.TWINGATE_ENABLED == 'true' }}
+              # Secrets cannot be tested directly in an `if:` expression. The
+              # script starts the connector automatically when both tokens are
+              # present, skips when they are absent, and honours
+              # TWINGATE_ENABLED=false/true as an override.
               continue-on-error: true
               run: |
                   set -euo pipefail
-                  bash scripts/twingate-connector.sh start
+                  bash scripts/twingate-connector.sh start | tee .agent-work/logs/twingate-connector.log
 
             - name: expose_server
               id: expose-tunnel

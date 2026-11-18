@@ -14,6 +14,7 @@ NETWORK="${TWINGATE_NETWORK:-}"
 ACCESS_TOKEN="${TWINGATE_ACCESS_TOKEN:-}"
 REFRESH_TOKEN="${TWINGATE_REFRESH_TOKEN:-}"
 LOG_LEVEL="${TWINGATE_LOG_LEVEL:-3}"
+ENABLED_MODE="${TWINGATE_ENABLED:-auto}"
 
 ENV_FILE=""
 
@@ -22,11 +23,14 @@ usage() {
 Usage: twingate-connector.sh {start|stop|status}
 
 Required for start (provide through the environment, never on the command line):
-  TWINGATE_NETWORK         Twingate network slug
   TWINGATE_ACCESS_TOKEN    Connector access token
   TWINGATE_REFRESH_TOKEN   Connector refresh token
 
 Optional:
+  TWINGATE_ENABLED         auto (default), true/required, or false/disabled.
+                           auto starts only when both connector tokens are set.
+  TWINGATE_NETWORK         Twingate network slug. If omitted, it is read from
+                           the access token's "aud" claim.
   TWINGATE_CONNECTOR_NAME  Docker container name (default: ultron-twingate)
   TWINGATE_DOCKER_IMAGE    Connector image (default: twingate/connector:1)
   TWINGATE_DOCKER_BIN      Docker executable (default: docker)
@@ -59,10 +63,81 @@ validate_value() {
     esac
 }
 
+mode_is_disabled() {
+    case "${ENABLED_MODE,,}" in
+        false | 0 | no | off | disabled)
+            return 0
+            ;;
+        *)
+            return 1
+            ;;
+    esac
+}
+
+mode_is_required() {
+    case "${ENABLED_MODE,,}" in
+        true | 1 | yes | on | required)
+            return 0
+            ;;
+        *)
+            return 1
+            ;;
+    esac
+}
+
+derive_network_from_token() {
+    TWINGATE_ACCESS_TOKEN="$ACCESS_TOKEN" python3 - <<'PY'
+import base64
+import json
+import os
+import sys
+
+token = os.environ.get("TWINGATE_ACCESS_TOKEN", "")
+parts = token.split(".")
+if len(parts) < 2:
+    sys.exit(1)
+
+payload = parts[1] + "=" * (-len(parts[1]) % 4)
+try:
+    claims = json.loads(base64.urlsafe_b64decode(payload.encode("ascii")))
+except Exception:
+    sys.exit(1)
+
+audience = claims.get("aud")
+if isinstance(audience, list):
+    audience = next((item for item in audience if isinstance(item, str) and item), None)
+if not isinstance(audience, str):
+    sys.exit(1)
+
+audience = audience.strip()
+if not audience or not all(ch.isalnum() or ch in "._-" for ch in audience):
+    sys.exit(1)
+
+# Twingate documents the JWT "aud" claim as the tenant/network slug.
+print(audience)
+PY
+}
+
+should_skip() {
+    if mode_is_disabled; then
+        echo "Twingate connector is disabled (TWINGATE_ENABLED=${ENABLED_MODE})."
+        return 0
+    fi
+
+    if [ -z "$ACCESS_TOKEN" ] && [ -z "$REFRESH_TOKEN" ]; then
+        if mode_is_required; then
+            fail "TWINGATE_ACCESS_TOKEN and TWINGATE_REFRESH_TOKEN are required when TWINGATE_ENABLED=${ENABLED_MODE}."
+        fi
+        echo "Twingate connector skipped: TWINGATE_ACCESS_TOKEN and TWINGATE_REFRESH_TOKEN are not configured."
+        return 0
+    fi
+
+    return 1
+}
+
 require_tokens() {
     local missing=""
 
-    [ -n "$NETWORK" ] || missing="${missing} TWINGATE_NETWORK"
     [ -n "$ACCESS_TOKEN" ] || missing="${missing} TWINGATE_ACCESS_TOKEN"
     [ -n "$REFRESH_TOKEN" ] || missing="${missing} TWINGATE_REFRESH_TOKEN"
 
@@ -70,9 +145,17 @@ require_tokens() {
         fail "missing Twingate connector configuration:${missing}. Set these as GitHub Actions secrets/variables; never paste tokens into issues or commit them."
     fi
 
-    validate_value TWINGATE_NETWORK "$NETWORK"
     validate_value TWINGATE_ACCESS_TOKEN "$ACCESS_TOKEN"
     validate_value TWINGATE_REFRESH_TOKEN "$REFRESH_TOKEN"
+
+    if [ -z "$NETWORK" ]; then
+        NETWORK="$(derive_network_from_token 2>/dev/null || true)"
+    fi
+    if [ -z "$NETWORK" ]; then
+        fail "missing Twingate connector configuration: TWINGATE_NETWORK could not be read from the access token. Set the repository variable or secret TWINGATE_NETWORK."
+    fi
+
+    validate_value TWINGATE_NETWORK "$NETWORK"
 }
 
 require_docker() {
@@ -109,6 +192,10 @@ stop_connector() {
 }
 
 start_connector() {
+    if should_skip; then
+        return 0
+    fi
+
     require_tokens
     require_docker
     mkdir -p "$LOG_DIR"
