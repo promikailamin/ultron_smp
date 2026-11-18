@@ -20,6 +20,7 @@ import urllib.request
 
 DEFAULT_NAME = "minecraft"
 DEFAULT_ADDRESS = "127.0.0.1"
+DEFAULT_ALIAS = "minecraft.ultronsmp.internal"
 DEFAULT_PORT = 25565
 PAGE_SIZE = 100
 
@@ -136,6 +137,28 @@ def resource_port():
     if not 1 <= port <= 65535:
         raise TwingateError("TWINGATE_RESOURCE_PORT must be between 1 and 65535.")
     return port
+
+
+def resource_alias():
+    raw = env("TWINGATE_RESOURCE_ALIAS", DEFAULT_ALIAS).strip().rstrip(".")
+    if raw.lower() in {"", "none", "off", "disabled", "false"}:
+        return None
+    return raw
+
+
+def valid_alias(value):
+    if value is None:
+        return True
+    if len(value) > 253 or "." not in value:
+        return False
+    labels = value.split(".")
+    return all(
+        0 < len(label) <= 63
+        and all(ch.isalnum() or ch == "-" for ch in label)
+        and not label.startswith("-")
+        and not label.endswith("-")
+        for label in labels
+    )
 
 
 class Client:
@@ -312,7 +335,7 @@ def find_resource(client, name):
     resources = paginate(
         client,
         "resources",
-        "id name address { type value } remoteNetwork { id name } "
+        "id name address { type value } alias remoteNetwork { id name } "
         "groups { edges { node { id name } } }",
     )
     for item in resources:
@@ -371,19 +394,20 @@ def desired_protocols(port):
     }
 
 
-def create_resource(client, name, address, network_id, port, group_ids=None):
+def create_resource(client, name, address, network_id, port, group_ids=None, alias=None):
     query = """
-    mutation($name: String!, $address: String!, $remoteNetworkId: ID!, $protocols: ProtocolsInput!, $groupIds: [ID]) {
+    mutation($name: String!, $address: String!, $alias: String, $remoteNetworkId: ID!, $protocols: ProtocolsInput!, $groupIds: [ID]) {
       resourceCreate(
         name: $name,
         address: $address,
+        alias: $alias,
         remoteNetworkId: $remoteNetworkId,
         protocols: $protocols,
         groupIds: $groupIds
       ) {
         ok
         error
-        entity { id name address { type value } }
+        entity { id name address { type value } alias }
       }
     }
     """
@@ -392,6 +416,7 @@ def create_resource(client, name, address, network_id, port, group_ids=None):
         {
             "name": name,
             "address": address,
+            "alias": alias,
             "remoteNetworkId": network_id,
             "protocols": desired_protocols(port),
             "groupIds": group_ids or [],
@@ -407,19 +432,20 @@ def create_resource(client, name, address, network_id, port, group_ids=None):
     return result.get("entity") or {}
 
 
-def update_resource(client, resource_id, address, network_id, port, group_ids=None):
+def update_resource(client, resource_id, address, network_id, port, group_ids=None, alias=None):
     query = """
-    mutation($id: ID!, $address: String!, $remoteNetworkId: ID!, $protocols: ProtocolsInput!, $groupIds: [ID]) {
+    mutation($id: ID!, $address: String!, $alias: String, $remoteNetworkId: ID!, $protocols: ProtocolsInput!, $groupIds: [ID]) {
       resourceUpdate(
         id: $id,
         address: $address,
+        alias: $alias,
         remoteNetworkId: $remoteNetworkId,
         protocols: $protocols,
         addedGroupIds: $groupIds
       ) {
         ok
         error
-        entity { id name address { type value } }
+        entity { id name address { type value } alias }
       }
     }
     """
@@ -428,6 +454,7 @@ def update_resource(client, resource_id, address, network_id, port, group_ids=No
         {
             "id": resource_id,
             "address": address,
+            "alias": alias,
             "remoteNetworkId": network_id,
             "protocols": desired_protocols(port),
             "groupIds": group_ids or [],
@@ -466,11 +493,17 @@ def ensure_resource():
     name = env("TWINGATE_RESOURCE_NAME", DEFAULT_NAME)
     address = env("TWINGATE_RESOURCE_ADDRESS", DEFAULT_ADDRESS)
     port = resource_port()
+    alias = resource_alias()
 
     if not name:
         raise TwingateError("TWINGATE_RESOURCE_NAME must not be empty.")
     if not address:
         raise TwingateError("TWINGATE_RESOURCE_ADDRESS must not be empty.")
+    if not valid_alias(alias):
+        raise TwingateError(
+            "TWINGATE_RESOURCE_ALIAS must be a DNS-valid name with at least "
+            "one dot, for example minecraft.ultronsmp.internal."
+        )
 
     candidates = network_candidates(token)
     last_error = None
@@ -486,6 +519,7 @@ def ensure_resource():
                 entity = existing
                 current_address = (existing.get("address") or {}).get("value")
                 current_network = (existing.get("remoteNetwork") or {}).get("id")
+                current_alias = existing.get("alias") or None
                 missing_groups = [
                     group_id
                     for group_id in group_ids
@@ -494,6 +528,7 @@ def ensure_resource():
                 if (
                     current_address != address
                     or current_network != network_id
+                    or current_alias != alias
                     or missing_groups
                 ):
                     entity = update_resource(
@@ -503,12 +538,19 @@ def ensure_resource():
                         network_id,
                         port,
                         missing_groups,
+                        alias,
                     )
                     print(
                         "Twingate resource '{}' updated to {}:{}.".format(
                             name, address, port
                         )
                     )
+                    if current_alias != alias:
+                        print(
+                            "Resource alias set to '{}'.".format(
+                                alias or "none"
+                            )
+                        )
                     if missing_groups:
                         print(
                             "Added {} group assignment(s) to the resource.".format(
@@ -519,13 +561,15 @@ def ensure_resource():
                     print("Twingate resource '{}' already exists.".format(name))
             else:
                 entity = create_resource(
-                    client, name, address, network_id, port, group_ids
+                    client, name, address, network_id, port, group_ids, alias
                 )
                 print(
                     "Twingate resource '{}' created at {}:{}.".format(
                         name, address, port
                     )
                 )
+                if alias:
+                    print("Resource alias set to '{}'.".format(alias))
                 if group_ids:
                     print(
                         "Assigned {} group(s) to the resource.".format(
@@ -537,6 +581,13 @@ def ensure_resource():
                 "Resource id: {}. Assign users or groups to it in the Twingate "
                 "Admin Console.".format(entity.get("id", "unknown"))
             )
+            if alias:
+                print(
+                    "Twingate clients must connect to {}:{} (not {}:{}); "
+                    "127.0.0.1 is the loopback address of the client device.".format(
+                        alias, port, address, port
+                    )
+                )
             return 0
         except TwingateError as exc:
             last_error = exc

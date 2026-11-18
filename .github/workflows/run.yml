@@ -54,6 +54,7 @@ jobs:
             TWINGATE_REMOTE_NETWORK_ID: ${{ vars.TWINGATE_REMOTE_NETWORK_ID }}
             TWINGATE_RESOURCE_NAME: ${{ vars.TWINGATE_RESOURCE_NAME || 'minecraft' }}
             TWINGATE_RESOURCE_ADDRESS: ${{ vars.TWINGATE_RESOURCE_ADDRESS || '127.0.0.1' }}
+            TWINGATE_RESOURCE_ALIAS: ${{ vars.TWINGATE_RESOURCE_ALIAS || 'minecraft.ultronsmp.internal' }}
             TWINGATE_RESOURCE_PORT: ${{ vars.TWINGATE_RESOURCE_PORT || '25565' }}
             TWINGATE_RESOURCE_GROUP_NAMES: ${{ vars.TWINGATE_RESOURCE_GROUP_NAMES || 'Everyone' }}
 

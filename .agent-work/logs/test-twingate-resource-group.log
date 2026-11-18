@@ -1,5 +1,8 @@
 Twingate resource 'minecraft' created at 127.0.0.1:25565.
+Resource alias set to 'minecraft.ultronsmp.internal'.
 Assigned 1 group(s) to the resource.
 Resource id: resource-1. Assign users or groups to it in the Twingate Admin Console.
+Twingate clients must connect to minecraft.ultronsmp.internal:25565 (not 127.0.0.1:25565); 127.0.0.1 is the loopback address of the client device.
 Twingate resource 'minecraft' already exists.
 Resource id: resource-1. Assign users or groups to it in the Twingate Admin Console.
+Twingate clients must connect to minecraft.ultronsmp.internal:25565 (not 127.0.0.1:25565); 127.0.0.1 is the loopback address of the client device.

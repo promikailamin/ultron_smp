@@ -14,6 +14,7 @@ EXISTING_LOG="$LOG_DIR/test-twingate-resource-existing.log"
 SKIP_LOG="$LOG_DIR/test-twingate-resource-skip.log"
 MULTI_LOG="$LOG_DIR/test-twingate-resource-multi.log"
 SELECT_LOG="$LOG_DIR/test-twingate-resource-select.log"
+ALIAS_LOG="$LOG_DIR/test-twingate-resource-alias.log"
 
 mkdir -p "$LOG_DIR" "$TMP_DIR"
 rm -rf "$TEST_DIR"
@@ -75,6 +76,7 @@ class Handler(BaseHTTPRequestHandler):
                 "id": "resource-{}".format(len(state["resources"]) + 1),
                 "name": variables["name"],
                 "address": {"type": "IP", "value": variables["address"]},
+                "alias": variables.get("alias"),
                 "remoteNetwork": {"id": variables["remoteNetworkId"], "name": "selected"},
                 "protocols": variables.get("protocols"),
                 "groups": {"edges": [
@@ -88,6 +90,7 @@ class Handler(BaseHTTPRequestHandler):
         elif "resourceUpdate" in query:
             resource = next(item for item in state["resources"] if item["id"] == variables["id"])
             resource["address"] = {"type": "IP", "value": variables["address"]}
+            resource["alias"] = variables.get("alias")
             resource["remoteNetwork"] = {"id": variables["remoteNetworkId"], "name": "selected"}
             resource["protocols"] = variables.get("protocols")
             existing_groups = {
@@ -198,6 +201,8 @@ if grep -qF "$TOKEN" "$CREATE_LOG"; then
     exit 1
 fi
 
+grep -q "Twingate clients must connect to minecraft.ultronsmp.internal:25565" "$CREATE_LOG"
+
 python3 - "$STATE_DIR/state.json" <<'PY'
 import json
 import sys
@@ -211,6 +216,8 @@ if resource["name"] != "minecraft":
     raise SystemExit("resource name is not minecraft")
 if resource["address"]["value"] != "127.0.0.1":
     raise SystemExit("resource address is wrong")
+if resource.get("alias") != "minecraft.ultronsmp.internal":
+    raise SystemExit("resource alias is missing or wrong")
 protocols = resource["protocols"]
 if protocols["tcp"]["policy"] != "RESTRICTED":
     raise SystemExit("tcp policy is not RESTRICTED")
@@ -239,6 +246,29 @@ with open(sys.argv[1], encoding="utf-8") as handle:
     state = json.load(handle)
 if len(state["resources"]) != 1:
     raise SystemExit("resource script created a duplicate")
+PY
+
+cat >"$STATE_DIR/state.json" <<'JSON'
+{"networks": [{"id": "network-1", "name": "Ultron"}], "resources": [{"id": "resource-existing", "name": "minecraft", "address": {"type": "IP", "value": "127.0.0.1"}, "alias": null, "remoteNetwork": {"id": "network-1", "name": "Ultron"}, "protocols": {"allowIcmp": false, "tcp": {"policy": "RESTRICTED", "ports": [{"start": 25565, "end": 25565}]}, "udp": {"policy": "RESTRICTED", "ports": []}}, "groups": {"edges": []}}], "groups": [{"id": "group-everyone", "name": "Everyone"}]}
+JSON
+
+TWINGATE_API_TOKEN="$TOKEN" \
+    TWINGATE_NETWORK="testnet" \
+    TWINGATE_API_URL="$API_URL" \
+    TWINGATE_RESOURCE_NAME="minecraft" \
+    TWINGATE_RESOURCE_ADDRESS="127.0.0.1" \
+    TWINGATE_RESOURCE_PORT="25565" \
+    python3 "$SCRIPT" ensure >"$ALIAS_LOG" 2>&1
+grep -q "Resource alias set to 'minecraft.ultronsmp.internal'" "$ALIAS_LOG"
+
+python3 - "$STATE_DIR/state.json" <<'PY'
+import json
+import sys
+
+with open(sys.argv[1], encoding="utf-8") as handle:
+    state = json.load(handle)
+if state["resources"][0].get("alias") != "minecraft.ultronsmp.internal":
+    raise SystemExit("an existing resource did not receive the alias")
 PY
 
 if grep -qF "$TOKEN" "$STATE_DIR/requests.jsonl"; then
@@ -311,6 +341,8 @@ if len(creates) != 1:
     raise SystemExit("expected one resource create request")
 if creates[0]["variables"].get("groupIds") != ["group-everyone"]:
     raise SystemExit("Everyone group was not assigned during resource creation")
+if creates[0]["variables"].get("alias") != "minecraft.ultronsmp.internal":
+    raise SystemExit("the resource alias was not sent during resource creation")
 PYCHECK
 
 TWINGATE_API_TOKEN="$TOKEN" \

@@ -117,15 +117,27 @@ require both secrets. The default `auto` mode skips the connector when the
 secrets are not configured.
 
 `scripts/twingate-resource.py` runs after the connector and idempotently
-creates the `minecraft` Resource through the Twingate Admin API. The default
-Resource points at `127.0.0.1:25565` and restricts TCP to port `25565` with
-UDP and ICMP disabled. It is created in the only Remote Network in the
-account; if there are several, set the repository variable
-`TWINGATE_REMOTE_NETWORK` (name) or `TWINGATE_REMOTE_NETWORK_ID`. Resource
-settings can be overridden with the repository variables
-`TWINGATE_RESOURCE_NAME`, `TWINGATE_RESOURCE_ADDRESS` and
-`TWINGATE_RESOURCE_PORT`. The script never prints token values. When neither
-`TWINGATE_API_TOKEN` nor `TWINGATE_ACCESS_TOKEN` is set it skips cleanly; set
+creates the `minecraft` Resource through the Twingate Admin API. The Resource
+address is `127.0.0.1:25565`, which is where the Connector reaches the server,
+and restricts TCP to port `25565` with UDP and ICMP disabled. The script also
+sets the Twingate alias `minecraft.ultronsmp.internal`, because `127.0.0.1`
+on a player's device means that device, not the runner. To join through
+Twingate, connect Minecraft to:
+
+```text
+minecraft.ultronsmp.internal:25565
+```
+
+The alias only resolves while the Twingate client is connected and the
+Connector is online; it does not need a public DNS record. It is created in
+the only Remote Network in the account; if there are several, set the
+repository variable `TWINGATE_REMOTE_NETWORK` (name) or
+`TWINGATE_REMOTE_NETWORK_ID`. Resource settings can be overridden with the
+repository variables `TWINGATE_RESOURCE_NAME`, `TWINGATE_RESOURCE_ADDRESS`,
+`TWINGATE_RESOURCE_ALIAS` and `TWINGATE_RESOURCE_PORT`. Set
+`TWINGATE_RESOURCE_ALIAS=none` to create the Resource without an alias. The
+script never prints token values. When neither `TWINGATE_API_TOKEN` nor
+`TWINGATE_ACCESS_TOKEN` is set it skips cleanly; set
 `TWINGATE_RESOURCE_ENABLED=true` to make a missing token fatal instead.
 
 The standalone **Ensure Twingate Resource** workflow can also be run manually
