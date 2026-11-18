@@ -22,11 +22,19 @@
 #   PINGGY_RECONNECT_SECONDS  Reconnect before Pinggy's 60 minute limit
 #                             (default: 3300)
 #   PINGGY_KNOWN_HOSTS        known_hosts file used for the relay
+#   PINGGY_SSH_BIN            SSH executable (default: ssh; used by tests)
+#   PLAYER_REGION             "bangladesh"/"bd" gives the Asia-Pacific relay a
+#                             preference margin, "auto" picks the lowest total
+#                             (default: auto)
+#   BANGLADESH_RELAY_MARGIN_MS Margin used for the Bangladesh preference
+#                             (default: 75)
+#   LOW_LATENCY_ADDRESS_FILE  Address output file
+#                             (default: <repo>/SERVER_ADDRESS_LOW_LATENCY.txt)
 set -euo pipefail
 
 ROOT_DIR="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")/.." && pwd)"
 LOG_DIR="$ROOT_DIR/.agent-work/logs"
-ADDRESS_FILE="$ROOT_DIR/SERVER_ADDRESS_LOW_LATENCY.txt"
+ADDRESS_FILE="${LOW_LATENCY_ADDRESS_FILE:-$ROOT_DIR/SERVER_ADDRESS_LOW_LATENCY.txt}"
 DEFAULT_PID_DIR="${RUNNER_TEMP:-$ROOT_DIR/.agent-work/tmp}"
 PID_FILE="${LOW_LATENCY_PID_FILE:-$DEFAULT_PID_DIR/ultron-low-latency-tunnel.pid}"
 TUNNEL_LOG="$LOG_DIR/pinggy-tunnel.log"
@@ -38,6 +46,9 @@ RELAY_SSH_PORT="${PINGGY_PORT:-443}"
 RELAY_USER="${PINGGY_USER:-tcp}"
 RECONNECT_SECONDS="${PINGGY_RECONNECT_SECONDS:-3300}"
 KNOWN_HOSTS="${PINGGY_KNOWN_HOSTS:-$ROOT_DIR/.agent-work/tmp/pinggy_known_hosts}"
+SSH_BIN="${PINGGY_SSH_BIN:-ssh}"
+PLAYER_REGION="${PLAYER_REGION:-auto}"
+BANGLADESH_RELAY_MARGIN_MS="${BANGLADESH_RELAY_MARGIN_MS:-75}"
 
 mkdir -p "$LOG_DIR" "$(dirname -- "$PID_FILE")" "$(dirname -- "$KNOWN_HOSTS")"
 
@@ -81,6 +92,8 @@ select_relay() {
     # adapts when GitHub places the job in a different region.
     local best_relay=""
     local best_score=99999
+    local ap_relay=""
+    local ap_score=99999
     local relay player_leg runner_leg score
 
     for relay in ap.free.pinggy.io us.free.pinggy.io eu.free.pinggy.io; do
@@ -97,11 +110,29 @@ select_relay() {
             best_score="$score"
             best_relay="$relay"
         fi
+        if [ "$relay" = "ap.free.pinggy.io" ]; then
+            ap_relay="$relay"
+            ap_score="$score"
+        fi
     done
 
     if [ -z "$best_relay" ] || [ "$best_score" -ge 99999 ]; then
         best_relay="us.free.pinggy.io"
     fi
+
+    # Bangladesh/South Asia players get the Singapore relay unless another
+    # route is clearly faster. This avoids switching them to a distant relay
+    # for a small runner-side measurement difference.
+    case "$(printf '%s' "$PLAYER_REGION" | tr '[:upper:]' '[:lower:]')" in
+        bangladesh | bd | south-asia | southasia)
+            if [ -n "$ap_relay" ] && [ "$ap_score" -lt 99999 ] \
+                && [ "$ap_score" -le $((best_score + BANGLADESH_RELAY_MARGIN_MS)) ]; then
+                best_relay="$ap_relay"
+                best_score="$ap_score"
+                echo "Prioritising the Asia-Pacific relay for Bangladesh/South Asia players." >&2
+            fi
+            ;;
+    esac
 
     RELAY_HOST="$best_relay"
     echo "Selected low-latency relay: ${RELAY_HOST} (estimated ${best_score}ms)" >&2
@@ -115,7 +146,9 @@ write_address() {
         echo "# Ultron SMP low-latency public server address"
         echo "# Updated: $(date -u '+%Y-%m-%d %H:%M:%S UTC')"
         echo "# Relay: Pinggy ${RELAY_HOST} (free relay, reconnects about once an hour)"
-        echo "# Stable fallback: see SERVER_ADDRESS.txt"
+        if [ "$ADDRESS_FILE" != "$ROOT_DIR/SERVER_ADDRESS.txt" ]; then
+            echo "# Stable fallback: see SERVER_ADDRESS.txt"
+        fi
         echo "# Add this server in Minecraft (host and port):"
         echo "$address"
     } >"$tmp"
@@ -135,24 +168,32 @@ run_tunnel_once() {
     # Pinggy's free relay uses password authentication with an empty
     # password. BatchMode would refuse that, so keep it disabled and feed
     # /dev/null to avoid waiting for terminal input.
-    timeout --signal=TERM "$RECONNECT_SECONDS" \
-        ssh -T \
-            -o BatchMode=no \
-            -o ConnectTimeout=20 \
-            -o ExitOnForwardFailure=yes \
-            -o NumberOfPasswordPrompts=1 \
-            -o PasswordAuthentication=yes \
-            -o PreferredAuthentications=password \
-            -o PubkeyAuthentication=no \
-            -o KbdInteractiveAuthentication=no \
-            -o ServerAliveInterval=15 \
-            -o ServerAliveCountMax=3 \
-            -o StrictHostKeyChecking=accept-new \
-            -o UserKnownHostsFile="$KNOWN_HOSTS" \
-            -p "$RELAY_SSH_PORT" \
-            -R "0:localhost:${LOCAL_PORT}" \
-            "${RELAY_USER}@${RELAY_HOST}" \
+    local -a ssh_args=(
+        -T
+        -o BatchMode=no
+        -o ConnectTimeout=20
+        -o ExitOnForwardFailure=yes
+        -o NumberOfPasswordPrompts=1
+        -o PasswordAuthentication=yes
+        -o PreferredAuthentications=password
+        -o PubkeyAuthentication=no
+        -o KbdInteractiveAuthentication=no
+        -o ServerAliveInterval=15
+        -o ServerAliveCountMax=3
+        -o StrictHostKeyChecking=accept-new
+        -o UserKnownHostsFile="$KNOWN_HOSTS"
+        -p "$RELAY_SSH_PORT"
+        -R "0:localhost:${LOCAL_PORT}"
+    )
+
+    if [ "$RECONNECT_SECONDS" -gt 0 ] 2>/dev/null; then
+        timeout --signal=TERM "$RECONNECT_SECONDS" \
+            "$SSH_BIN" "${ssh_args[@]}" "${RELAY_USER}@${RELAY_HOST}" \
             >"$attempt_log" 2>&1 </dev/null &
+    else
+        "$SSH_BIN" "${ssh_args[@]}" "${RELAY_USER}@${RELAY_HOST}" \
+            >"$attempt_log" 2>&1 </dev/null &
+    fi
     ssh_pid=$!
     ACTIVE_SSH_PID="$ssh_pid"
 
@@ -231,8 +272,8 @@ fi
 select_relay
 export PINGGY_SERVER="$RELAY_HOST"
 
-if ! command -v ssh >/dev/null 2>&1; then
-    echo "ERROR: ssh is required for the low-latency tunnel." >&2
+if ! command -v "$SSH_BIN" >/dev/null 2>&1; then
+    echo "ERROR: '$SSH_BIN' is required for the low-latency tunnel." >&2
     exit 1
 fi
 

@@ -1,0 +1,71 @@
+Issue 6: Add tunnl.gg tunnel and prioritise Bangladeshi players
+
+What was requested
+------------------
+Add a tunnl.gg tunnel and prefer the route with the best ping for players in
+Bangladesh.
+
+Important limitation found
+--------------------------
+tunnl.gg is an SSH-based HTTP/WebSocket tunnel. Its documentation and live
+tests confirm that it does not carry raw TCP, and its relay is in Finland.
+Minecraft Java Edition needs raw TCP on port 25565, so tunnl.gg cannot be the
+Minecraft endpoint directly. Pointing players at a tunnl.gg URL would not let
+them join the game.
+
+Implemented changes
+-------------------
+- scripts/tunnl-tunnel.sh
+  * Opens a tunnl.gg SSH tunnel with JSON output, parses the public URL,
+    supervises reconnects, pins the published ED25519 host key, and supports
+    stable URLs with a generated or supplied SSH key.
+  * Writes SERVER_STATUS_URL.txt.
+- scripts/tunnl-status-server.py
+  * Small read-only HTTP status page served over tunnl.gg. Shows the current
+    Minecraft address from SERVER_ADDRESS.txt, plus a /healthz endpoint and a
+    /status.json endpoint.
+- scripts/tunnel.sh
+  * Adds provider "tunnl": starts a Bangladesh-prioritised TCP relay for the
+    game, then adds the tunnl.gg status page. Falls back to bore.pub if the
+    low-latency relay cannot start.
+  * Adds provider "pinggy" for the existing low-latency TCP relay.
+- scripts/low-latency-tunnel.sh
+  * Supports PLAYER_REGION=bangladesh/bd with a configurable preference margin
+    (BANGLADESH_RELAY_MARGIN_MS, default 75 ms) for the Asia-Pacific relay.
+  * Supports PINGGY_SSH_BIN and LOW_LATENCY_ADDRESS_FILE for testing and for
+    using the relay as the primary Minecraft address.
+  * Avoids wrapping SSH in timeout when reconnect is disabled, so stopping the
+    supervisor does not leave an orphan SSH process.
+- .github/workflows/run.yml
+  * Adds pinggy and tunnl to the workflow_dispatch choices.
+  * Adds PLAYER_REGION (default bangladesh).
+  * Publishes SERVER_STATUS_URL.txt and includes the status URL in the step
+    summary and issue comment.
+- README.md, .gitignore updated.
+- Tests:
+  * .agent-work/tests/test_tunnl_tunnel.sh
+  * .agent-work/tests/test_tunnl_provider.sh
+  * Existing test_tunnel.sh and test_serveo_tunnel.sh now tolerate a missing
+    SERVER_ADDRESS.txt.
+
+Validation performed
+--------------------
+- bash -n and shellcheck pass for all changed shell scripts.
+- python3 -m py_compile passes for the status server.
+- YAML parses for both workflows.
+- test_tunnl_tunnel.sh passed.
+- test_tunnl_provider.sh passed (game TCP relay + tunnl.gg status page).
+- test_tunnel.sh passed.
+- test_serveo_tunnel.sh passed.
+- test_low_latency_tunnel.sh passed against the real Pinggy relay.
+- A real tunnl.gg tunnel was created with scripts/tunnl-tunnel.sh; the public
+  HTTPS URL served /healthz ("ok") and /status.json successfully.
+
+Remaining notes
+---------------
+- Because tunnl.gg has no raw TCP, the game itself remains on a TCP relay.
+  With provider tunnl the default is Pinggy's Asia-Pacific relay for South
+  Asian players, with bore.pub as the fallback.
+- A tunnl.gg URL is stable within a run when the generated key is reused. For
+  a stable URL across runs, supply TUNNL_SSH_KEY through the runner
+  environment or repository secret handling.

@@ -17,9 +17,21 @@ provider** input:
 | `localxpose` | `scripts/tunnel.sh` | Uses the access token stored in the `LOCALXPOSE_ACCESS_TOKEN` repository secret. |
 | `bore` | `scripts/bore-tunnel.sh` | Stable free relay at `bore.pub`. Tries a fixed port list, then a random port. |
 | `serveo` | `scripts/serveo-tunnel.sh` | Free SSH relay at `serveo.net`. Reconnects automatically and updates `SERVER_ADDRESS.txt` when the random port changes. |
+| `pinggy` | `scripts/low-latency-tunnel.sh` | Free TCP relay with an Asia-Pacific relay. Prioritises the route with the best latency for Bangladeshi players. |
+| `tunnl` | `scripts/tunnel.sh` | Starts a Bangladesh-prioritised TCP relay for Minecraft and adds a free `tunnl.gg` HTTP status page. |
+
+`tunnl.gg` only carries HTTP and WebSocket traffic, and its relay is in
+Finland, so it cannot be the Minecraft TCP endpoint itself. The `tunnl`
+provider therefore keeps the game on the lowest-latency TCP relay
+(Pinggy's Asia-Pacific relay by default, `bore.pub` as a fallback) and uses
+`tunnl.gg` to publish `SERVER_STATUS_URL.txt`, a small page showing the
+current Minecraft address. That gives the project a `tunnl.gg` tunnel without
+breaking gameplay or sending Bangladeshi players through a distant relay.
 
 The selection is passed to the workflow as `TUNNEL_PROVIDER`. The same
-provider is used for automatic tunnel restarts during the run.
+provider is used for automatic tunnel restarts during the run. `pinggy` and
+`tunnl` also use the repository variable `PLAYER_REGION` (default:
+`bangladesh`) so the Asia-Pacific relay is preferred for South Asian players.
 
 LocalXpose TCP tunnels require a **PRO** account. If the token is missing, is
 invalid, or belongs to a FREE account (which only supports HTTP/HTTPS), the
@@ -51,6 +63,23 @@ The token is never stored in the repository. Add or rotate it under
 - `SERVEO_RECONNECT_SECONDS` (optional environment variable) - reconnect
   after this many seconds; `0` only reconnects when the SSH session drops.
   Default: `0`.
+
+- `PLAYER_REGION` (repository variable) - set to `bangladesh` (or `bd`) to
+  prefer Pinggy's Asia-Pacific relay for South Asian players, or `auto` to
+  always pick the lowest measured total. Default: `bangladesh`.
+- `BANGLADESH_RELAY_MARGIN_MS` (optional environment variable) - how many
+  milliseconds worse the Asia-Pacific relay may be before another relay is
+  chosen. Default: `75`.
+
+- `TUNNL_SERVER` (optional environment variable) - tunnl.gg relay host.
+  Default: `proxy.tunnl.gg`.
+- `TUNNL_STATUS_PORT` (optional environment variable) - local port used for
+  the status page that tunnl.gg exposes. Default: `8080`.
+- `TUNNL_SSH_KEY` (optional environment variable) - SSH key for a stable
+  tunnl.gg URL. If unset, a temporary key is generated in
+  `.agent-work/tmp/`; the URL can then change between runs.
+- `TUNNL_RECONNECT_SECONDS` (optional environment variable) - reconnect after
+  this many seconds; `0` waits for the SSH session to end. Default: `0`.
 
 The LocalXpose CLI (`loclx`) is downloaded automatically into
 `.agent-work/tools/` and is not committed. Serveo only needs the system
@@ -97,6 +126,10 @@ The workflow makes the best of the available infrastructure:
   available.
 - `scripts/serveo-tunnel.sh` provides an alternative free SSH relay with
   automatic reconnects.
+- `scripts/low-latency-tunnel.sh` prefers Pinggy's Asia-Pacific relay for
+  Bangladeshi players and reconnects when the free hourly tunnel expires.
+- `scripts/tunnl-tunnel.sh` adds a `tunnl.gg` HTTP status page. tunnl.gg does
+  not carry raw TCP, so the game stays on a TCP relay.
 
 If the game is still unplayable, the only real fix is to host the server on
 hardware with a better network path to South Asia (for example a VPS in
@@ -109,9 +142,15 @@ bash .agent-work/tests/test_run.sh
 bash .agent-work/tests/test_server_control.sh
 bash .agent-work/tests/test_tunnel.sh
 bash .agent-work/tests/test_serveo_tunnel.sh
+bash .agent-work/tests/test_tunnl_tunnel.sh
+bash .agent-work/tests/test_tunnl_provider.sh
 bash .agent-work/tests/test_network_tune.sh
 ```
 
 `test_tunnel.sh` uses a fake `loclx` client so it can validate the address
 parsing, forwarding and process handling without spending LocalXpose quota.
 `test_serveo_tunnel.sh` uses a fake `ssh` client for the same reason.
+`test_tunnl_tunnel.sh` also uses a fake `ssh` client and checks that the
+tunnl.gg URL serves the status page and its `/healthz` endpoint.
+`test_tunnl_provider.sh` validates the full `TUNNEL_PROVIDER=tunnl` path:
+a TCP game relay plus the tunnl.gg status page.

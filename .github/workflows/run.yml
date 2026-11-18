@@ -13,6 +13,8 @@ on:
                     - localxpose
                     - bore
                     - serveo
+                    - pinggy
+                    - tunnl
 
 permissions:
     contents: write
@@ -33,6 +35,7 @@ jobs:
             LOCALXPOSE_ACCESS_TOKEN: ${{ secrets.LOCALXPOSE_ACCESS_TOKEN }}
             LOCALXPOSE_REGION: ${{ vars.LOCALXPOSE_REGION || 'ap' }}
             LOCALXPOSE_BORE_FALLBACK: ${{ vars.LOCALXPOSE_BORE_FALLBACK }}
+            PLAYER_REGION: ${{ vars.PLAYER_REGION || 'bangladesh' }}
 
         steps:
             - name: checkout_repo
@@ -152,10 +155,20 @@ jobs:
                   echo "Tunnel has been started at ${address}"
                   echo "SERVER_ADDRESS=${address}" >> "$GITHUB_ENV"
 
+                  status_url="$(grep -v '^#' SERVER_STATUS_URL.txt 2>/dev/null | tail -n 1 || true)"
+                  if [ -n "$status_url" ]; then
+                      echo "Status page is available at ${status_url}"
+                      echo "SERVER_STATUS_URL=${status_url}" >> "$GITHUB_ENV"
+                  fi
+
                   {
                       echo "## Ultron SMP is online"
                       echo ""
                       echo "**Minecraft address:** \`${address}\`"
+                      if [ -n "$status_url" ]; then
+                          echo ""
+                          echo "**Status page:** ${status_url}"
+                      fi
                       echo ""
                       echo "The address is also kept in \`SERVER_ADDRESS.txt\`."
                   } >> "$GITHUB_STEP_SUMMARY"
@@ -191,6 +204,9 @@ jobs:
                   echo "ERROR: the public tunnel is not reachable."
                   tail -100 .agent-work/logs/localxpose-tunnel.log \
                       .agent-work/logs/serveo-tunnel.log \
+                      .agent-work/logs/tunnl-tunnel.log \
+                      .agent-work/logs/tunnl-status.log \
+                      .agent-work/logs/pinggy-tunnel.log \
                       .agent-work/logs/tunnel.log 2>/dev/null || true
                   exit 1
 
@@ -205,7 +221,11 @@ jobs:
 
                   echo "Publishing ${address}..."
 
-                  git add SERVER_ADDRESS.txt
+                  address_files=(SERVER_ADDRESS.txt)
+                  if [ -f SERVER_STATUS_URL.txt ]; then
+                      address_files+=(SERVER_STATUS_URL.txt)
+                  fi
+                  git add "${address_files[@]}"
                   if ! git diff --cached --quiet; then
                       git commit -m "Update public server address: ${address}"
                       git fetch origin "$GITHUB_REF_NAME" || true
@@ -216,6 +236,9 @@ jobs:
 
                   if [ -n "${SERVER_ISSUE_NUMBER:-}" ] && [ -n "${address}" ]; then
                       body="Ultron SMP is online. Address: \`${address}\` (host \`${host}\`, port \`${port}\`). The current address is kept in \`SERVER_ADDRESS.txt\`."
+                      if [ -n "${SERVER_STATUS_URL:-}" ]; then
+                          body="${body} Status page: ${SERVER_STATUS_URL}"
+                      fi
                       gh issue comment "$SERVER_ISSUE_NUMBER" \
                           --repo "${{ github.repository }}" \
                           --body "$body" \

@@ -1,1 +1,7 @@
-Low-latency tunnel is live at dxtuc-52-190-221-91.run.pinggy-free.link:33481 (pid 8024)
+Relay candidate ap.free.pinggy.io: runner 355ms + player ~55ms = 410ms
+Relay candidate us.free.pinggy.io: runner 84ms + player ~200ms = 284ms
+Relay candidate eu.free.pinggy.io: runner 157ms + player ~150ms = 307ms
+Selected low-latency relay: us.free.pinggy.io (estimated 284ms)
+Low-latency tunnel is live at jhixh-20-80-79-11.run.pinggy-free.link:40015 (pid 4516)
+HTTP/1.0 200 OK
+Low-latency tunnel test passed: public TCP endpoint is reachable

@@ -1,0 +1,3 @@
+Low-latency tunnel is live at 127.0.0.1:39061 (pid 4724)
+tunnl.gg status page is live at http://127.0.0.1:39955 (pid 4773)
+tunnl provider test passed: game TCP relay and tunnl.gg status page are reachable

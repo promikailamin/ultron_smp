@@ -17,7 +17,11 @@ KNOWN_HOSTS="$TMP_DIR/serveo_known_hosts_test"
 FAKE_SSH="$TMP_DIR/fake-serveo-ssh"
 
 mkdir -p "$LOG_DIR" "$TMP_DIR"
-cp "$ADDRESS_FILE" "$BACKUP_FILE"
+had_address=0
+if [ -f "$ADDRESS_FILE" ]; then
+    cp "$ADDRESS_FILE" "$BACKUP_FILE"
+    had_address=1
+fi
 
 cat >"$FAKE_SSH" <<'PY'
 #!/usr/bin/env python3
@@ -122,7 +126,11 @@ cleanup() {
         kill "$http_pid" 2>/dev/null || true
         wait "$http_pid" 2>/dev/null || true
     fi
-    cp "$BACKUP_FILE" "$ADDRESS_FILE" 2>/dev/null || true
+    if [ "$had_address" -eq 1 ]; then
+        cp "$BACKUP_FILE" "$ADDRESS_FILE" 2>/dev/null || true
+    else
+        rm -f "$ADDRESS_FILE"
+    fi
     rm -f "$PID_FILE" "$FAKE_SSH" "$KNOWN_HOSTS"
 }
 trap cleanup EXIT

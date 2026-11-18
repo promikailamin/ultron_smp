@@ -16,7 +16,11 @@ PID_FILE="$TMP_DIR/ultron-tunnel-test.pid"
 FAKE_LOCLX="$TMP_DIR/fake-loclx"
 
 mkdir -p "$LOG_DIR" "$TMP_DIR"
-cp "$ADDRESS_FILE" "$BACKUP_FILE"
+had_address=0
+if [ -f "$ADDRESS_FILE" ]; then
+    cp "$ADDRESS_FILE" "$BACKUP_FILE"
+    had_address=1
+fi
 
 cat >"$FAKE_LOCLX" <<'PY'
 #!/usr/bin/env python3
@@ -116,7 +120,11 @@ cleanup() {
     if [ -n "$http_pid" ]; then
         kill "$http_pid" 2>/dev/null || true
     fi
-    cp "$BACKUP_FILE" "$ADDRESS_FILE" 2>/dev/null || true
+    if [ "$had_address" -eq 1 ]; then
+        cp "$BACKUP_FILE" "$ADDRESS_FILE" 2>/dev/null || true
+    else
+        rm -f "$ADDRESS_FILE"
+    fi
     rm -f "$PID_FILE" "$FAKE_LOCLX"
 }
 trap cleanup EXIT

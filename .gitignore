@@ -18,3 +18,10 @@
 .agent-work/logs/test-latency-http.log
 .agent-work/tmp/pinggy_known_hosts
 .agent-work/tmp/serveo_known_hosts
+.agent-work/logs/tunnl-tunnel.log
+.agent-work/logs/tunnl-attempt.log
+.agent-work/logs/tunnl-status.log
+.agent-work/logs/tunnl-tunnel-test.log
+.agent-work/logs/test-tunnl-http.log
+.agent-work/logs/tunnl-provider-test.log
+.agent-work/logs/test-tunnl-provider-http.log

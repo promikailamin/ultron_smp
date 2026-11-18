@@ -19,9 +19,15 @@
 #   localxpose  Force the LocalXpose tunnel
 #   bore        Force the bore.pub tunnel
 #   serveo      Force the Serveo SSH tunnel
+#   pinggy      Force the Bangladesh-prioritised Pinggy TCP relay
+#   tunnl       Use a low-latency TCP relay for Minecraft and add a
+#               tunnl.gg HTTP status page (tunnl.gg cannot carry raw TCP)
 #
 # Optional environment variables:
 #   TUNNEL_PROVIDER             Tunnel provider (default: auto)
+#   PLAYER_REGION               bangladesh/bd prioritises the Asia-Pacific
+#                               Pinggy relay (default: bangladesh for
+#                               pinggy/tunnl, auto for the standalone script)
 #   LOCALXPOSE_ACCESS_TOKEN     LocalXpose access token (required)
 #   ACCESS_TOKEN                Alternative token variable name
 #   MINECRAFT_PORT              Local Minecraft port (default: 25565)
@@ -57,8 +63,31 @@ case "$PROVIDER" in
     serveo)
         exec bash "$ROOT_DIR/scripts/serveo-tunnel.sh"
         ;;
+    pinggy | low-latency)
+        default_pid_dir="${RUNNER_TEMP:-$ROOT_DIR/.agent-work/tmp}"
+        export PLAYER_REGION="${PLAYER_REGION:-bangladesh}"
+        export LOW_LATENCY_ADDRESS_FILE="${LOW_LATENCY_ADDRESS_FILE:-$ROOT_DIR/SERVER_ADDRESS.txt}"
+        export LOW_LATENCY_PID_FILE="${LOW_LATENCY_PID_FILE:-${TUNNEL_PID_FILE:-$default_pid_dir/ultron-tunnel.pid}}"
+        exec bash "$ROOT_DIR/scripts/low-latency-tunnel.sh"
+        ;;
+    tunnl | tunnl.gg)
+        # tunnl.gg only carries HTTP/WebSocket, so it cannot be the Minecraft
+        # TCP endpoint. Prioritise the Asia-Pacific TCP relay for Bangladeshi
+        # players, then publish a tunnl.gg status page alongside it.
+        default_pid_dir="${RUNNER_TEMP:-$ROOT_DIR/.agent-work/tmp}"
+        export PLAYER_REGION="${PLAYER_REGION:-bangladesh}"
+        export LOW_LATENCY_ADDRESS_FILE="$ROOT_DIR/SERVER_ADDRESS.txt"
+        export LOW_LATENCY_PID_FILE="${TUNNEL_PID_FILE:-$default_pid_dir/ultron-tunnel.pid}"
+        if bash "$ROOT_DIR/scripts/low-latency-tunnel.sh"; then
+            bash "$ROOT_DIR/scripts/tunnl-tunnel.sh" \
+                || echo "WARNING: the tunnl.gg status page could not be started; the Minecraft tunnel is still online." >&2
+            exit 0
+        fi
+        echo "WARNING: the low-latency TCP relay failed; falling back to bore.pub for Minecraft." >&2
+        exec bash "$ROOT_DIR/scripts/bore-tunnel.sh"
+        ;;
     *)
-        echo "ERROR: unsupported TUNNEL_PROVIDER '${PROVIDER}' (use auto, localxpose, bore or serveo)." >&2
+        echo "ERROR: unsupported TUNNEL_PROVIDER '${PROVIDER}' (use auto, localxpose, bore, serveo, pinggy or tunnl)." >&2
         exit 2
         ;;
 esac
