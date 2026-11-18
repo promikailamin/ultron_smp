@@ -181,3 +181,15 @@ java.lang.IllegalStateException: too many requests
 [32m[14:39:06] [Server thread/INFO]: System chat: Saved the game[m
 [32m[14:40:38] [Server thread/INFO]: System chat: Saving the game (this may take a moment!)[m
 [32m[14:40:38] [Server thread/INFO]: System chat: Saved the game[m
+[32m[14:41:11] [Server thread/INFO]: System chat: Saving the game (this may take a moment!)[m
+[32m[14:41:11] [Server thread/INFO]: System chat: Saved the game[m
+[32m[14:41:11] [Server thread/INFO]: System chat: Saving the game (this may take a moment!)[m
+[32m[14:41:11] [Server thread/INFO]: System chat: Saved the game[m
+[32m[14:41:13] [Server thread/INFO]: System chat: Stopping the server[m
+[32m[14:41:13] [Server thread/INFO]: 存档数据已保存[m
+[32m[14:41:13] [Server thread/INFO]: Stopping server[m
+[32m[14:41:13] [Server thread/INFO]: Saving players[m
+[32m[14:41:13] [Server thread/INFO]: Saving worlds[m
+[32m[14:41:13] [Server thread/INFO]: Saving chunks for level 'ServerLevel[world]'/minecraft:overworld[m
+[32m[14:41:13] [Server thread/INFO]: Saving chunks for level 'ServerLevel[world]'/minecraft:the_nether[m
+[32m[14:41:13] [Server thread/INFO]: Saving chunks for level 'ServerLevel[world]'/minecraft:the_end[m
