@@ -98,6 +98,10 @@ def list_resources(client):
     )
 
 
+def list_groups(client):
+    return resource.paginate(client, "groups", "id name isActive")
+
+
 def format_resource_address(item):
     address = item.get("address") or {}
     value = address.get("value")
@@ -108,6 +112,7 @@ def print_status(client, tenant):
     networks = list_remote_networks(client)
     connectors = list_connectors(client)
     resources = list_resources(client)
+    groups = list_groups(client)
 
     print("Twingate tenant: {}".format(tenant))
     print("Remote Networks ({}):".format(len(networks)))
@@ -133,6 +138,16 @@ def print_status(client, tenant):
                 item.get("state", "?"),
                 network.get("name", "?"),
                 network.get("id", "?"),
+            )
+        )
+
+    print("Groups ({}):".format(len(groups)))
+    for item in groups:
+        print(
+            "  - {} | id={} | active={}".format(
+                item.get("name", "?"),
+                item.get("id", "?"),
+                item.get("isActive", "?"),
             )
         )
 
