@@ -54,6 +54,13 @@ jobs:
                   python3 scripts/twingate-admin.py "${{ inputs.action }}" \
                       | tee ".agent-work/logs/twingate-admin-${{ inputs.action }}.log"
 
+            - name: ensure_resource
+              if: ${{ inputs.action == 'provision' }}
+              run: |
+                  set -euo pipefail
+                  python3 scripts/twingate-resource.py ensure \
+                      | tee .agent-work/logs/twingate-resource.log
+
             - name: update_connector_secrets
               if: ${{ inputs.action == 'provision' && inputs.rotate_tokens }}
               env:
