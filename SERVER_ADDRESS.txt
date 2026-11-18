@@ -1,8 +1,8 @@
 # Ultron SMP public server address
-# Updated: 2026-11-18 12:04:09 UTC
-# Provider: Minekube Connect (Gate 0.81.1, endpoint ultron-c4144638)
+# Updated: 2026-11-18 12:09:25 UTC
+# Provider: Minekube Connect (Gate 0.81.1, endpoint ultron-8c7145b9)
 # Add this server in Minecraft (host and port):
-ultron-c4144638.play.minekube.net:25565
+ultron-8c7145b9.play.minekube.net:25565
 #
-# Host: ultron-c4144638.play.minekube.net
+# Host: ultron-8c7145b9.play.minekube.net
 # Port: 25565
