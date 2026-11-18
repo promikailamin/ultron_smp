@@ -1,7 +1,8 @@
 # Ultron SMP public server address
-# Updated: 2026-11-18 09:48:22 UTC
+# Updated: 2026-11-18 11:06:41 UTC
+# Provider: Minekube Connect (Gate 0.81.1, endpoint ultron-5f13767e)
 # Add this server in Minecraft (host and port):
-bore.pub:25568
+ultron-5f13767e.play.minekube.net:25565
 #
-# Host: bore.pub
-# Port: 25568
+# Host: ultron-5f13767e.play.minekube.net
+# Port: 25565
