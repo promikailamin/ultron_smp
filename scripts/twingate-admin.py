@@ -94,7 +94,8 @@ def list_resources(client):
     return resource.paginate(
         client,
         "resources",
-        "id name address { type value } remoteNetwork { id name }",
+        "id name address { type value } remoteNetwork { id name } "
+        "groups { edges { node { id name } } }",
     )
 
 
@@ -154,13 +155,18 @@ def print_status(client, tenant):
     print("Resources ({}):".format(len(resources)))
     for item in resources:
         network = item.get("remoteNetwork") or {}
+        groups = [
+            (edge.get("node") or {}).get("name", "?")
+            for edge in ((item.get("groups") or {}).get("edges") or [])
+        ]
         print(
-            "  - {} | id={} | address={} | network={} ({})".format(
+            "  - {} | id={} | address={} | network={} ({}) | groups={}".format(
                 item.get("name", "?"),
                 item.get("id", "?"),
                 format_resource_address(item),
                 network.get("name", "?"),
                 network.get("id", "?"),
+                ", ".join(groups) if groups else "none",
             )
         )
 

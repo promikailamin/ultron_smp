@@ -6073,3 +6073,247 @@ run.sh test passed: server is listening on port 25566 after 18s
 .agent-work/logs/opencode-output.log:4804: trailing whitespace.
 +admin	remove_token_file	2026-11-18T13:00:47.3099336Z   TWINGATE_REMOTE_NETWORK_ID:
 [0m
+[0m$ [0mgit add README.md scripts/twingate-resource.py .github/workflows/run.yml .github/workflows/twingate-admin.yml .github/workflows/twingate-resource.yml .agent-work/tests/test_twingate_resource.sh .agent-work/tests/test_twingate_admin.sh .agent-work/logs/opencode-output.log && git commit -m "Assign Twingate resource access and document admin workflows" && git push origin HEAD:main 2>&1 | tail -5
+[main 44c0ec0] Assign Twingate resource access and document admin workflows
+ 8 files changed, 5751 insertions(+), 2370 deletions(-)
+ create mode 100755 .agent-work/tests/test_twingate_admin.sh
+To https://github.com/promikailamin/ultron_smp
+   6147000..44c0ec0  HEAD -> main
+[0m
+[0m$ [0mgh workflow run twingate-admin.yml --repo promikailamin/ultron_smp --ref main -f action=provision -f rotate_tokens=false 2>&1 && sleep 8 && gh run list --repo promikailamin/ultron_smp --workflow twingate-admin.yml --limit 1 2>&1
+https://github.com/promikailamin/ultron_smp/actions/runs/44310470316
+in_progress		Twingate Admin	Twingate Admin	main	workflow_dispatch	44310470316	9s	2026-11-18T13:07:09Z
+[0m
+[0m$ [0msleep 25; gh run list --repo promikailamin/ultron_smp --workflow twingate-admin.yml --limit 1 2>&1; gh run view 44310470316 --repo promikailamin/ultron_smp --log 2>&1 | grep -E "Provisioned|Created|resource|Resource|group|Group|ERROR|updated|exists|tokens" | head -60
+completed	success	Twingate Admin	Twingate Admin	main	workflow_dispatch	44310470316	30s	2026-11-18T13:07:09Z
+admin	Set up job	2026-11-18T13:07:14.8499260Z ##[group]Runner Image Provisioner
+admin	Set up job	2026-11-18T13:07:14.8505354Z ##[endgroup]
+admin	Set up job	2026-11-18T13:07:14.8506871Z ##[group]Operating System
+admin	Set up job	2026-11-18T13:07:14.8509410Z ##[endgroup]
+admin	Set up job	2026-11-18T13:07:14.8510223Z ##[group]Runner Image
+admin	Set up job	2026-11-18T13:07:14.8515678Z ##[endgroup]
+admin	Set up job	2026-11-18T13:07:14.8516877Z ##[group]GITHUB_TOKEN Permissions
+admin	Set up job	2026-11-18T13:07:14.8520305Z ##[endgroup]
+admin	checkout_repo	﻿2026-11-18T13:07:20.0116284Z ##[group]Run actions/checkout@v4
+admin	checkout_repo	2026-11-18T13:07:20.0164062Z ##[endgroup]
+admin	checkout_repo	2026-11-18T13:07:25.7030062Z ##[group]Getting Git version info
+admin	checkout_repo	2026-11-18T13:07:25.7033202Z ##[endgroup]
+admin	checkout_repo	2026-11-18T13:07:25.7505757Z ##[group]Initializing the repository
+admin	checkout_repo	2026-11-18T13:07:25.9195570Z ##[endgroup]
+admin	checkout_repo	2026-11-18T13:07:25.9196104Z ##[group]Disabling automatic garbage collection
+admin	checkout_repo	2026-11-18T13:07:25.9220393Z ##[endgroup]
+admin	checkout_repo	2026-11-18T13:07:25.9221100Z ##[group]Setting up auth
+admin	checkout_repo	2026-11-18T13:07:26.4242019Z ##[endgroup]
+admin	checkout_repo	2026-11-18T13:07:26.4242661Z ##[group]Fetching the repository
+admin	checkout_repo	2026-11-18T13:07:30.7354627Z ##[endgroup]
+admin	checkout_repo	2026-11-18T13:07:30.7355419Z ##[group]Determining the checkout info
+admin	checkout_repo	2026-11-18T13:07:30.7358309Z ##[endgroup]
+admin	checkout_repo	2026-11-18T13:07:30.7438165Z ##[group]Checking out the ref
+admin	checkout_repo	2026-11-18T13:07:31.3769205Z ##[endgroup]
+admin	twingate_admin	﻿2026-11-18T13:07:31.4007462Z ##[group]Run set -euo pipefail
+admin	twingate_admin	2026-11-18T13:07:31.4038118Z ##[endgroup]
+admin	twingate_admin	2026-11-18T13:07:32.1362308Z Provisioned Remote Network 'Ultron SMP' and Connector 'twingate-mccon'.
+admin	ensure_resource	﻿2026-11-18T13:07:32.1472175Z ##[group]Run set -euo pipefail
+admin	ensure_resource	2026-11-18T13:07:32.1472521Z ^[[36;1mset -euo pipefail^[[0m
+admin	ensure_resource	2026-11-18T13:07:32.1472841Z ^[[36;1mpython3 scripts/twingate-resource.py ensure \^[[0m
+admin	ensure_resource	2026-11-18T13:07:32.1473202Z ^[[36;1m    | tee .agent-work/logs/twingate-resource.log^[[0m
+admin	ensure_resource	2026-11-18T13:07:32.1490787Z shell: /usr/bin/bash -e {0}
+admin	ensure_resource	2026-11-18T13:07:32.1491065Z env:
+admin	ensure_resource	2026-11-18T13:07:32.1492234Z   TWINGATE_API_TOKEN: ***
+admin	ensure_resource	2026-11-18T13:07:32.1494934Z   TWINGATE_ACCESS_TOKEN: ***
+admin	ensure_resource	2026-11-18T13:07:32.1495533Z   TWINGATE_REFRESH_TOKEN: ***
+admin	ensure_resource	2026-11-18T13:07:32.1495868Z   TWINGATE_NETWORK: ***
+admin	ensure_resource	2026-11-18T13:07:32.1496113Z   TWINGATE_REMOTE_NETWORK: 
+admin	ensure_resource	2026-11-18T13:07:32.1496373Z   TWINGATE_REMOTE_NETWORK_ID: 
+admin	ensure_resource	2026-11-18T13:07:32.1496664Z   TWINGATE_NEW_REMOTE_NETWORK: Ultron SMP
+admin	ensure_resource	2026-11-18T13:07:32.1497015Z   TWINGATE_CONNECTOR_NAME: twingate-mccon
+admin	ensure_resource	2026-11-18T13:07:32.1497325Z   TWINGATE_RESOURCE_NAME: minecraft
+admin	ensure_resource	2026-11-18T13:07:32.1497580Z   TWINGATE_RESOURCE_ADDRESS: 127.0.0.1
+admin	ensure_resource	2026-11-18T13:07:32.1497909Z   TWINGATE_RESOURCE_PORT: 25565
+admin	ensure_resource	2026-11-18T13:07:32.1498265Z   TWINGATE_RESOURCE_GROUP_NAMES: Everyone
+admin	ensure_resource	2026-11-18T13:07:32.1498544Z   TWINGATE_GENERATE_TOKENS: false
+admin	ensure_resource	2026-11-18T13:07:32.1498819Z ##[endgroup]
+admin	ensure_resource	2026-11-18T13:07:34.3546485Z Twingate resource 'minecraft' updated to 127.0.0.1:25565.
+admin	ensure_resource	2026-11-18T13:07:34.3547023Z Added 1 group assignment(s) to the resource.
+admin	ensure_resource	2026-11-18T13:07:34.3547696Z Resource id: UmVzb3VyY2U6OTk1OA==. Assign users or groups to it in the Twingate Admin Console.
+admin	remove_token_file	﻿2026-11-18T13:07:34.3683572Z ##[group]Run rm -f "${RUNNER_TEMP}/twingate-connector.env"
+admin	remove_token_file	2026-11-18T13:07:34.3709335Z ##[endgroup]
+admin	upload_admin_log	﻿2026-11-18T13:07:34.3796874Z ##[group]Run actions/upload-artifact@v4
+admin	upload_admin_log	2026-11-18T13:07:34.3806549Z ##[endgroup]
+[0m
+[0m$ [0mgh workflow run run.yml --repo promikailamin/ultron_smp --ref main -f tunnel=bore 2>&1 && sleep 8 && gh run list --repo promikailamin/ultron_smp --workflow run.yml --limit 2 2>&1
+https://github.com/promikailamin/ultron_smp/actions/runs/44310694698
+in_progress		Run UltronSMP	Run UltronSMP	main	workflow_dispatch	44310694698	9s	2026-11-18T13:08:31Z
+completed	cancelled	Run UltronSMP	Run UltronSMP	main	workflow_dispatch	44301134244	7m59s	2026-11-18T12:08:48Z
+[0m
+[0m$ [0msleep 90; gh run view 44310694698 --repo promikailamin/ultron_smp 2>&1 | sed -n '1,80p'
+* main Run UltronSMP · 44310694698
+Triggered via workflow_dispatch about 1 minute ago
+
+JOBS
+* server (ID 134823756171)
+
+For more information about the job, try: gh run view --job=134823756171
+View this run on GitHub: https://github.com/promikailamin/ultron_smp/actions/runs/44310694698
+[0m
+[0m$ [0mgh run view 44310694698 --repo promikailamin/ultron_smp --log 2>&1 | grep -E "^server\s+(start_twingate_connector|ensure_twingate_resource|verify_minecraft_port|run_server|expose_server|verify_public_tunnel)|Twingate connector|resource '|created at|already exists|updated to|Connected|Online|ALIVE|ERROR|error" | tail -80
+(no output)
+[0m
+[0m$ [0mgh run view --repo promikailamin/ultron_smp --job 134823756171 2>&1 | head -80
+* main Run UltronSMP · 44310694698
+Triggered via workflow_dispatch about 1 minute ago
+
+* server (ID 134823756171)
+  ✓ Set up job
+  ✓ checkout_repo
+  ✓ setup_java_25
+  ✓ configure_git
+  ✓ tune_network
+  ✓ refresh_world_from_backup
+  ✓ run_server
+  ✓ verify_minecraft_port
+  ✓ start_twingate_connector
+  ✓ ensure_twingate_resource
+  ✓ expose_server
+  ✓ verify_public_tunnel
+  ✓ publish_server_address
+  * keep_server_alive
+  * restore_final_server
+  * Post setup_java_25
+  * Post checkout_repo
+
+To see the full job log, try: gh run view --log --job=134823756171
+View this run on GitHub: https://github.com/promikailamin/ultron_smp/actions/runs/44310694698
+[0m
+[0m$ [0mgh run view 44310694698 --repo promikailamin/ultron_smp --log --job 134823756171 2>&1 | grep -E "start_twingate_connector|ensure_twingate_resource|Twingate connector|Twingate resource|Connected|Online|ALIVE|SERVER_ADDRESS|Public tunnel|Tunnel has" | tail -60
+(no output)
+[0m
+[0m$ [0mgh run cancel 44310694698 --repo promikailamin/ultron_smp 2>&1; sleep 15; gh run list --repo promikailamin/ultron_smp --workflow run.yml --limit 2 2>&1
+✓ Request to cancel workflow 44310694698 submitted.
+in_progress		Run UltronSMP	Run UltronSMP	main	workflow_dispatch	44310694698	2m13s	2026-11-18T13:08:31Z
+completed	cancelled	Run UltronSMP	Run UltronSMP	main	workflow_dispatch	44301134244	7m59s	2026-11-18T12:08:48Z
+[0m
+[0m$ [0msleep 45; gh run list --repo promikailamin/ultron_smp --workflow run.yml --limit 2 2>&1; gh run view 44310694698 --repo promikailamin/ultron_smp --log 2>&1 | grep -E "start_twingate_connector|ensure_twingate_resource|Twingate connector|Twingate resource|ALIVE|Online|ERROR" | tail -40
+completed	cancelled	Run UltronSMP	Run UltronSMP	main	workflow_dispatch	44310694698	2m22s	2026-11-18T13:08:31Z
+completed	cancelled	Run UltronSMP	Run UltronSMP	main	workflow_dispatch	44301134244	7m59s	2026-11-18T12:08:48Z
+server	start_twingate_connector	2026-11-18T13:09:15.5658828Z Create/assign the Minecraft resource in the Twingate Admin Console; its token values were supplied only through the environment.
+server	ensure_twingate_resource	﻿2026-11-18T13:09:15.5730304Z ##[group]Run set -euo pipefail
+server	ensure_twingate_resource	2026-11-18T13:09:15.5731079Z ^[[36;1mset -euo pipefail^[[0m
+server	ensure_twingate_resource	2026-11-18T13:09:15.5731947Z ^[[36;1mpython3 scripts/twingate-resource.py ensure | tee .agent-work/logs/twingate-resource.log^[[0m
+server	ensure_twingate_resource	2026-11-18T13:09:15.5777834Z shell: /usr/bin/bash -e {0}
+server	ensure_twingate_resource	2026-11-18T13:09:15.5778624Z env:
+server	ensure_twingate_resource	2026-11-18T13:09:15.5779094Z   MINECRAFT_PORT: 25565
+server	ensure_twingate_resource	2026-11-18T13:09:15.5779889Z   SERVER_ISSUE_NUMBER: 1
+server	ensure_twingate_resource	2026-11-18T13:09:15.5780798Z   TUNNEL_PROVIDER: bore
+server	ensure_twingate_resource	2026-11-18T13:09:15.5781796Z   LOCALXPOSE_ACCESS_TOKEN: ***
+server	ensure_twingate_resource	2026-11-18T13:09:15.5782399Z   LOCALXPOSE_REGION: ap
+server	ensure_twingate_resource	2026-11-18T13:09:15.5782942Z   LOCALXPOSE_BORE_FALLBACK: 
+server	ensure_twingate_resource	2026-11-18T13:09:15.5783533Z   PLAYER_REGION: bangladesh
+server	ensure_twingate_resource	2026-11-18T13:09:15.5784109Z   MINEKUBE_ENDPOINT: 
+server	ensure_twingate_resource	2026-11-18T13:09:15.5784668Z   MINEKUBE_CONNECT_TOKEN: 
+server	ensure_twingate_resource	2026-11-18T13:09:15.5785253Z   MINEKUBE_GATE_VERSION: 0.81.1
+server	ensure_twingate_resource	2026-11-18T13:09:15.5785801Z   MINEKUBE_AUTO: true
+server	ensure_twingate_resource	2026-11-18T13:09:15.5786368Z   TWINGATE_ENABLED: auto
+server	ensure_twingate_resource	2026-11-18T13:09:15.5786928Z   TWINGATE_NETWORK: ***
+server	ensure_twingate_resource	2026-11-18T13:09:15.5787749Z   TWINGATE_CONNECTOR_NAME: twingate-mccon
+server	ensure_twingate_resource	2026-11-18T13:09:15.5788342Z   TWINGATE_DOCKER_PULL: always
+server	ensure_twingate_resource	2026-11-18T13:09:15.5788947Z   TWINGATE_LABEL_HOSTNAME: ultronsmp.net
+server	ensure_twingate_resource	2026-11-18T13:09:15.5790195Z   TWINGATE_LABEL_DEPLOYED_BY: docker
+server	ensure_twingate_resource	2026-11-18T13:09:15.5797255Z   TWINGATE_ACCESS_TOKEN: ***
+server	ensure_twingate_resource	2026-11-18T13:09:15.5798555Z   TWINGATE_REFRESH_TOKEN: ***
+server	ensure_twingate_resource	2026-11-18T13:09:15.5800267Z   TWINGATE_API_TOKEN: ***
+server	ensure_twingate_resource	2026-11-18T13:09:15.5800910Z   TWINGATE_REMOTE_NETWORK: 
+server	ensure_twingate_resource	2026-11-18T13:09:15.5801538Z   TWINGATE_REMOTE_NETWORK_ID: 
+server	ensure_twingate_resource	2026-11-18T13:09:15.5802131Z   TWINGATE_RESOURCE_NAME: minecraft
+server	ensure_twingate_resource	2026-11-18T13:09:15.5802732Z   TWINGATE_RESOURCE_ADDRESS: 127.0.0.1
+server	ensure_twingate_resource	2026-11-18T13:09:15.5803376Z   TWINGATE_RESOURCE_PORT: 25565
+server	ensure_twingate_resource	2026-11-18T13:09:15.5803942Z   TWINGATE_RESOURCE_GROUP_NAMES: Everyone
+server	ensure_twingate_resource	2026-11-18T13:09:15.5804753Z   JAVA_HOME: /opt/hostedtoolcache/Java_Temurin-Hotspot_jdk/25.0.5-8/x64
+server	ensure_twingate_resource	2026-11-18T13:09:15.5805650Z   JAVA_HOME_25_X64: /opt/hostedtoolcache/Java_Temurin-Hotspot_jdk/25.0.5-8/x64
+server	ensure_twingate_resource	2026-11-18T13:09:15.5806478Z ##[endgroup]
+server	ensure_twingate_resource	2026-11-18T13:09:16.7891833Z Twingate resource 'minecraft' already exists.
+server	ensure_twingate_resource	2026-11-18T13:09:16.7893747Z Resource id: UmVzb3VyY2U6OTk1OA==. Assign users or groups to it in the Twingate Admin Console.
+server	expose_server	2026-11-18T13:09:16.8049801Z ^[[36;1m    echo "ERROR: no public server address was generated."^[[0m
+server	verify_public_tunnel	2026-11-18T13:09:18.0793283Z ^[[36;1mecho "ERROR: the public tunnel is not reachable."^[[0m
+server	restore_final_server	2026-11-18T13:10:44.3772326Z ^[[36;1m    echo "ERROR: final backup could not be pushed."^[[0m
+[0m
+[0m$ [0mgit fetch origin main && git status --short && git log --oneline -5 origin/main && git diff --stat HEAD origin/main | tail -20
+From https://github.com/promikailamin/ultron_smp
+ * branch            main       -> FETCH_HEAD
+   44c0ec0..809491f  main       -> origin/main
+ M .agent-work/logs/opencode-output.log
+ M .agent-work/logs/run-test.log
+?? .agent-work/logs/test-twingate-admin-provision.log
+?? .agent-work/logs/test-twingate-admin-repeat.log
+?? .agent-work/logs/test-twingate-admin-status.log
+?? .agent-work/logs/test-twingate-resource-group.log
+809491f Final Minecraft server backup
+fca90e8 Update public server address: bore.pub:25568
+44c0ec0 Assign Twingate resource access and document admin workflows
+6147000 List Twingate groups in admin status
+b6b1e8b Add Twingate connector verification workflow
+ config/economy/balances.properties                 |   2 +-
+ logs/2026-11-18-1.log.gz                           | Bin 3148 -> 2930 bytes
+ logs/2026-11-18-2.log.gz                           | Bin 2930 -> 3123 bytes
+ logs/2026-11-18-3.log.gz                           | Bin 3123 -> 3349 bytes
+ logs/2026-11-18-4.log.gz                           | Bin 3349 -> 3287 bytes
+ logs/2026-11-18-5.log.gz                           | Bin 3287 -> 3060 bytes
+ logs/2026-11-18-6.log.gz                           | Bin 3060 -> 3026 bytes
+ logs/2026-11-18-7.log.gz                           | Bin 3026 -> 2957 bytes
+ logs/latest.log                                    | 120 ++--
+ server.log                                         | 122 ++--
+ server.properties                                  |   2 +-
+ world/data/minecraft/wandering_trader.dat          | Bin 66 -> 66 bytes
+ world/data/minecraft/weather.dat                   | Bin 110 -> 110 bytes
+ world/data/minecraft/world_clocks.dat              | Bin 106 -> 106 bytes
+ .../minecraft/overworld/data/minecraft/raids.dat   | Bin 74 -> 74 bytes
+ .../minecraft/the_end/data/minecraft/raids.dat     | Bin 74 -> 74 bytes
+ .../minecraft/the_nether/data/minecraft/raids.dat  | Bin 74 -> 74 bytes
+ world/level.dat                                    | Bin 439 -> 441 bytes
+ world/level.dat_old                                | Bin 440 -> 440 bytes
+ 23 files changed, 500 insertions(+), 479 deletions(-)
+[0m
+[0m$ [0mpython3 - <<'PYMAIN'
+from pathlib import Path
+p=Path('scripts/twingate-admin.py')
+s=p.read_text()
+s=s.replace('''        "resources",
+        "id name address { type value } remoteNetwork { id name }",
+    )''','''        "resources",
+        "id name address { type value } remoteNetwork { id name } "
+        "groups { edges { node { id name } } }",
+    )''')
+s=s.replace('''    print("Resources ({}):".format(len(resources)))
+    for item in resources:
+        network = item.get("remoteNetwork") or {}
+        print(
+            "  - {} | id={} | address={} | network={} ({})".format(
+                item.get("name", "?"),
+                item.get("id", "?"),
+                format_resource_address(item),
+                network.get("name", "?"),
+                network.get("id", "?"),
+            )
+        )''','''    print("Resources ({}):".format(len(resources)))
+    for item in resources:
+        network = item.get("remoteNetwork") or {}
+        groups = [
+            (edge.get("node") or {}).get("name", "?")
+            for edge in ((item.get("groups") or {}).get("edges") or [])
+        ]
+        print(
+            "  - {} | id={} | address={} | network={} ({}) | groups={}".format(
+                item.get("name", "?"),
+                item.get("id", "?"),
+                format_resource_address(item),
+                network.get("name", "?"),
+                network.get("id", "?"),
+                ", ".join(groups) if groups else "none",
+            )
+        )''')
+p.write_text(s)
+PYMAIN
+python3 -m py_compile scripts/twingate-admin.py && bash .agent-work/tests/test_twingate_admin.sh >/tmp/admin-test2.out 2>&1; echo rc=$?; tail -2 /tmp/admin-test2.out
+rc=0
+Twingate admin test passed: status, provisioning, token rotation file, idempotency and credential secrecy validated.
+[0m

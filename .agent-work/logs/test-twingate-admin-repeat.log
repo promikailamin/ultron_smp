@@ -1,0 +1,2 @@
+Connector token generation skipped. Set TWINGATE_GENERATE_TOKENS=true to rotate/generate a token pair.
+Provisioned Remote Network 'Ultron SMP' and Connector 'twingate-mccon'.
