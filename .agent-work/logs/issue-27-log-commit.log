@@ -1,0 +1,10 @@
+[main bf3d282] Record issue 27 test and live run logs
+ 8 files changed, 17 insertions(+)
+ create mode 100644 .agent-work/logs/issue-27-commit.log
+ create mode 100644 .agent-work/logs/issue-27-live-status.log
+ create mode 100644 .agent-work/logs/issue-27-push.log
+ create mode 100644 .agent-work/logs/issue-27-run-list.log
+ create mode 100644 .agent-work/logs/issue-27-run-trigger.log
+ create mode 100644 .agent-work/logs/issue-27-workflow-commit.log
+ create mode 100644 .agent-work/logs/issue-27-workflow-push.log
+ create mode 100644 .agent-work/logs/issue-27-workflow-test-failure.log
