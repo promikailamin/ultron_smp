@@ -11,6 +11,14 @@ on:
                 description: 'Paper build (blank = latest stable)'
                 required: false
                 default: ''
+            connector:
+                description: 'Minekube connector (gate = separate process, restartable)'
+                required: false
+                default: plugin
+                type: choice
+                options:
+                    - plugin
+                    - gate
 
 permissions:
     contents: read
@@ -27,6 +35,13 @@ jobs:
             MINEKUBE_ENDPOINT: ${{ vars.MINEKUBE_ENDPOINT || 'mikailamin' }}
             MINEKUBE_CONNECT_TOKEN: ${{ secrets.MINEKUBE_CONNECT_TOKEN }}
             MINEKUBE_ALLOW_OFFLINE: 'true'
+            MINEKUBE_CONNECTOR: ${{ inputs.connector || 'plugin' }}
+            MINEKUBE_GATE_VERSION: ${{ vars.MINEKUBE_GATE_VERSION || 'latest' }}
+            MINEKUBE_WATCH_HEALTH_ADDR: '127.0.0.1:25580'
+            MINEKUBE_WATCH_URL: ${{ vars.MINEKUBE_WATCH_URL || '' }}
+            MINEKUBE_FORCE_TUNNEL_SERVICE_ADDR: ${{ vars.MINEKUBE_FORCE_TUNNEL_SERVICE_ADDR || '' }}
+            MINEKUBE_LIBP2P_EDGE_ADDR: ${{ vars.MINEKUBE_LIBP2P_EDGE_ADDR || '' }}
+            MINEKUBE_LIBP2P_RELAY_ADDRS: ${{ vars.MINEKUBE_LIBP2P_RELAY_ADDRS || '' }}
             PAPER_VERSION: ${{ inputs.paper_version }}
             PAPER_BUILD: ${{ inputs.paper_build }}
             PAPER_JAVA_OPTS: '-Xms1G -Xmx2G'
@@ -39,6 +54,26 @@ jobs:
               with:
                   distribution: temurin
                   java-version: '25'
+
+            - name: tune_runner_network
+              continue-on-error: true
+              run: |
+                  set -euo pipefail
+                  mkdir -p .agent-work/logs
+                  sudo bash scripts/network-tune.sh 2>&1 \
+                      | tee .agent-work/logs/network-tune.log
+
+            - name: tunnel_latency_baseline
+              continue-on-error: true
+              run: |
+                  set -euo pipefail
+                  mkdir -p .agent-work/logs .agent-work/outputs
+                  python3 scripts/tunnel-latency.py \
+                      --endpoint "${MINEKUBE_ENDPOINT}" \
+                      --samples 8 \
+                      --label before-server \
+                      --json-out .agent-work/outputs/tunnel-latency-before-server.json \
+                      2>&1 | tee .agent-work/logs/tunnel-latency-before-server.log
 
             - name: verify_connect_secret
               run: |
@@ -53,9 +88,11 @@ jobs:
               timeout-minutes: 350
               run: |
                   set -euo pipefail
-                  mkdir -p .agent-work/logs .agent-work/tmp
+                  mkdir -p .agent-work/logs .agent-work/tmp .agent-work/outputs
                   log=".agent-work/logs/server-run.log"
+                  health_log=".agent-work/logs/tunnel-health.log"
                   fifo=".agent-work/tmp/server-input.fifo"
+                  monitor_pid=""
                   rm -f "$fifo"
                   mkfifo "$fifo"
 
@@ -64,6 +101,13 @@ jobs:
                   exec 3>"$fifo"
 
                   stop_server() {
+                      if [ -n "$monitor_pid" ]; then
+                          kill "$monitor_pid" 2>/dev/null || true
+                          wait "$monitor_pid" 2>/dev/null || true
+                      fi
+                      if [ "${MINEKUBE_CONNECTOR:-plugin}" = "gate" ]; then
+                          bash scripts/minekube-gate.sh stop >/dev/null 2>&1 || true
+                      fi
                       if kill -0 "$server_pid" 2>/dev/null; then
                           echo "Stopping the Minecraft server..." >&2
                           echo "stop" >&3 2>/dev/null || true
@@ -99,18 +143,65 @@ jobs:
                       exit 1
                   fi
 
-                  endpoint="$(sed -n 's/^endpoint:[[:space:]]*//p' plugins/connect/config.yml | head -n 1)"
+                  echo "Minecraft server is ready."
+                  if [ "${MINEKUBE_CONNECTOR:-plugin}" = "gate" ]; then
+                      bash scripts/minekube-gate.sh start \
+                          2>&1 | tee -a .agent-work/logs/minekube-gate-console.log
+                      endpoint="${MINEKUBE_ENDPOINT:-}"
+                      if [ -z "$endpoint" ]; then
+                          endpoint="$(sed -n 's/^[[:space:]]*name:[[:space:]]*//p' \
+                              .agent-work/tmp/minekube-gate/config.yml | head -n 1 | tr -d '"')"
+                      fi
+                      echo "Minekube Gate connector registered the endpoint successfully."
+                  else
+                      endpoint="$(sed -n 's/^endpoint:[[:space:]]*//p' plugins/connect/config.yml | head -n 1)"
+                      if grep -q "Your public address: ${endpoint}.play.minekube.net" "$log"; then
+                          echo "Minekube Connect registered the endpoint successfully."
+                      else
+                          echo "WARNING: could not find the Minekube registration line in the log." >&2
+                          grep -i 'connect' "$log" | tail -n 20 || true
+                      fi
+                  fi
+
                   address="${endpoint}.play.minekube.net:25565"
                   printf '# Ultron SMP public address\n%s\n' "$address" > SERVER_ADDRESS.txt
-
-                  echo "Minecraft server is ready."
                   echo "Minekube address: ${address}"
-                  if grep -q "Your public address: ${endpoint}.play.minekube.net" "$log"; then
-                      echo "Minekube Connect registered the endpoint successfully."
-                  else
-                      echo "WARNING: could not find the Minekube registration line in the log." >&2
-                      grep -i 'connect' "$log" | tail -n 20 || true
-                  fi
+
+                  # Record the connector's watch-health state for the whole run so a
+                  # slow/dropped server -> tunnel leg is visible instead of silent.
+                  health_addr="${MINEKUBE_WATCH_HEALTH_ADDR:-127.0.0.1:25580}"
+                  gate_pid_file="${RUNNER_TEMP:-$PWD/.agent-work/tmp}/ultron-gate.pid"
+                  monitor_tunnel() {
+                      while kill -0 "$server_pid" 2>/dev/null; do
+                          if [ "${MINEKUBE_CONNECTOR:-plugin}" = "gate" ]; then
+                              gate_pid="$(cat "$gate_pid_file" 2>/dev/null || true)"
+                              if [ -n "$gate_pid" ] && kill -0 "$gate_pid" 2>/dev/null; then
+                                  code="gate-running"
+                              else
+                                  code="gate-down"
+                                  echo "$(date -u '+%Y-%m-%dT%H:%M:%SZ') restarting Gate" \
+                                      >>.agent-work/logs/minekube-gate-restart.log
+                                  bash scripts/minekube-gate.sh start \
+                                      >>.agent-work/logs/minekube-gate-restart.log 2>&1 || true
+                              fi
+                          else
+                              code="$(curl -fsS --max-time 3 \
+                                  -o /dev/null -w '%{http_code}' \
+                                  "http://${health_addr}/healthz" 2>/dev/null || echo unavailable)"
+                          fi
+                          printf '%s health=%s\n' "$(date -u '+%Y-%m-%dT%H:%M:%SZ')" "$code" >>"$health_log"
+                          sleep 30
+                      done
+                  }
+                  monitor_tunnel &
+                  monitor_pid=$!
+
+                  python3 scripts/tunnel-latency.py \
+                      --endpoint "${endpoint}" \
+                      --samples 8 \
+                      --label server-ready \
+                      --json-out .agent-work/outputs/tunnel-latency-server-ready.json \
+                      2>&1 | tee .agent-work/logs/tunnel-latency-server-ready.log || true
 
                   {
                       echo "## Ultron SMP is online"
@@ -119,10 +210,20 @@ jobs:
                       echo ""
                       echo "**Paper:** latest downloaded build (see server log)"
                       echo "**Minekube endpoint:** \`${endpoint}\`"
+                      echo "**Connector:** \`${MINEKUBE_CONNECTOR:-plugin}\`"
+                      echo ""
+                      echo "### Tunnel path"
+                      echo '```'
+                      tail -n 14 .agent-work/logs/tunnel-latency-server-ready.log 2>/dev/null || true
+                      echo '```'
                   } >> "$GITHUB_STEP_SUMMARY"
 
                   # Wait for the server to exit (job timeout or manual stop).
                   wait "$server_pid"
+                  if [ -n "$monitor_pid" ]; then
+                      kill "$monitor_pid" 2>/dev/null || true
+                      wait "$monitor_pid" 2>/dev/null || true
+                  fi
                   rm -f "$fifo"
                   exec 3>&-
                   trap - EXIT
@@ -137,6 +238,12 @@ jobs:
                       tail -n 40 .agent-work/logs/server-run.log >> "$GITHUB_STEP_SUMMARY" || true
                       echo '```' >> "$GITHUB_STEP_SUMMARY"
                   fi
+                  if [ -f .agent-work/logs/tunnel-health.log ]; then
+                      echo "### Tunnel health samples" >> "$GITHUB_STEP_SUMMARY"
+                      echo '```' >> "$GITHUB_STEP_SUMMARY"
+                      tail -n 20 .agent-work/logs/tunnel-health.log >> "$GITHUB_STEP_SUMMARY" || true
+                      echo '```' >> "$GITHUB_STEP_SUMMARY"
+                  fi
 
             - name: upload_logs
               if: always()
@@ -146,5 +253,14 @@ jobs:
                   path: |
                       .agent-work/logs/server-run.log
                       .agent-work/logs/setup-server.log
+                      .agent-work/logs/network-tune.log
+                      .agent-work/logs/tunnel-latency-before-server.log
+                      .agent-work/logs/tunnel-latency-server-ready.log
+                      .agent-work/logs/tunnel-health.log
+                      .agent-work/logs/minekube-gate.log
+                      .agent-work/logs/minekube-gate-console.log
+                      .agent-work/logs/minekube-gate-restart.log
+                      .agent-work/outputs/tunnel-latency-before-server.json
+                      .agent-work/outputs/tunnel-latency-server-ready.json
                       SERVER_ADDRESS.txt
                   if-no-files-found: ignore

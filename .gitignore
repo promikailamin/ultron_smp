@@ -44,3 +44,7 @@ permissions.yml
 help.yml
 config/paper-global.yml
 config/paper-world-defaults.yml
+
+# Python bytecode
+__pycache__/
+*.pyc

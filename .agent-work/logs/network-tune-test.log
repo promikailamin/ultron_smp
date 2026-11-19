@@ -23,3 +23,107 @@ Applying low-latency TCP tuning...
   net.ipv4.tcp_rmem=4096 87380 16777216
   net.ipv4.tcp_wmem=4096 65536 16777216
 TCP tuning active: congestion_control=bbr default_qdisc=fq
+
+=== 2026-11-19 01:09:53 UTC network tuning ===
+Applying long-haul TCP tuning for the tunnel path...
+  TEST core.default_qdisc=fq
+  TEST ipv4.tcp_congestion_control=bbr
+  TEST ipv4.tcp_slow_start_after_idle=0
+  TEST ipv4.tcp_mtu_probing=1
+  TEST ipv4.tcp_keepalive_time=60
+  TEST ipv4.tcp_keepalive_intvl=15
+  TEST ipv4.tcp_keepalive_probes=4
+  TEST ipv4.tcp_no_metrics_save=1
+  TEST ipv4.tcp_notsent_lowat=8192
+  TEST ipv4.tcp_sack=1
+  TEST ipv4.tcp_dsack=1
+  TEST ipv4.tcp_timestamps=1
+  TEST ipv4.tcp_tw_reuse=1
+  TEST ipv4.tcp_fastopen=3
+  TEST core.rmem_max=33554432
+  TEST core.wmem_max=33554432
+  TEST ipv4.tcp_rmem=4096 131072 33554432
+  TEST ipv4.tcp_wmem=4096 65536 33554432
+  TEST ipv4.tcp_max_syn_backlog=4096
+  TEST core.somaxconn=4096
+  TEST core.optmem_max=65536
+  TEST core.netdev_max_backlog=32768
+TCP tuning active: congestion_control=dry-run default_qdisc=dry-run
+
+=== 2026-11-19 01:09:59 UTC network tuning ===
+Applying long-haul TCP tuning for the tunnel path...
+  TEST net.core.default_qdisc=fq
+  TEST net.ipv4.tcp_congestion_control=bbr
+  TEST net.ipv4.tcp_slow_start_after_idle=0
+  TEST net.ipv4.tcp_mtu_probing=1
+  TEST net.ipv4.tcp_keepalive_time=60
+  TEST net.ipv4.tcp_keepalive_intvl=15
+  TEST net.ipv4.tcp_keepalive_probes=4
+  TEST net.ipv4.tcp_no_metrics_save=1
+  TEST net.ipv4.tcp_notsent_lowat=8192
+  TEST net.ipv4.tcp_sack=1
+  TEST net.ipv4.tcp_dsack=1
+  TEST net.ipv4.tcp_timestamps=1
+  TEST net.ipv4.tcp_tw_reuse=1
+  TEST net.ipv4.tcp_fastopen=3
+  TEST net.core.rmem_max=33554432
+  TEST net.core.wmem_max=33554432
+  TEST net.ipv4.tcp_rmem=4096 131072 33554432
+  TEST net.ipv4.tcp_wmem=4096 65536 33554432
+  TEST net.ipv4.tcp_max_syn_backlog=4096
+  TEST net.core.somaxconn=4096
+  TEST net.core.optmem_max=65536
+  TEST net.core.netdev_max_backlog=32768
+TCP tuning active: congestion_control=dry-run default_qdisc=dry-run
+
+=== 2026-11-19 01:11:25 UTC network tuning ===
+Applying long-haul TCP tuning for the tunnel path...
+  TEST net.core.default_qdisc=fq
+  TEST net.ipv4.tcp_congestion_control=bbr
+  TEST net.ipv4.tcp_slow_start_after_idle=0
+  TEST net.ipv4.tcp_mtu_probing=1
+  TEST net.ipv4.tcp_keepalive_time=60
+  TEST net.ipv4.tcp_keepalive_intvl=15
+  TEST net.ipv4.tcp_keepalive_probes=4
+  TEST net.ipv4.tcp_no_metrics_save=1
+  TEST net.ipv4.tcp_notsent_lowat=8192
+  TEST net.ipv4.tcp_sack=1
+  TEST net.ipv4.tcp_dsack=1
+  TEST net.ipv4.tcp_timestamps=1
+  TEST net.ipv4.tcp_tw_reuse=1
+  TEST net.ipv4.tcp_fastopen=3
+  TEST net.core.rmem_max=33554432
+  TEST net.core.wmem_max=33554432
+  TEST net.ipv4.tcp_rmem=4096 131072 33554432
+  TEST net.ipv4.tcp_wmem=4096 65536 33554432
+  TEST net.ipv4.tcp_max_syn_backlog=4096
+  TEST net.core.somaxconn=4096
+  TEST net.core.optmem_max=65536
+  TEST net.core.netdev_max_backlog=32768
+TCP tuning active: congestion_control=dry-run default_qdisc=dry-run
+
+=== 2026-11-19 01:14:05 UTC network tuning ===
+Applying long-haul TCP tuning for the tunnel path...
+  TEST net.core.default_qdisc=fq
+  TEST net.ipv4.tcp_congestion_control=bbr
+  TEST net.ipv4.tcp_slow_start_after_idle=0
+  TEST net.ipv4.tcp_mtu_probing=1
+  TEST net.ipv4.tcp_keepalive_time=60
+  TEST net.ipv4.tcp_keepalive_intvl=15
+  TEST net.ipv4.tcp_keepalive_probes=4
+  TEST net.ipv4.tcp_no_metrics_save=1
+  TEST net.ipv4.tcp_notsent_lowat=8192
+  TEST net.ipv4.tcp_sack=1
+  TEST net.ipv4.tcp_dsack=1
+  TEST net.ipv4.tcp_timestamps=1
+  TEST net.ipv4.tcp_tw_reuse=1
+  TEST net.ipv4.tcp_fastopen=3
+  TEST net.core.rmem_max=33554432
+  TEST net.core.wmem_max=33554432
+  TEST net.ipv4.tcp_rmem=4096 131072 33554432
+  TEST net.ipv4.tcp_wmem=4096 65536 33554432
+  TEST net.ipv4.tcp_max_syn_backlog=4096
+  TEST net.core.somaxconn=4096
+  TEST net.core.optmem_max=65536
+  TEST net.core.netdev_max_backlog=32768
+TCP tuning active: congestion_control=dry-run default_qdisc=dry-run

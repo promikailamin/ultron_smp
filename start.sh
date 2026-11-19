@@ -17,6 +17,13 @@
 #   MINEKUBE_PLUGIN_URL          Override the plugin download URL
 #   MINEKUBE_PLUGIN_VERSION      Plugin version (default: latest release)
 #   MINEKUBE_ALLOW_OFFLINE       Allow offline/cracked players (default: true)
+#   MINEKUBE_WATCH_URL           Override the Connect watch service URL
+#   MINEKUBE_WATCH_HEALTH_ADDR   Local health endpoint (default: 127.0.0.1:25580)
+#   MINEKUBE_FORCE_TUNNEL_SERVICE_ADDR
+#                                Advanced: pin the tunnel service address
+#   MINEKUBE_LIBP2P_EDGE_ADDR    Advanced: enable Connect libp2p endpoint mode
+#   MINEKUBE_LIBP2P_RELAY_ADDRS  Advanced: libp2p relay bootstrap addresses
+#   MINEKUBE_CONNECTOR           plugin (default) or gate
 set -euo pipefail
 
 ROOT_DIR="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)"
@@ -31,6 +38,7 @@ PAPER_BUILD="${PAPER_BUILD:-}"
 PAPER_JAVA_OPTS="${PAPER_JAVA_OPTS:--Xms1G -Xmx2G}"
 MINEKUBE_PLUGIN_VERSION="${MINEKUBE_PLUGIN_VERSION:-latest}"
 MINEKUBE_ALLOW_OFFLINE="${MINEKUBE_ALLOW_OFFLINE:-true}"
+MINEKUBE_CONNECTOR="${MINEKUBE_CONNECTOR:-plugin}"
 
 mkdir -p "$TOOLS_DIR" "$PLUGINS_DIR" "$CONNECT_DIR"
 
@@ -212,9 +220,32 @@ PY
     fi
 }
 
+configure_connect_env() {
+    if [ -n "${MINEKUBE_WATCH_URL:-}" ]; then
+        export CONNECT_WATCH_URL="$MINEKUBE_WATCH_URL"
+    fi
+    if [ -n "${MINEKUBE_FORCE_TUNNEL_SERVICE_ADDR:-}" ]; then
+        export CONNECT_FORCE_TUNNEL_SERVICE_ADDR="$MINEKUBE_FORCE_TUNNEL_SERVICE_ADDR"
+    fi
+    if [ -n "${MINEKUBE_LIBP2P_EDGE_ADDR:-}" ]; then
+        export CONNECT_LIBP2P_EDGE_ADDR="$MINEKUBE_LIBP2P_EDGE_ADDR"
+    fi
+    if [ -n "${MINEKUBE_LIBP2P_RELAY_ADDRS:-}" ]; then
+        export CONNECT_LIBP2P_RELAY_ADDRS="$MINEKUBE_LIBP2P_RELAY_ADDRS"
+    fi
+    if [ -n "${MINEKUBE_WATCH_HEALTH_ADDR:-127.0.0.1:25580}" ]; then
+        export CONNECT_WATCH_HEALTH_ADDR="${MINEKUBE_WATCH_HEALTH_ADDR:-127.0.0.1:25580}"
+    fi
+}
+
 install_paper
-install_plugin
-configure_connect
+if [ "$MINEKUBE_CONNECTOR" = "gate" ]; then
+    echo "Using the external Minekube Gate connector; skipping the Paper Connect plugin."
+else
+    install_plugin
+    configure_connect
+fi
+configure_connect_env
 
 cd "$ROOT_DIR"
 # shellcheck disable=SC2206
