@@ -1,19 +1,19 @@
 # Paper runtime files
-paper.jar
-paper.jar.tmp
-cache/
-libraries/
-versions/
-logs/
-world/
-world_nether/
-world_the_end/
-server.log
-usercache.json
-ops.json
-whitelist.json
-banned-players.json
-banned-ips.json
+/paper.jar
+/paper.jar.tmp
+/cache/
+/libraries/
+/versions/
+/logs/
+/world/
+/world_nether/
+/world_the_end/
+/server.log
+/usercache.json
+/ops.json
+/whitelist.json
+/banned-players.json
+/banned-ips.json
 
 # Downloaded plugins (recreated by start.sh)
 plugins/*.jar
