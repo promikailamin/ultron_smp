@@ -17,11 +17,16 @@ for expected in \
     'net.ipv4.tcp_congestion_control=bbr' \
     'net.core.default_qdisc=fq' \
     'net.ipv4.tcp_notsent_lowat=8192' \
+    'net.ipv4.tcp_autocorking=0' \
     'net.ipv4.tcp_mtu_probing=1' \
     'net.ipv4.tcp_slow_start_after_idle=0' \
     'net.ipv4.tcp_keepalive_time=60' \
+    'net.ipv4.tcp_fin_timeout=15' \
+    'net.ipv4.tcp_syn_retries=3' \
     'net.core.rmem_max=33554432' \
-    'net.core.wmem_max=33554432'; do
+    'net.core.wmem_max=33554432' \
+    'net.ipv4.tcp_rmem=65536 131072 33554432' \
+    'net.ipv4.tcp_wmem=65536 131072 33554432'; do
     if ! grep -Fq "TEST ${expected}" <<<"$output"; then
         echo "FAIL: tuning profile does not set ${expected}" >&2
         exit 1

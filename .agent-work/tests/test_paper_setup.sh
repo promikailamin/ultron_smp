@@ -17,6 +17,12 @@ fail() {
 [ -f scripts/network-tune.sh ] || fail "scripts/network-tune.sh is missing"
 [ -f scripts/tunnel-latency.py ] || fail "scripts/tunnel-latency.py is missing"
 [ -f scripts/minekube-gate.sh ] || fail "scripts/minekube-gate.sh is missing"
+[ -f scripts/twingate-connector.sh ] || fail "scripts/twingate-connector.sh is missing"
+[ -f scripts/twingate-resource.py ] || fail "scripts/twingate-resource.py is missing"
+[ -f scripts/twingate-admin.py ] || fail "scripts/twingate-admin.py is missing"
+[ -f .github/workflows/twingate-admin.yml ] || fail "twingate-admin.yml is missing"
+[ -f .github/workflows/twingate-resource.yml ] || fail "twingate-resource.yml is missing"
+[ -f .github/workflows/twingate-verify.yml ] || fail "twingate-verify.yml is missing"
 [ -f plugins/connect/config.yml ] || fail "Connect config is missing"
 [ -f eula.txt ] || fail "eula.txt is missing"
 grep -qi '^eula=true' eula.txt || fail "eula.txt is not accepted"
@@ -25,7 +31,9 @@ bash -n start.sh || fail "start.sh has a syntax error"
 bash -n scripts/setup-server.sh || fail "setup-server.sh has a syntax error"
 bash -n scripts/network-tune.sh || fail "network-tune.sh has a syntax error"
 bash -n scripts/minekube-gate.sh || fail "minekube-gate.sh has a syntax error"
-python3 -m py_compile scripts/tunnel-latency.py || fail "tunnel-latency.py does not compile"
+bash -n scripts/twingate-connector.sh || fail "twingate-connector.sh has a syntax error"
+python3 -m py_compile scripts/tunnel-latency.py scripts/twingate-resource.py scripts/twingate-admin.py \
+    || fail "a Python helper does not compile"
 
 grep -q 'fill.papermc.io/v3/projects/paper' start.sh \
     || fail "start.sh does not resolve Paper from the fill API"
@@ -43,11 +51,15 @@ grep -q 'scripts/tunnel-latency.py' .github/workflows/run.yml \
     || fail "run.yml does not measure the tunnel path"
 grep -q 'scripts/minekube-gate.sh' .github/workflows/run.yml \
     || fail "run.yml does not support the Gate connector"
-grep -q '^view-distance=6$' server.properties \
-    || fail "server.properties does not use the tunnel-friendly view distance"
-grep -q '^simulation-distance=5$' server.properties \
-    || fail "server.properties does not use the tunnel-friendly simulation distance"
-grep -q '^entity-broadcast-range-percentage=75$' server.properties \
+grep -q 'scripts/twingate-connector.sh start' .github/workflows/run.yml \
+    || fail "run.yml does not start the Twingate connector"
+grep -q 'scripts/twingate-resource.py ensure' .github/workflows/run.yml \
+    || fail "run.yml does not ensure the Twingate resource"
+grep -q '^view-distance=5$' server.properties \
+    || fail "server.properties does not use the low-ping view distance"
+grep -q '^simulation-distance=4$' server.properties \
+    || fail "server.properties does not use the low-ping simulation distance"
+grep -q '^entity-broadcast-range-percentage=50$' server.properties \
     || fail "server.properties does not reduce entity broadcast range"
 grep -q '^network-compression-threshold=128$' server.properties \
     || fail "server.properties does not compress more tunnel traffic"

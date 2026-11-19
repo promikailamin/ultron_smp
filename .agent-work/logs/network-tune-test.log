@@ -127,3 +127,96 @@ Applying long-haul TCP tuning for the tunnel path...
   TEST net.core.optmem_max=65536
   TEST net.core.netdev_max_backlog=32768
 TCP tuning active: congestion_control=dry-run default_qdisc=dry-run
+
+=== 2026-11-19 01:56:26 UTC network tuning ===
+Applying long-haul TCP tuning for the tunnel path...
+  TEST net.core.default_qdisc=fq
+  TEST net.ipv4.tcp_congestion_control=bbr
+  TEST net.ipv4.tcp_slow_start_after_idle=0
+  TEST net.ipv4.tcp_mtu_probing=1
+  TEST net.ipv4.tcp_keepalive_time=60
+  TEST net.ipv4.tcp_keepalive_intvl=15
+  TEST net.ipv4.tcp_keepalive_probes=4
+  TEST net.ipv4.tcp_no_metrics_save=1
+  TEST net.ipv4.tcp_notsent_lowat=8192
+  TEST net.ipv4.tcp_autocorking=0
+  TEST net.ipv4.tcp_sack=1
+  TEST net.ipv4.tcp_dsack=1
+  TEST net.ipv4.tcp_timestamps=1
+  TEST net.ipv4.tcp_tw_reuse=1
+  TEST net.ipv4.tcp_fastopen=3
+  TEST net.ipv4.tcp_fin_timeout=15
+  TEST net.ipv4.tcp_thin_linear_timeouts=1
+  TEST net.ipv4.tcp_syn_retries=3
+  TEST net.ipv4.tcp_synack_retries=2
+  TEST net.core.rmem_max=33554432
+  TEST net.core.wmem_max=33554432
+  TEST net.ipv4.tcp_rmem=65536 131072 33554432
+  TEST net.ipv4.tcp_wmem=65536 131072 33554432
+  TEST net.ipv4.tcp_max_syn_backlog=4096
+  TEST net.core.somaxconn=4096
+  TEST net.core.optmem_max=65536
+  TEST net.core.netdev_max_backlog=32768
+TCP tuning active: congestion_control=dry-run default_qdisc=dry-run
+
+=== 2026-11-19 01:57:06 UTC network tuning ===
+Applying long-haul TCP tuning for the tunnel path...
+  TEST net.core.default_qdisc=fq
+  TEST net.ipv4.tcp_congestion_control=bbr
+  TEST net.ipv4.tcp_slow_start_after_idle=0
+  TEST net.ipv4.tcp_mtu_probing=1
+  TEST net.ipv4.tcp_keepalive_time=60
+  TEST net.ipv4.tcp_keepalive_intvl=15
+  TEST net.ipv4.tcp_keepalive_probes=4
+  TEST net.ipv4.tcp_no_metrics_save=1
+  TEST net.ipv4.tcp_notsent_lowat=8192
+  TEST net.ipv4.tcp_autocorking=0
+  TEST net.ipv4.tcp_sack=1
+  TEST net.ipv4.tcp_dsack=1
+  TEST net.ipv4.tcp_timestamps=1
+  TEST net.ipv4.tcp_tw_reuse=1
+  TEST net.ipv4.tcp_fastopen=3
+  TEST net.ipv4.tcp_fin_timeout=15
+  TEST net.ipv4.tcp_thin_linear_timeouts=1
+  TEST net.ipv4.tcp_syn_retries=3
+  TEST net.ipv4.tcp_synack_retries=2
+  TEST net.core.rmem_max=33554432
+  TEST net.core.wmem_max=33554432
+  TEST net.ipv4.tcp_rmem=65536 131072 33554432
+  TEST net.ipv4.tcp_wmem=65536 131072 33554432
+  TEST net.ipv4.tcp_max_syn_backlog=4096
+  TEST net.core.somaxconn=4096
+  TEST net.core.optmem_max=65536
+  TEST net.core.netdev_max_backlog=32768
+TCP tuning active: congestion_control=dry-run default_qdisc=dry-run
+
+=== 2026-11-19 01:59:49 UTC network tuning ===
+Applying long-haul TCP tuning for the tunnel path...
+  TEST net.core.default_qdisc=fq
+  TEST net.ipv4.tcp_congestion_control=bbr
+  TEST net.ipv4.tcp_slow_start_after_idle=0
+  TEST net.ipv4.tcp_mtu_probing=1
+  TEST net.ipv4.tcp_keepalive_time=60
+  TEST net.ipv4.tcp_keepalive_intvl=15
+  TEST net.ipv4.tcp_keepalive_probes=4
+  TEST net.ipv4.tcp_no_metrics_save=1
+  TEST net.ipv4.tcp_notsent_lowat=8192
+  TEST net.ipv4.tcp_autocorking=0
+  TEST net.ipv4.tcp_sack=1
+  TEST net.ipv4.tcp_dsack=1
+  TEST net.ipv4.tcp_timestamps=1
+  TEST net.ipv4.tcp_tw_reuse=1
+  TEST net.ipv4.tcp_fastopen=3
+  TEST net.ipv4.tcp_fin_timeout=15
+  TEST net.ipv4.tcp_thin_linear_timeouts=1
+  TEST net.ipv4.tcp_syn_retries=3
+  TEST net.ipv4.tcp_synack_retries=2
+  TEST net.core.rmem_max=33554432
+  TEST net.core.wmem_max=33554432
+  TEST net.ipv4.tcp_rmem=65536 131072 33554432
+  TEST net.ipv4.tcp_wmem=65536 131072 33554432
+  TEST net.ipv4.tcp_max_syn_backlog=4096
+  TEST net.core.somaxconn=4096
+  TEST net.core.optmem_max=65536
+  TEST net.core.netdev_max_backlog=32768
+TCP tuning active: congestion_control=dry-run default_qdisc=dry-run

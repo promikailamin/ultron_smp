@@ -12,13 +12,13 @@ on:
                 required: false
                 default: ''
             connector:
-                description: 'Minekube connector (gate = separate process, restartable)'
+                description: 'Minekube connector (gate = fastest, separate restartable process)'
                 required: false
-                default: plugin
+                default: gate
                 type: choice
                 options:
-                    - plugin
                     - gate
+                    - plugin
 
 permissions:
     contents: read
@@ -29,13 +29,16 @@ concurrency:
 
 jobs:
     server:
-        runs-on: ubuntu-latest
+        # Set the RUNNER_LABELS repository variable to a JSON array such as
+        # ["self-hosted","linux","asia"] to run Paper on a VPS/runner near the
+        # players. That is the only way to remove the physical US-runner RTT.
+        runs-on: ${{ fromJSON(vars.RUNNER_LABELS || '["ubuntu-latest"]') }}
         timeout-minutes: 360
         env:
             MINEKUBE_ENDPOINT: ${{ vars.MINEKUBE_ENDPOINT || 'mikailamin' }}
             MINEKUBE_CONNECT_TOKEN: ${{ secrets.MINEKUBE_CONNECT_TOKEN }}
             MINEKUBE_ALLOW_OFFLINE: 'true'
-            MINEKUBE_CONNECTOR: ${{ inputs.connector || 'plugin' }}
+            MINEKUBE_CONNECTOR: ${{ inputs.connector || 'gate' }}
             MINEKUBE_GATE_VERSION: ${{ vars.MINEKUBE_GATE_VERSION || 'latest' }}
             MINEKUBE_WATCH_HEALTH_ADDR: '127.0.0.1:25580'
             MINEKUBE_WATCH_URL: ${{ vars.MINEKUBE_WATCH_URL || '' }}
@@ -44,7 +47,34 @@ jobs:
             MINEKUBE_LIBP2P_RELAY_ADDRS: ${{ vars.MINEKUBE_LIBP2P_RELAY_ADDRS || '' }}
             PAPER_VERSION: ${{ inputs.paper_version }}
             PAPER_BUILD: ${{ inputs.paper_build }}
-            PAPER_JAVA_OPTS: '-Xms1G -Xmx2G'
+            # Aikar-style G1 flags keep GC pauses short so keepalive/tick
+            # handling is not delayed by multi-tens-of-ms collections.
+            PAPER_JAVA_OPTS: >-
+                -Xms2G -Xmx2G -XX:+UseG1GC -XX:+ParallelRefProcEnabled
+                -XX:MaxGCPauseMillis=30 -XX:+UnlockExperimentalVMOptions
+                -XX:+DisableExplicitGC -XX:G1NewSizePercent=30
+                -XX:G1MaxNewSizePercent=40 -XX:G1HeapRegionSize=8M
+                -XX:G1ReservePercent=20 -XX:G1MixedGCCountTarget=4
+                -XX:InitiatingHeapOccupancyPercent=15
+                -XX:G1MixedGCLiveThresholdPercent=90
+                -XX:G1RSetUpdatingPauseTimePercent=5 -XX:SurvivorRatio=32
+                -XX:MaxTenuringThreshold=1 -XX:+PerfDisableSharedMem
+            TWINGATE_ENABLED: ${{ vars.TWINGATE_ENABLED || 'auto' }}
+            TWINGATE_NETWORK: ${{ vars.TWINGATE_NETWORK || secrets.TWINGATE_NETWORK || 'mikailamin' }}
+            TWINGATE_CONNECTOR_NAME: ${{ vars.TWINGATE_CONNECTOR_NAME || 'twingate-mccon' }}
+            TWINGATE_DOCKER_PULL: ${{ vars.TWINGATE_DOCKER_PULL || 'always' }}
+            TWINGATE_LABEL_HOSTNAME: ${{ vars.TWINGATE_LABEL_HOSTNAME || 'ultronsmp.net' }}
+            TWINGATE_LABEL_DEPLOYED_BY: ${{ vars.TWINGATE_LABEL_DEPLOYED_BY || 'docker' }}
+            TWINGATE_ACCESS_TOKEN: ${{ secrets.TWINGATE_ACCESS_TOKEN }}
+            TWINGATE_REFRESH_TOKEN: ${{ secrets.TWINGATE_REFRESH_TOKEN }}
+            TWINGATE_API_TOKEN: ${{ secrets.TWINGATE_API_TOKEN }}
+            TWINGATE_REMOTE_NETWORK: ${{ vars.TWINGATE_REMOTE_NETWORK }}
+            TWINGATE_REMOTE_NETWORK_ID: ${{ vars.TWINGATE_REMOTE_NETWORK_ID }}
+            TWINGATE_RESOURCE_NAME: ${{ vars.TWINGATE_RESOURCE_NAME || 'minecraft' }}
+            TWINGATE_RESOURCE_ADDRESS: ${{ vars.TWINGATE_RESOURCE_ADDRESS || '127.0.0.1' }}
+            TWINGATE_RESOURCE_ALIAS: ${{ vars.TWINGATE_RESOURCE_ALIAS || 'minecraft.ultronsmp.internal' }}
+            TWINGATE_RESOURCE_PORT: ${{ vars.TWINGATE_RESOURCE_PORT || '25565' }}
+            TWINGATE_RESOURCE_GROUP_NAMES: ${{ vars.TWINGATE_RESOURCE_GROUP_NAMES || 'Everyone' }}
         steps:
             - name: checkout_repo
               uses: actions/checkout@v4
@@ -84,6 +114,28 @@ jobs:
                   fi
                   echo "Minekube token secret is present (value not printed)."
 
+            - name: start_twingate_connector
+              # The script starts only when both connector tokens are present and
+              # honours TWINGATE_ENABLED=false/true as an override. A Twingate
+              # problem must never take down the public Minecraft tunnel.
+              continue-on-error: true
+              run: |
+                  set -euo pipefail
+                  mkdir -p .agent-work/logs
+                  bash scripts/twingate-connector.sh start 2>&1 \
+                      | tee .agent-work/logs/twingate-connector.log
+
+            - name: ensure_twingate_resource
+              # Connector tokens cannot create Resources, so this needs an Admin
+              # API token. The script skips cleanly when none is configured and
+              # never prints secret values.
+              continue-on-error: true
+              run: |
+                  set -euo pipefail
+                  mkdir -p .agent-work/logs
+                  python3 scripts/twingate-resource.py ensure 2>&1 \
+                      | tee .agent-work/logs/twingate-resource.log
+
             - name: run_server
               timeout-minutes: 350
               run: |
@@ -108,6 +160,7 @@ jobs:
                       if [ "${MINEKUBE_CONNECTOR:-plugin}" = "gate" ]; then
                           bash scripts/minekube-gate.sh stop >/dev/null 2>&1 || true
                       fi
+                      bash scripts/twingate-connector.sh stop >/dev/null 2>&1 || true
                       if kill -0 "$server_pid" 2>/dev/null; then
                           echo "Stopping the Minecraft server..." >&2
                           echo "stop" >&3 2>/dev/null || true
@@ -210,7 +263,11 @@ jobs:
                       echo ""
                       echo "**Paper:** latest downloaded build (see server log)"
                       echo "**Minekube endpoint:** \`${endpoint}\`"
-                      echo "**Connector:** \`${MINEKUBE_CONNECTOR:-plugin}\`"
+                      echo "**Connector:** \`${MINEKUBE_CONNECTOR:-gate}\`"
+                      if [ -n "${TWINGATE_RESOURCE_ALIAS:-}" ] \
+                          && [ "${TWINGATE_RESOURCE_ALIAS}" != "none" ]; then
+                          echo "**Twingate (low-ping/private):** \`${TWINGATE_RESOURCE_ALIAS}:${TWINGATE_RESOURCE_PORT:-25565}\`"
+                      fi
                       echo ""
                       echo "### Tunnel path"
                       echo '```'
@@ -227,6 +284,12 @@ jobs:
                   rm -f "$fifo"
                   exec 3>&-
                   trap - EXIT
+
+            - name: stop_twingate_connector
+              if: always()
+              run: |
+                  set -euo pipefail
+                  bash scripts/twingate-connector.sh stop || true
 
             - name: run_summary
               if: always()
@@ -260,6 +323,8 @@ jobs:
                       .agent-work/logs/minekube-gate.log
                       .agent-work/logs/minekube-gate-console.log
                       .agent-work/logs/minekube-gate-restart.log
+                      .agent-work/logs/twingate-connector.log
+                      .agent-work/logs/twingate-resource.log
                       .agent-work/outputs/tunnel-latency-before-server.json
                       .agent-work/outputs/tunnel-latency-server-ready.json
                       SERVER_ADDRESS.txt

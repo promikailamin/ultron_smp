@@ -99,6 +99,11 @@ apply net.ipv4.tcp_no_metrics_save 1
 # queue turns chunk bursts into hundreds of milliseconds of extra latency.
 apply net.ipv4.tcp_notsent_lowat 8192
 
+# TCP autocorking deliberately delays small writes so they can be merged into
+# one segment. That saves a few packets but adds up to a timer tick of latency
+# to Minecraft's small keepalive/entity packets, so disable it for gameplay.
+apply net.ipv4.tcp_autocorking 0
+
 # Reliable, modern TCP behaviour.
 apply net.ipv4.tcp_sack 1
 apply net.ipv4.tcp_dsack 1
@@ -106,12 +111,20 @@ apply net.ipv4.tcp_timestamps 1
 apply net.ipv4.tcp_tw_reuse 1
 apply net.ipv4.tcp_fastopen 3
 
+# Recover and fail over quickly instead of letting a dead connection linger.
+apply net.ipv4.tcp_fin_timeout 15
+apply net.ipv4.tcp_thin_linear_timeouts 1
+apply net.ipv4.tcp_syn_retries 3
+apply net.ipv4.tcp_synack_retries 2
+
 # Larger autotuning ceilings let a single long-haul flow use the available
-# bandwidth (BDP) instead of being capped by the small default buffers.
+# bandwidth (BDP) instead of being capped by the small default buffers. The
+# larger minimum window also lets a fresh flow ramp up on a 200+ ms route
+# instead of spending its first packets stuck at the default 4 KiB.
 apply net.core.rmem_max 33554432
 apply net.core.wmem_max 33554432
-apply net.ipv4.tcp_rmem "4096 131072 33554432"
-apply net.ipv4.tcp_wmem "4096 65536 33554432"
+apply net.ipv4.tcp_rmem "65536 131072 33554432"
+apply net.ipv4.tcp_wmem "65536 131072 33554432"
 
 # More room for connection bursts and Netty's event loops.
 apply net.ipv4.tcp_max_syn_backlog 4096

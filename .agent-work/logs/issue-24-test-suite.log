@@ -1,0 +1,19 @@
+Issue 24 validation 2026-11-19T01:59:49Z
+=== test_paper_setup.sh ===
+All Paper + Minekube setup checks passed.
+PASS test_paper_setup.sh
+=== test_network_tune.sh ===
+network tune profile checks passed.
+PASS test_network_tune.sh
+=== test_minekube_gate.sh ===
+Minekube Gate connector checks passed.
+PASS test_minekube_gate.sh
+=== test_twingate_connector.sh ===
+Twingate connector test passed: auto-detection, env-only tokens, cleanup and status handling validated.
+PASS test_twingate_connector.sh
+=== test_twingate_resource.sh ===
+Twingate resource test passed: create, idempotency, group access, network selection, API token secrecy and workflow wiring validated.
+PASS test_twingate_resource.sh
+=== test_twingate_admin.sh ===
+Twingate admin test passed: status, provisioning, token rotation file, idempotency and credential secrecy validated.
+PASS test_twingate_admin.sh

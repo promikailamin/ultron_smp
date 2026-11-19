@@ -1,0 +1,117 @@
+{
+  "endpoint": "mikailamin",
+  "label": "issue-24-runner",
+  "recommendations": [
+    "Runner -> watch service latency is acceptable. If gameplay is still slow, the bottleneck is downstream (edge <-> connector <-> Paper), not connector registration.",
+    "Public status round-trip is 244 ms, which is usable for the runner -> edge -> Paper path measured from the runner itself.",
+    "Apply scripts/network-tune.sh (BBR + fq + shallow send queue) before starting Paper to remove kernel-side stalls on long or lossy routes."
+  ],
+  "samples": 3,
+  "targets": {
+    "edge": {
+      "dns": {
+        "addresses": [
+          "77.83.142.54"
+        ],
+        "dns_ms": 44.17
+      },
+      "host": "connect.minekube.net",
+      "port": 443,
+      "tcp": {
+        "attempts": 3,
+        "avg_ms": 54.17,
+        "failures": 0,
+        "jitter_ms": 30.24,
+        "loss_percent": 0.0,
+        "max_ms": 80.67,
+        "min_ms": 11.86,
+        "p95_ms": 80.67,
+        "peers": [
+          "77.83.142.54"
+        ],
+        "samples": 3
+      },
+      "tls": {
+        "attempts": 3,
+        "failures": 3,
+        "loss_percent": 100.0,
+        "samples": 0
+      }
+    },
+    "public": {
+      "dns": {
+        "addresses": [
+          "77.83.142.54"
+        ],
+        "dns_ms": 43.94
+      },
+      "host": "mikailamin.play.minekube.net",
+      "minecraft": {
+        "attempts": 3,
+        "avg_ms": 244.17,
+        "failures": 0,
+        "jitter_ms": 283.63,
+        "loss_percent": 0.0,
+        "max": 100,
+        "max_ms": 645.28,
+        "min_ms": 41.63,
+        "online": 0,
+        "p95_ms": 645.28,
+        "samples": 3,
+        "version": "Gate 1.7.2-1.7.5-26.3"
+      },
+      "port": 25565,
+      "tcp": {
+        "attempts": 3,
+        "avg_ms": 27.18,
+        "failures": 0,
+        "jitter_ms": 14.46,
+        "loss_percent": 0.0,
+        "max_ms": 46.07,
+        "min_ms": 10.96,
+        "p95_ms": 46.07,
+        "peers": [
+          "77.83.142.54"
+        ],
+        "samples": 3
+      }
+    },
+    "watch": {
+      "dns": {
+        "addresses": [
+          "66.241.124.220",
+          "2a09:8280:1::37:e391"
+        ],
+        "dns_ms": 58.84
+      },
+      "host": "watch-connect.minekube.net",
+      "port": 443,
+      "tcp": {
+        "attempts": 3,
+        "avg_ms": 9.33,
+        "failures": 0,
+        "jitter_ms": 0.22,
+        "loss_percent": 0.0,
+        "max_ms": 9.54,
+        "min_ms": 9.03,
+        "p95_ms": 9.54,
+        "peers": [
+          "66.241.124.220"
+        ],
+        "samples": 3
+      },
+      "tls": {
+        "attempts": 3,
+        "avg_ms": 27.71,
+        "failures": 0,
+        "jitter_ms": 4.45,
+        "loss_percent": 0.0,
+        "max_ms": 31.5,
+        "min_ms": 21.46,
+        "p95_ms": 31.5,
+        "samples": 3
+      }
+    }
+  },
+  "timestamp_utc": "2026-11-19T01:57:07Z"
+}
