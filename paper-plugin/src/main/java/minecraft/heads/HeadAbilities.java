@@ -1,27 +1,39 @@
 package minecraft.heads;
 
 import java.util.ArrayList;
+import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Set;
 import org.bukkit.entity.EntityType;
 import org.bukkit.potion.PotionEffectType;
 
 /**
  * Passive and active power definitions for every mob head. Each profile is a
- * combination of refreshing potion effects; a few mobs also have dedicated
- * active abilities implemented in {@link HeadPowers}.
+ * combination of refreshing potion effects plus one or more non-effect
+ * abilities implemented in {@link HeadPowers}.
  */
 public final class HeadAbilities {
 
     public record Effect(PotionEffectType type, int amplifier) {
     }
 
-    public record Profile(List<Effect> effects, String description) {
+    public record Profile(List<Effect> effects, String description, List<HeadAbility> abilities) {
     }
 
     private static final Map<String, Profile> PROFILES = new HashMap<>();
+
+    private static final Set<String> FLIGHT_MOBS = Set.of(
+            "ALLAY", "BAT", "BEE", "PARROT", "PHANTOM", "VEX", "BREEZE",
+            "GHAST", "HAPPY_GHAST", "ENDER_DRAGON", "WITHER");
+    private static final Set<String> KNOCKBACK_MOBS = Set.of(
+            "IRON_GOLEM", "GIANT", "RAVAGER", "POLAR_BEAR", "HOGLIN", "ZOGLIN",
+            "PIGLIN_BRUTE", "WARDEN", "ENDER_DRAGON", "WITHER", "COPPER_GOLEM");
+    private static final Set<String> THORNS_MOBS = Set.of(
+            "PUFFERFISH", "ARMADILLO", "SHULKER", "TURTLE", "GUARDIAN",
+            "ELDER_GUARDIAN", "ZOMBIE_NAUTILUS");
 
     private HeadAbilities() {
     }
@@ -31,11 +43,81 @@ public final class HeadAbilities {
     }
 
     private static void add(String key, String description, Effect... effects) {
-        PROFILES.put(key, new Profile(List.of(effects), description));
+        PROFILES.put(key, new Profile(List.of(effects), description,
+                abilitiesFor(key)));
+    }
+
+    private static void grant(EnumSet<HeadAbility> abilities, String key,
+            HeadAbility ability, String... mobs) {
+        if (List.of(mobs).contains(key)) {
+            abilities.add(ability);
+        }
+    }
+
+    private static List<HeadAbility> abilitiesFor(String key) {
+        EnumSet<HeadAbility> abilities = EnumSet.noneOf(HeadAbility.class);
+        if (FLIGHT_MOBS.contains(key)) {
+            abilities.add(HeadAbility.FLIGHT);
+        }
+        if (KNOCKBACK_MOBS.contains(key)) {
+            abilities.add(HeadAbility.KNOCKBACK);
+        }
+        if (THORNS_MOBS.contains(key)) {
+            abilities.add(HeadAbility.THORNS);
+        }
+
+        grant(abilities, key, HeadAbility.EXPLOSION, "CREEPER");
+        grant(abilities, key, HeadAbility.SUMMON_PIGS, "PIG");
+        grant(abilities, key, HeadAbility.TELEPORT, "ENDERMAN", "CREAKING");
+        grant(abilities, key, HeadAbility.FIRE_CHARGE,
+                "BREEZE", "BLAZE", "GHAST", "HAPPY_GHAST", "ENDER_DRAGON");
+        grant(abilities, key, HeadAbility.SHOOT_ARROW,
+                "SKELETON", "STRAY", "BOGGED", "PARCHED", "PILLAGER",
+                "ILLUSIONER", "WITHER_SKELETON");
+        grant(abilities, key, HeadAbility.THROW_SNOWBALL,
+                "SNOW_GOLEM", "FROSTBITE", "STRAY");
+        grant(abilities, key, HeadAbility.SONIC_BOOM, "WARDEN");
+        grant(abilities, key, HeadAbility.WITHER_SKULL, "WITHER");
+        grant(abilities, key, HeadAbility.POISON_CLOUD,
+                "WITCH", "BEE", "PUFFERFISH", "CAVE_SPIDER");
+        grant(abilities, key, HeadAbility.WEB, "SPIDER", "CAVE_SPIDER");
+        grant(abilities, key, HeadAbility.INVISIBILITY, "ILLUSIONER");
+        grant(abilities, key, HeadAbility.SHIELD,
+                "VINDICATOR", "ARMOR_STAND", "MANNEQUIN", "VILLAGER",
+                "WANDERING_TRADER", "SHULKER", "ARMADILLO", "TURTLE");
+        grant(abilities, key, HeadAbility.LIGHTNING, "EVOKER");
+        grant(abilities, key, HeadAbility.FIRE_AURA,
+                "BLAZE", "MAGMA_CUBE", "SULFUR_CUBE", "STRIDER");
+        grant(abilities, key, HeadAbility.WATER_BURST,
+                "DOLPHIN", "SQUID", "GLOW_SQUID", "COD", "SALMON",
+                "TROPICAL_FISH", "TADPOLE", "AXOLOTL", "DROWNED",
+                "GUARDIAN", "ELDER_GUARDIAN", "TURTLE");
+        grant(abilities, key, HeadAbility.PULL, "NAUTILUS", "ZOMBIE_NAUTILUS");
+        grant(abilities, key, HeadAbility.HEAL,
+                "COW", "MOOSHROOM", "SHEEP", "SNIFFER", "WITCH", "AXOLOTL",
+                "ZOMBIE_VILLAGER", "HAPPY_GHAST");
+        grant(abilities, key, HeadAbility.DASH,
+                "HORSE", "DONKEY", "MULE", "CAMEL", "CAMEL_HUSK",
+                "SKELETON_HORSE", "ZOMBIE_HORSE", "LLAMA", "TRADER_LLAMA",
+                "RAVAGER", "ZOGLIN", "HOGLIN", "POLAR_BEAR", "OCELOT", "CAT",
+                "FOX", "WOLF", "GIANT", "STRIDER", "PIGLIN_BRUTE");
+        grant(abilities, key, HeadAbility.LEAP,
+                "RABBIT", "FROG", "GOAT", "SLIME", "MAGMA_CUBE", "SULFUR_CUBE",
+                "CHICKEN", "PARROT", "BAT");
+        grant(abilities, key, HeadAbility.SUMMON_MINIONS,
+                "ZOMBIE", "HUSK", "DROWNED", "ZOMBIE_VILLAGER", "PIGLIN",
+                "ZOMBIFIED_PIGLIN", "WITHER_SKELETON", "SILVERFISH",
+                "ENDERMITE", "VEX", "EVOKER", "PIGLIN_BRUTE");
+        grant(abilities, key, HeadAbility.SHIELD, "ZOMBIE", "HUSK");
+
+        if (abilities.isEmpty()) {
+            abilities.add(HeadAbility.DASH);
+        }
+        return List.copyOf(abilities);
     }
 
     static {
-        add("ALLAY", "Floats gently and moves quickly while helping.",
+        add("ALLAY", "Creative-style flight and a gentle glide while helping.",
                 effect(PotionEffectType.SPEED, 1),
                 effect(PotionEffectType.SLOW_FALLING, 0));
         add("ARMADILLO", "Rolls with the blows, gaining heavy damage resistance.",
@@ -51,7 +133,7 @@ public final class HeadAbilities {
         add("BAT", "Sees in the dark and never takes fall damage.",
                 effect(PotionEffectType.NIGHT_VISION, 0),
                 effect(PotionEffectType.SLOW_FALLING, 0));
-        add("BEE", "Buzzes upward and lands softly.",
+        add("BEE", "Creative-style flight plus a poisonous sting cloud.",
                 effect(PotionEffectType.JUMP_BOOST, 1),
                 effect(PotionEffectType.SLOW_FALLING, 0));
         add("BLAZE", "Burns brightly with fire resistance and strength.",
@@ -60,7 +142,7 @@ public final class HeadAbilities {
         add("BOGGED", "Marsh resilience repairs damage and toughens skin.",
                 effect(PotionEffectType.RESISTANCE, 0),
                 effect(PotionEffectType.REGENERATION, 0));
-        add("BREEZE", "Rides the wind with speed, leaps and soft falls.",
+        add("BREEZE", "Creative-style flight; right-click to throw a fire charge.",
                 effect(PotionEffectType.SPEED, 1),
                 effect(PotionEffectType.JUMP_BOOST, 2),
                 effect(PotionEffectType.SLOW_FALLING, 0));
@@ -89,7 +171,7 @@ public final class HeadAbilities {
         add("CREAKING", "Creaking wood grants night vision and deep resistance.",
                 effect(PotionEffectType.NIGHT_VISION, 0),
                 effect(PotionEffectType.RESISTANCE, 1));
-        add("CREEPER", "Right-click with an empty hand for a safe blast.",
+        add("CREEPER", "Right-click for an entity-only blast that never breaks blocks.",
                 effect(PotionEffectType.SPEED, 0));
         add("DOLPHIN", "Glides through water with dolphins grace.",
                 effect(PotionEffectType.DOLPHINS_GRACE, 1),
@@ -110,7 +192,7 @@ public final class HeadAbilities {
                 effect(PotionEffectType.RESISTANCE, 2),
                 effect(PotionEffectType.REGENERATION, 1),
                 effect(PotionEffectType.HEALTH_BOOST, 1));
-        add("ENDERMAN", "Night vision and speed. Right-click to teleport.",
+        add("ENDERMAN", "Night vision and speed. Right-click to blink-teleport.",
                 effect(PotionEffectType.NIGHT_VISION, 0),
                 effect(PotionEffectType.SPEED, 1));
         add("ENDERMITE", "Burrows quickly with haste and speed.",
@@ -156,7 +238,7 @@ public final class HeadAbilities {
         add("ILLUSIONER", "Illager trickery grants speed and night vision.",
                 effect(PotionEffectType.SPEED, 1),
                 effect(PotionEffectType.NIGHT_VISION, 0));
-        add("IRON_GOLEM", "Golem strength with two extra hearts.",
+        add("IRON_GOLEM", "Golem strength, extra hearts and a huge knockback punch.",
                 effect(PotionEffectType.STRENGTH, 1),
                 effect(PotionEffectType.HEALTH_BOOST, 1));
         add("LLAMA", "A strong jump and a sturdy spit.",
@@ -195,7 +277,7 @@ public final class HeadAbilities {
                 effect(PotionEffectType.NIGHT_VISION, 0),
                 effect(PotionEffectType.SPEED, 1),
                 effect(PotionEffectType.SLOW_FALLING, 0));
-        add("PIG", "Right-click to summon nearby pigs as guards.",
+        add("PIG", "Right-click to summon nearby pigs as loyal guards.",
                 effect(PotionEffectType.SPEED, 0));
         add("PIGLIN", "Nether speed and fire resistance.",
                 effect(PotionEffectType.SPEED, 0),
@@ -347,7 +429,8 @@ public final class HeadAbilities {
             case "SNOWMAN" -> PROFILES.get("SNOW_GOLEM");
             case "PIG_ZOMBIE" -> PROFILES.get("ZOMBIFIED_PIGLIN");
             default -> new Profile(List.of(effect(PotionEffectType.SPEED, 0)),
-                    "A mysterious mob aura grants a small speed boost.");
+                    "A mysterious mob aura grants a small speed boost.",
+                    List.of(HeadAbility.DASH));
         };
     }
 
@@ -356,8 +439,21 @@ public final class HeadAbilities {
         return profile == null ? "No power" : profile.description();
     }
 
+    public static List<HeadAbility> abilities(EntityType type) {
+        Profile profile = profileFor(type);
+        return profile == null ? List.of() : profile.abilities();
+    }
+
     public static int profileCount() {
         return PROFILES.size();
+    }
+
+    public static int abilityCount() {
+        int count = 0;
+        for (Profile profile : PROFILES.values()) {
+            count += profile.abilities().size();
+        }
+        return count;
     }
 
     public static List<String> keys() {

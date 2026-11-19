@@ -7,13 +7,13 @@ require-player-kill: true
 # A charged creeper kill always drops a head (unless disabled).
 charged-creeper-always-drops: true
 
-# Mob head powers. Every living mob head has a unique passive ability.
+# Mob head powers. Every living mob head has refreshing effects plus one or
+# more unique non-effect abilities. Active abilities are triggered by
+# right-clicking with an empty hand.
 powers:
-  # Creeper head: right-click with an empty hand to detonate safely.
+  # Creeper head: right-click for an entity-only blast. Blocks are never broken.
   creeper-cooldown: 10.0
   creeper-power: 3.0
-  # Keep this false to protect the world from head-powered griefing.
-  creeper-break-blocks: false
 
   # Pig head: right-click to recruit nearby pigs as guards.
   pig-cooldown: 5.0
@@ -22,5 +22,87 @@ powers:
   pig-follow-radius: 4.0
   pig-hostile-radius: 12.0
 
-  # Enderman head: right-click to teleport to a nearby safe spot.
-  enderman-cooldown: 5.0
+  # Enderman/creaking teleport.
+  teleport-cooldown: 5.0
+  teleport-radius: 12.0
+
+  # Breeze/blaze/ghast fire charge.
+  fire-charge-cooldown: 4.0
+  fire-charge-speed: 1.8
+  # 0 keeps head-powered fire charges from breaking blocks.
+  fire-charge-yield: 0.0
+  fire-charge-incendiary: false
+  fire-charge-damage: 5.0
+  fire-charge-fire-ticks: 60
+
+  # Skeleton/pillager arrows.
+  arrow-cooldown: 2.0
+  arrow-speed: 2.5
+  arrow-damage: 4.0
+
+  # Snow golem/frostbite snowballs.
+  snowball-cooldown: 2.0
+  snowball-speed: 1.6
+  snowball-damage: 2.0
+
+  # Warden sonic boom.
+  sonic-boom-cooldown: 15.0
+  sonic-boom-range: 10.0
+  sonic-boom-damage: 10.0
+
+  # Wither skull projectile.
+  wither-skull-cooldown: 6.0
+  wither-skull-speed: 1.2
+  wither-skull-damage: 8.0
+
+  # Poison, web, invisibility and shield powers.
+  poison-cooldown: 8.0
+  poison-radius: 5.0
+  web-cooldown: 8.0
+  web-duration: 5.0
+  invisibility-cooldown: 15.0
+  shield-cooldown: 12.0
+
+  # Evoker lightning.
+  lightning-cooldown: 15.0
+  lightning-range: 12.0
+  lightning-damage: 8.0
+
+  # Blaze/magma/strider fire aura.
+  fire-aura-cooldown: 10.0
+  fire-aura-radius: 5.0
+  fire-aura-damage: 2.0
+
+  # Aquatic powers.
+  water-burst-cooldown: 8.0
+  water-burst-radius: 6.0
+  water-burst-power: 0.9
+  pull-cooldown: 8.0
+  pull-radius: 10.0
+  pull-power: 1.1
+
+  # Healing heads.
+  heal-cooldown: 12.0
+  heal-amount: 6.0
+
+  # Mount and predator dashes plus jumping heads.
+  dash-cooldown: 5.0
+  dash-power: 1.2
+  leap-cooldown: 5.0
+  leap-horizontal: 0.5
+  leap-power: 1.0
+
+  # Undead/illager minions.
+  minions-cooldown: 20.0
+  minions-count: 2
+  minions-lifetime: 20.0
+
+  # Passive combat powers.
+  knockback-strength: 1.8
+  iron-golem-knockback: 3.5
+  thorns-cooldown: 1.0
+  thorns-knockback: 0.9
+  thorns-damage: 2.0
+
+  # Flying mob heads grant creative-style flight in survival.
+  flight-enabled: true

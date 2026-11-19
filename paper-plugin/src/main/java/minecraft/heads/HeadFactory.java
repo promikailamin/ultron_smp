@@ -53,6 +53,8 @@ public final class HeadFactory {
 
     private static void decorate(ItemStack item, EntityType type) {
         String name = HeadTextures.displayName(type) + " Head";
+        String abilities = String.join(", ", HeadAbilities.abilities(type).stream()
+                .map(HeadAbility::displayName).toList());
         item.editMeta(meta -> {
             meta.getPersistentDataContainer().set(MOB_KEY, PersistentDataType.STRING, type.name());
             meta.displayName(Component.text(name)
@@ -62,6 +64,8 @@ public final class HeadFactory {
                     Component.text("Mob head", NamedTextColor.GRAY)
                             .decoration(TextDecoration.ITALIC, false),
                     Component.text("Power: " + HeadAbilities.description(type), NamedTextColor.AQUA)
+                            .decoration(TextDecoration.ITALIC, false),
+                    Component.text("Abilities: " + abilities, NamedTextColor.YELLOW)
                             .decoration(TextDecoration.ITALIC, false),
                     Component.text(type.getKey().toString(), NamedTextColor.DARK_GRAY)
                             .decoration(TextDecoration.ITALIC, false)));

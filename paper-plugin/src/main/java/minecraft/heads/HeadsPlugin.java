@@ -3,7 +3,10 @@ package minecraft.heads;
 import com.destroystokyo.paper.profile.PlayerProfile;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.EnumSet;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import org.bukkit.Material;
 import org.bukkit.command.PluginCommand;
 import org.bukkit.entity.EntityType;
@@ -139,11 +142,19 @@ public final class HeadsPlugin extends JavaPlugin {
         }
 
         int powerProfiles = 0;
+        int abilityCount = 0;
+        Set<List<HeadAbility>> abilityCombos = new HashSet<>();
+        EnumSet<HeadAbility> usedAbilities = EnumSet.noneOf(HeadAbility.class);
         for (EntityType type : textures.types()) {
             HeadAbilities.Profile profile = HeadAbilities.profileFor(type);
             if (profile == null || profile.description() == null || profile.description().isBlank()) {
                 failures++;
                 getLogger().warning("SELFTEST missing head power for " + type.getKey());
+                continue;
+            }
+            if (profile.abilities().isEmpty()) {
+                failures++;
+                getLogger().warning("SELFTEST head has no non-effect ability for " + type.getKey());
                 continue;
             }
             ItemStack head = HeadFactory.create(textures, type);
@@ -152,7 +163,15 @@ public final class HeadsPlugin extends JavaPlugin {
                 getLogger().warning("SELFTEST head power tag round-trip failed for " + type.getKey());
                 continue;
             }
+            abilityCount += profile.abilities().size();
+            abilityCombos.add(profile.abilities());
+            usedAbilities.addAll(profile.abilities());
             powerProfiles++;
+        }
+        if (usedAbilities.size() != HeadAbility.values().length) {
+            failures++;
+            getLogger().warning("SELFTEST only " + usedAbilities.size() + " of "
+                    + HeadAbility.values().length + " abilities are assigned");
         }
 
         if (failures == 0) {
@@ -160,6 +179,8 @@ public final class HeadsPlugin extends JavaPlugin {
                     + " fallbacks=" + textures.missing().size());
             getLogger().info("HEADS GUI SELFTEST PASS pages=" + guiPages + " heads=" + guiHeads);
             getLogger().info("HEADS POWERS SELFTEST PASS profiles=" + powerProfiles);
+            getLogger().info("HEADS ABILITIES SELFTEST PASS abilities=" + abilityCount
+                    + " unique=" + usedAbilities.size() + " combos=" + abilityCombos.size());
         } else {
             getLogger().warning("HEADS SELFTEST FAIL types=" + checked + " failures=" + failures);
         }
