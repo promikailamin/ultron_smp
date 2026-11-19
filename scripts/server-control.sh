@@ -30,6 +30,10 @@ PID_FILE="${MC_PID_FILE:-$STATE_DIR/minecraft-server.pid}"
 HOLDER_PID_FILE="${MC_HOLDER_PID_FILE:-$STATE_DIR/ultron-console-holder.pid}"
 LOG_FILE="${MC_LOG_FILE:-$ROOT_DIR/server.log}"
 RUN_SCRIPT="${MC_RUN_SCRIPT:-$ROOT_DIR/run.sh}"
+case "$RUN_SCRIPT" in
+    /*) ;;
+    *) RUN_SCRIPT="$ROOT_DIR/$RUN_SCRIPT" ;;
+esac
 
 mkdir -p "$STATE_DIR" "$(dirname -- "$CONSOLE_FIFO")" "$(dirname -- "$LOG_FILE")"
 

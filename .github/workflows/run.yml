@@ -44,6 +44,7 @@ jobs:
         timeout-minutes: 360
         env:
             MINECRAFT_PORT: '25565'
+            MC_RUN_SCRIPT: paper/start.sh
             SERVER_ISSUE_NUMBER: '1'
             TUNNEL_PROVIDER: ${{ inputs.tunnel || 'auto' }}
             TUNNEL_REGION: ${{ inputs.tunnel_region || 'auto' }}

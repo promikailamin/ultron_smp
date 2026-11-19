@@ -40,3 +40,26 @@
 
 __pycache__/
 *.pyc
+
+# Paper runtime files (the world and economy data are symlinked to the repo root)
+paper/paper.jar
+paper/libraries/
+paper/versions/
+paper/cache/
+paper/logs/
+paper/world
+paper/world_nether
+paper/world_the_end
+paper/config/economy
+paper/ops.json
+paper/whitelist.json
+paper/banned-players.json
+paper/banned-ips.json
+paper/usercache.json
+
+# Paper build/download artifacts
+.agent-work/tools/paper-*
+.agent-work/tools/cfr.jar
+.agent-work/tools/vineflower.jar
+.agent-work/logs/issue-21-*.log
+paper-plugin/build/

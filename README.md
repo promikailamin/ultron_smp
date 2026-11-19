@@ -1,7 +1,42 @@
 # Ultron SMP
 
-Fabric Minecraft server backed up in this repository and started from the
+Paper 26.3 Minecraft server backed up in this repository and started from the
 **Run UltronSMP** GitHub Actions workflow.
+
+## Paper server and Economy plugin
+
+The server runs the latest Paper release (currently **26.3 build 255**, pinned
+by SHA-256) instead of Fabric. The only Fabric mod, the Economy mod, has been
+ported to a Paper plugin in `paper-plugin/`. It keeps the same commands
+(`/bal`, `/pay`, `/fine`, `/shop`, `/buy`, `/sell`, `/ah`, `/eco`, `/ecosb`),
+the seller axe, gear boxes, auctions and the existing `config/economy` data.
+
+`paper/start.sh` downloads the pinned Paper jar on demand, builds the plugin
+when `paper/plugins/Economy-1.0.0.jar` is missing, links the existing world and
+economy data from the repository root, and starts the server on port `25565`.
+The **Run UltronSMP** workflow uses this script through
+`scripts/server-control.sh`, so autosaves, final backups and tunnels keep
+working unchanged.
+
+Useful commands:
+
+```bash
+# Build the Paper plugin (downloads/initialises Paper once)
+bash paper-plugin/build.sh
+
+# Build and run the in-server integration self-test against Paper
+bash paper-plugin/test.sh
+
+# Start the Paper server with the Economy plugin
+bash paper/start.sh
+```
+
+The integration test runs a real Paper server, loads the plugin, and exercises
+balances, prices, gear boxes, auctions, the seller axe, command registration,
+all player GUIs/commands and the scoreboard. The
+**Paper Economy Plugin Test** workflow runs the same test on every push that
+changes the plugin, Paper files or economy data, and can also be started
+manually.
 
 ## Connecting
 
@@ -54,11 +89,11 @@ hop is longer. `auto` measures both legs and chooses the best total.
 ## Minekube Connect
 
 Minekube's fast-start Connect plugin is a Paper/Spigot/Velocity/BungeeCord
-plugin, so a Fabric server cannot load it directly. Gate is Minekube's own
-Minecraft proxy and the supported platform-independent Connect connector, so
-this repository uses it instead of converting the Paper plugin. Gate runs
-next to the Fabric server, forwards players to `127.0.0.1:25565` and keeps an
-outbound tunnel to the Connect network. The public address is
+plugin. This repository still uses Gate, Minekube's own Minecraft proxy and
+platform-independent Connect connector, because it is already wired into the
+tunnel workflow and keeps working independently of the server platform. Gate
+runs next to the Paper server, forwards players to `127.0.0.1:25565` and keeps
+an outbound tunnel to the Connect network. The public address is
 `<endpoint>.play.minekube.net`.
 
 No setup is required: `auto` tries Minekube first, and the `minekube`
