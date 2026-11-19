@@ -20,16 +20,22 @@ import org.bukkit.Sound;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Arrow;
+import org.bukkit.entity.Boat;
+import org.bukkit.entity.DragonFireball;
 import org.bukkit.entity.Enemy;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Fireball;
+import org.bukkit.entity.Hanging;
+import org.bukkit.entity.Interaction;
 import org.bukkit.entity.LivingEntity;
+import org.bukkit.entity.Minecart;
 import org.bukkit.entity.Mob;
 import org.bukkit.entity.Pig;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Projectile;
 import org.bukkit.entity.Snowball;
+import org.bukkit.entity.WindCharge;
 import org.bukkit.entity.WitherSkull;
 import org.bukkit.event.Event;
 import org.bukkit.event.EventHandler;
@@ -44,6 +50,7 @@ import org.bukkit.event.entity.ProjectileHitEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.inventory.EquipmentSlot;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.scheduler.BukkitTask;
@@ -60,7 +67,19 @@ public final class HeadPowers implements Listener {
     private static final String MINION_TAG = "heads_minion";
     private static final String SNOWBALL_TAG = "heads_snowball";
     private static final String FIRE_CHARGE_TAG = "heads_fire_charge";
+    private static final String DRAGON_BREATH_TAG = "heads_dragon_breath";
+    private static final String WIND_BURST_TAG = "heads_wind_burst";
     private static final String WITHER_SKULL_TAG = "heads_wither_skull";
+    private static final Set<String> RIGHT_CLICK_ITEM_NAMES = Set.of(
+            "BOW", "CROSSBOW", "TRIDENT", "SHIELD", "ENDER_PEARL", "ENDER_EYE",
+            "EXPERIENCE_BOTTLE", "FIREWORK_ROCKET", "FIREWORK_STAR", "FIRE_CHARGE",
+            "WIND_CHARGE", "SNOWBALL", "EGG", "BONE_MEAL", "NAME_TAG", "LEAD",
+            "FLINT_AND_STEEL", "ARMOR_STAND", "ITEM_FRAME", "GLOW_ITEM_FRAME",
+            "PAINTING", "BRUSH", "GOAT_HORN", "BUCKET", "WATER_BUCKET",
+            "LAVA_BUCKET", "MILK_BUCKET", "POWDER_SNOW_BUCKET", "AXOLOTL_BUCKET",
+            "COD_BUCKET", "SALMON_BUCKET", "TROPICAL_FISH_BUCKET",
+            "PUFFERFISH_BUCKET", "TADPOLE_BUCKET", "POTION", "SPLASH_POTION",
+            "LINGERING_POTION", "OMINOUS_BOTTLE", "HONEY_BOTTLE");
 
     private final HeadsPlugin plugin;
     private final Map<UUID, Set<UUID>> servants = new HashMap<>();
@@ -73,6 +92,7 @@ public final class HeadPowers implements Listener {
     private final Map<UUID, CombatTarget> combatTargets = new HashMap<>();
     private final Map<UUID, Integer> cowGrassSeconds = new HashMap<>();
     private final Map<UUID, Long> cowNextHeal = new HashMap<>();
+    private final Map<UUID, Long> pigNextRecruit = new HashMap<>();
     private final Map<UUID, Boolean> flightRestore = new HashMap<>();
     private BukkitTask task;
 
@@ -116,6 +136,7 @@ public final class HeadPowers implements Listener {
         combatTargets.clear();
         cowGrassSeconds.clear();
         cowNextHeal.clear();
+        pigNextRecruit.clear();
         flightRestore.clear();
     }
 
@@ -132,6 +153,7 @@ public final class HeadPowers implements Listener {
             if (head == null) {
                 cowGrassSeconds.remove(id);
                 cowNextHeal.remove(id);
+                pigNextRecruit.remove(id);
                 revokeFlight(player);
                 if (servants.containsKey(id)) {
                     releaseServants(player);
@@ -167,8 +189,11 @@ public final class HeadPowers implements Listener {
 
             if (head == EntityType.PIG) {
                 tickPig(player, now);
-            } else if (servants.containsKey(id)) {
-                releaseServants(player);
+            } else {
+                pigNextRecruit.remove(id);
+                if (servants.containsKey(id)) {
+                    releaseServants(player);
+                }
             }
         }
     }
@@ -233,6 +258,12 @@ public final class HeadPowers implements Listener {
 
     private void tickPig(Player owner, long now) {
         UUID ownerId = owner.getUniqueId();
+        long nextRecruit = pigNextRecruit.getOrDefault(ownerId, 0L);
+        if (now >= nextRecruit) {
+            commandPigs(owner);
+            pigNextRecruit.put(ownerId, now + 2000L);
+        }
+
         Set<UUID> owned = servants.get(ownerId);
         if (owned == null || owned.isEmpty()) {
             return;
@@ -438,28 +469,22 @@ public final class HeadPowers implements Listener {
         return HeadFactory.mobType(player.getInventory().getHelmet());
     }
 
-    @SuppressWarnings("deprecation")
     @EventHandler(priority = EventPriority.NORMAL)
     public void onInteract(PlayerInteractEvent event) {
         if (event.getHand() != EquipmentSlot.HAND) {
             return;
         }
         Player player = event.getPlayer();
-        if (!player.getInventory().getItemInMainHand().getType().isAir()) {
-            return;
-        }
         EntityType head = wornHead(player);
         if (head == null) {
             return;
         }
 
         Action action = event.getAction();
-        if (action == Action.RIGHT_CLICK_BLOCK) {
-            Block block = event.getClickedBlock();
-            if (block != null && block.getType().asBlockType().isInteractable()) {
-                return;
-            }
-        } else if (action != Action.RIGHT_CLICK_AIR) {
+        if (action != Action.RIGHT_CLICK_AIR && action != Action.RIGHT_CLICK_BLOCK) {
+            return;
+        }
+        if (interactionConsumesClick(player, event, action)) {
             return;
         }
 
@@ -473,6 +498,103 @@ public final class HeadPowers implements Listener {
             event.setUseInteractedBlock(Event.Result.DENY);
             event.setUseItemInHand(Event.Result.DENY);
         }
+    }
+
+    /**
+     * Returns true when the right-click is already a meaningful block, entity
+     * or held-item interaction. In that case the head power must stay dormant.
+     * Right-clicking air or a solid block with no interaction still triggers it.
+     */
+    private boolean interactionConsumesClick(Player player, PlayerInteractEvent event,
+            Action action) {
+        Block block = action == Action.RIGHT_CLICK_BLOCK ? event.getClickedBlock() : null;
+        if (block != null && isInteractiveBlock(block)) {
+            return true;
+        }
+
+        Entity target = player.getTargetEntity(6, false);
+        if (target != null && isInteractiveEntity(target)) {
+            return true;
+        }
+
+        return itemUsesRightClick(player.getInventory().getItemInMainHand(), action, block);
+    }
+
+    private static boolean isInteractiveEntity(Entity entity) {
+        return entity instanceof LivingEntity
+                || entity instanceof Boat
+                || entity instanceof Minecart
+                || entity instanceof Hanging
+                || entity instanceof Interaction;
+    }
+
+    @SuppressWarnings("deprecation")
+    private static boolean isInteractiveBlock(Block block) {
+        Material type = block.getType();
+        if (type.isAir()) {
+            return false;
+        }
+        try {
+            if (type.asBlockType().isInteractable()) {
+                return true;
+            }
+        } catch (IllegalArgumentException ignored) {
+            // Fall through to the explicit material-name checks below.
+        }
+        String name = type.name();
+        return name.endsWith("_DOOR") || name.endsWith("_TRAPDOOR")
+                || name.endsWith("_FENCE_GATE") || name.endsWith("_BUTTON")
+                || name.endsWith("_BED") || name.endsWith("_CANDLE")
+                || name.endsWith("_SIGN") || name.endsWith("_HANGING_SIGN")
+                || name.equals("LEVER") || name.equals("NOTE_BLOCK")
+                || name.equals("JUKEBOX") || name.equals("BELL")
+                || name.equals("CAKE") || name.equals("COMPOSTER")
+                || name.equals("LECTERN") || name.equals("BREWING_STAND")
+                || name.equals("ENCHANTING_TABLE") || name.equals("ANVIL")
+                || name.equals("CHIPPED_ANVIL") || name.equals("DAMAGED_ANVIL")
+                || name.equals("GRINDSTONE") || name.equals("STONECUTTER")
+                || name.equals("LOOM") || name.equals("CARTOGRAPHY_TABLE")
+                || name.equals("SMITHING_TABLE") || name.equals("RESPAWN_ANCHOR")
+                || name.equals("DAYLIGHT_DETECTOR") || name.equals("COMPARATOR")
+                || name.equals("REPEATER") || name.equals("COMMAND_BLOCK")
+                || name.equals("CHAIN_COMMAND_BLOCK")
+                || name.equals("REPEATING_COMMAND_BLOCK")
+                || name.equals("STRUCTURE_BLOCK") || name.equals("JIGSAW")
+                || name.equals("CHEST") || name.equals("TRAPPED_CHEST")
+                || name.equals("ENDER_CHEST") || name.endsWith("SHULKER_BOX")
+                || name.equals("BARREL") || name.equals("FURNACE")
+                || name.equals("BLAST_FURNACE") || name.equals("SMOKER")
+                || name.equals("DISPENSER") || name.equals("DROPPER")
+                || name.equals("HOPPER") || name.equals("CRAFTING_TABLE")
+                || name.equals("CRAFTER") || name.equals("BEACON")
+                || name.equals("CHISELED_BOOKSHELF")
+                || name.equals("DECORATED_POT") || name.equals("VAULT")
+                || name.equals("TRIAL_SPAWNER");
+    }
+
+    private static boolean itemUsesRightClick(ItemStack item, Action action, Block block) {
+        if (item == null || item.getType().isAir()) {
+            return false;
+        }
+        Material type = item.getType();
+        String name = type.name();
+        if (type.isEdible() || RIGHT_CLICK_ITEM_NAMES.contains(name)) {
+            return true;
+        }
+        if (name.endsWith("_SPAWN_EGG") || name.endsWith("_BOAT")
+                || name.endsWith("_RAFT") || name.endsWith("_MINECART")) {
+            return true;
+        }
+        if (type.isBlock()) {
+            return action == Action.RIGHT_CLICK_BLOCK;
+        }
+        if (action == Action.RIGHT_CLICK_BLOCK
+                && (name.endsWith("_AXE") || name.endsWith("_SHOVEL")
+                    || name.endsWith("_HOE") || name.equals("SHEARS")
+                    || name.equals("BRUSH"))) {
+            return true;
+        }
+        return false;
     }
 
     private boolean activate(Player player, HeadAbility ability, EntityType head) {
@@ -496,13 +618,17 @@ public final class HeadPowers implements Listener {
                 creeperBlast(player);
                 yield true;
             }
-            case SUMMON_PIGS -> {
-                commandPigs(player);
-                yield true;
-            }
             case TELEPORT -> enderTeleport(player);
             case FIRE_CHARGE -> {
                 fireCharge(player);
+                yield true;
+            }
+            case DRAGON_BREATH -> {
+                dragonBreath(player);
+                yield true;
+            }
+            case WIND_BURST -> {
+                windBurst(player);
                 yield true;
             }
             case SHOOT_ARROW -> {
@@ -568,11 +694,25 @@ public final class HeadPowers implements Listener {
     }
 
     private long readyAt(Player player, HeadAbility ability) {
+        if (!cooldownsEnabled()) {
+            return 0L;
+        }
         EnumMap<HeadAbility, Long> cooldowns = abilityReadyAt.get(player.getUniqueId());
         return cooldowns == null ? 0L : cooldowns.getOrDefault(ability, 0L);
     }
 
+    private boolean cooldownsEnabled() {
+        return cfgBool("powers.cooldowns-enabled", false);
+    }
+
     private void markCooldown(Player player, HeadAbility ability, long now) {
+        if (!cooldownsEnabled()) {
+            EnumMap<HeadAbility, Long> cooldowns = abilityReadyAt.get(player.getUniqueId());
+            if (cooldowns != null) {
+                cooldowns.remove(ability);
+            }
+            return;
+        }
         double seconds = plugin.getConfig().getDouble(ability.cooldownPath(),
                 ability.defaultCooldown());
         long until = now + (long) (Math.max(0.0, seconds) * 1000L);
@@ -619,10 +759,13 @@ public final class HeadPowers implements Listener {
         Set<UUID> owned = servants.computeIfAbsent(id, key -> new HashSet<>());
         int added = 0;
         for (Pig pig : nearby) {
-            if (added >= max) {
+            if (owned.size() >= max) {
                 break;
             }
             UUID pigId = pig.getUniqueId();
+            if (owned.contains(pigId)) {
+                continue;
+            }
             UUID currentOwner = servantOwner.get(pigId);
             if (currentOwner != null && !currentOwner.equals(id)) {
                 continue;
@@ -635,11 +778,9 @@ public final class HeadPowers implements Listener {
             added++;
         }
 
-        if (added == 0) {
-            player.sendActionBar(Component.text("No nearby pigs answered the call.",
-                    NamedTextColor.GRAY));
-        } else {
-            player.sendActionBar(Component.text(added + " pigs now protect you!",
+        if (added > 0) {
+            player.sendActionBar(Component.text(added + " pig"
+                    + (added == 1 ? "" : "s") + " answered the call!",
                     NamedTextColor.GREEN));
         }
     }
@@ -700,6 +841,37 @@ public final class HeadPowers implements Listener {
         player.playSound(player.getLocation(), Sound.ITEM_FIRECHARGE_USE, 0.8f, 1.0f);
         player.sendActionBar(Component.text("Fire charge thrown!",
                 NamedTextColor.GOLD));
+    }
+
+    private void dragonBreath(Player player) {
+        DragonFireball fireball = player.getWorld().spawn(player.getEyeLocation(),
+                DragonFireball.class);
+        fireball.setShooter(player);
+        fireball.setDirection(player.getLocation().getDirection().normalize()
+                .multiply(Math.max(0.5, cfg("powers.dragon-breath-speed", 1.1))));
+        fireball.setYield((float) Math.max(0.0, cfg("powers.dragon-breath-yield", 0.0)));
+        fireball.setIsIncendiary(cfgBool("powers.dragon-breath-incendiary", false));
+        fireball.addScoreboardTag(DRAGON_BREATH_TAG);
+        player.getWorld().spawnParticle(Particle.DRAGON_BREATH,
+                player.getEyeLocation(), 12, 0.2, 0.2, 0.2, 0.02);
+        player.playSound(player.getLocation(), Sound.ENTITY_ENDER_DRAGON_SHOOT, 0.9f, 1.0f);
+        player.sendActionBar(Component.text("Dragon's breath unleashed!",
+                NamedTextColor.DARK_PURPLE));
+    }
+
+    private void windBurst(Player player) {
+        WindCharge wind = player.getWorld().spawn(player.getEyeLocation(), WindCharge.class);
+        wind.setShooter(player);
+        wind.setDirection(player.getLocation().getDirection().normalize()
+                .multiply(Math.max(0.5, cfg("powers.wind-burst-speed", 1.5))));
+        wind.setYield(0.0f);
+        wind.setIsIncendiary(false);
+        wind.addScoreboardTag(WIND_BURST_TAG);
+        player.getWorld().spawnParticle(Particle.GUST, player.getEyeLocation(),
+                1, 0.0, 0.0, 0.0, 0.0);
+        player.playSound(player.getLocation(), Sound.ENTITY_BREEZE_SHOOT, 0.9f, 1.0f);
+        player.sendActionBar(Component.text("Wind burst!",
+                NamedTextColor.AQUA));
     }
 
     private void shootArrow(Player player) {
@@ -1066,6 +1238,7 @@ public final class HeadPowers implements Listener {
                 && !victim.getUniqueId().equals(player.getUniqueId())
                 && !isAlly(victim)) {
             applyKnockback(player, victim);
+            applyOnHit(player, victim);
             combatTargets.put(player.getUniqueId(), new CombatTarget(victim.getUniqueId(),
                     now + COMBAT_TARGET_MS));
             orderServants(player, victim);
@@ -1100,6 +1273,32 @@ public final class HeadPowers implements Listener {
         direction = direction.normalize().multiply(strength);
         direction.setY(Math.max(0.4, strength * 0.35));
         victim.setVelocity(victim.getVelocity().add(direction));
+    }
+
+    private void applyOnHit(Player player, LivingEntity victim) {
+        EntityType head = wornHead(player);
+        if (head == null) {
+            return;
+        }
+        List<HeadAbility> abilities = HeadAbilities.abilities(head);
+        if (abilities.contains(HeadAbility.FIRE_HIT)) {
+            int ticks = Math.max(0, cfgInt("powers.fire-hit-fire-ticks", 80));
+            if (ticks > 0) {
+                victim.setFireTicks(Math.max(victim.getFireTicks(), ticks));
+            }
+        }
+        if (abilities.contains(HeadAbility.POISON_HIT)) {
+            victim.addPotionEffect(new PotionEffect(PotionEffectType.POISON,
+                    Math.max(1, cfgInt("powers.poison-hit-duration", 100)),
+                    Math.max(0, cfgInt("powers.poison-hit-amplifier", 0)),
+                    true, true, true));
+        }
+        if (abilities.contains(HeadAbility.WITHER_HIT)) {
+            victim.addPotionEffect(new PotionEffect(PotionEffectType.WITHER,
+                    Math.max(1, cfgInt("powers.wither-hit-duration", 100)),
+                    Math.max(0, cfgInt("powers.wither-hit-amplifier", 0)),
+                    true, true, true));
+        }
     }
 
     private void applyThorns(Player player, LivingEntity attacker) {
@@ -1227,5 +1426,6 @@ public final class HeadPowers implements Listener {
         blastImmuneUntil.remove(id);
         cowGrassSeconds.remove(id);
         cowNextHeal.remove(id);
+        pigNextRecruit.remove(id);
     }
 }

@@ -1,0 +1,131 @@
+Minecraft client 26.3
+client jar: /home/runner/work/ultron_smp/ultron_smp/.agent-work/tmp/mc-client/client-26.3.jar (sha1 e877b6a07acd633fb3bb475002175cec036e7b87)
+vanilla living mob ids: 92
+plugin head types: 119
+vanilla mobs without a plugin head: 1
+plugin heads not in this client version: 26
+
+VANILLA LIVING MOB	PLUGIN HEAD
+allay	yes
+armadillo	yes
+armor_stand	yes
+axolotl	yes
+bat	yes
+bee	yes
+blaze	yes
+bogged	yes
+breeze	yes
+camel	yes
+camel_husk	yes
+cat	yes
+cave_spider	yes
+chicken	yes
+cod	yes
+copper_golem	yes
+cow	yes
+creaking	yes
+creeper	yes
+dolphin	yes
+donkey	yes
+drowned	yes
+elder_guardian	yes
+ender_dragon	yes
+enderman	yes
+endermite	yes
+evoker	yes
+fox	yes
+frog	yes
+ghast	yes
+giant	yes
+glow_squid	yes
+goat	yes
+guardian	yes
+happy_ghast	yes
+hoglin	yes
+horse	yes
+husk	yes
+illusioner	yes
+iron_golem	yes
+llama	yes
+magma_cube	yes
+mannequin	no
+mooshroom	yes
+mule	yes
+nautilus	yes
+ocelot	yes
+panda	yes
+parched	yes
+parrot	yes
+phantom	yes
+pig	yes
+piglin	yes
+piglin_brute	yes
+pillager	yes
+polar_bear	yes
+pufferfish	yes
+rabbit	yes
+ravager	yes
+salmon	yes
+sheep	yes
+shulker	yes
+silverfish	yes
+skeleton	yes
+skeleton_horse	yes
+slime	yes
+sniffer	yes
+snow_golem	yes
+spider	yes
+squid	yes
+stray	yes
+strider	yes
+sulfur_cube	yes
+tadpole	yes
+trader_llama	yes
+tropical_fish	yes
+turtle	yes
+vex	yes
+villager	yes
+vindicator	yes
+wandering_trader	yes
+warden	yes
+witch	yes
+wither	yes
+wither_skeleton	yes
+wolf	yes
+zoglin	yes
+zombie	yes
+zombie_horse	yes
+zombie_nautilus	yes
+zombie_villager	yes
+zombified_piglin	yes
+
+MISSING VANILLA MOBS
+mannequin
+
+EXTRA PLUGIN HEADS
+ACACIA_CHEST_BOAT
+BIRCH_CHEST_BOAT
+BOAT
+CHEST_MINECART
+COMMAND_BLOCK_MINECART
+DARK_OAK_CHEST_BOAT
+FROSTBITE
+FURNACE_MINECART
+HOPPER_MINECART
+ITEM_FRAME
+JUNGLE_CHEST_BOAT
+LEASH_HITCH
+LEASH_KNOT
+MANGROVE_CHEST_BOAT
+MINECART
+MINECART_CHEST
+MINECART_COMMAND
+MINECART_FURNACE
+MINECART_HOPPER
+MINECART_MOB_SPAWNER
+MINECART_TNT
+OAK_CHEST_BOAT
+SPAWNER_MINECART
+SPRUCE_CHEST_BOAT
+TNT_MINECART
+UNKNOWN

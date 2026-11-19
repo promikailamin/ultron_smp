@@ -1,120 +1,120 @@
 Downloading mojang_26.3.jar
 Applying patches
 Starting org.bukkit.craftbukkit.Main
-2026-11-19T13:14:45.144615097Z ServerMain WARN Advanced terminal features are not available in this environment
-[13:14:45 INFO]: [bootstrap] Running Java 25 (OpenJDK 64-Bit Server VM 25.0.5+8-LTS; Eclipse Adoptium Temurin-25.0.5+8) on Linux 7.0.0-1016-aws (amd64)
-[13:14:45 INFO]: [bootstrap] Loading Paper 26.3-256-main@1eda666 (2026-11-19T04:49:17Z) for Minecraft 26.3
-[13:14:45 INFO]: [PluginInitializerManager] Initializing plugins...
-[13:14:45 INFO]: [PluginInitializerManager] Initialized 1 plugin
-[13:14:45 INFO]: [PluginInitializerManager] Bukkit plugins (1):
+2026-11-19T14:38:12.325916863Z ServerMain WARN Advanced terminal features are not available in this environment
+[14:38:12 INFO]: [bootstrap] Running Java 25 (OpenJDK 64-Bit Server VM 25.0.5+8-LTS; Eclipse Adoptium Temurin-25.0.5+8) on Linux 7.0.0-1019-azure (amd64)
+[14:38:12 INFO]: [bootstrap] Loading Paper 26.3-256-main@1eda666 (2026-11-19T04:49:17Z) for Minecraft 26.3
+[14:38:12 INFO]: [PluginInitializerManager] Initializing plugins...
+[14:38:12 INFO]: [PluginInitializerManager] Initialized 1 plugin
+[14:38:12 INFO]: [PluginInitializerManager] Bukkit plugins (1):
  - Heads (1.0.0)
-[13:14:48 INFO]: [ca.spottedleaf.dataconverter.minecraft.datatypes.MCTypeRegistry] Initialising converters for DataConverter...
-[13:14:48 INFO]: [com.destroystokyo.paper.profile.PaperServicesDiscoveryService] Environment: Environment[discoveryUrl=https://discovery.minecraftservices.com/minecraft/client, name=PROD]
-[13:14:48 INFO]: [ca.spottedleaf.dataconverter.minecraft.datatypes.MCTypeRegistry] Finished initialising converters for DataConverter in 397.3ms
-[13:14:49 INFO]: Found new data pack paper, loading it automatically
-[13:14:49 INFO]: No existing world data, creating new world
-[13:14:50 INFO]: Loaded 1866 advancements
-[13:14:50 INFO]: Starting minecraft server version 26.3
-[13:14:50 INFO]: Loading properties
-[13:14:50 INFO]: This server is running Paper version 26.3-256-main@1eda666 (2026-11-19T04:49:17Z) (Implementing API version 26.3.build.256-stable)
-[13:14:50 INFO]: [spark] This server bundles the spark profiler. For more information please visit https://docs.papermc.io/paper/profiling
-[13:14:50 INFO]: Server Ping Player Sample Count: 12
-[13:14:50 INFO]: Using 4 threads for Netty based IO
-[13:14:50 INFO]: [MoonriseCommon] Paper is using 1 worker threads, 1 I/O threads
-[13:14:50 INFO]: [ca.spottedleaf.moonrise.common.util.FMA] FMA supported: true for Linux platform with feature flag: flags		: fpu vme de pse tsc msr pae mce cx8 apic sep mtrr pge mca cmov pat pse36 clflush mmx fxsr sse sse2 ss ht syscall nx pdpe1gb rdtscp lm constant_tsc arch_perfmon rep_good nopl xtopology nonstop_tsc cpuid aperfmperf tsc_known_freq pni pclmulqdq monitor vmx ssse3 fma cx16 pdcm pcid sse4_1 sse4_2 x2apic movbe popcnt tsc_deadline_timer aes xsave avx f16c rdrand hypervisor lahf_lm abm 3dnowprefetch cpuid_fault ssbd ibrs ibpb stibp ibrs_enhanced tpr_shadow flexpriority ept vpid ept_ad fsgsbase tsc_adjust bmi1 avx2 smep bmi2 erms invpcid avx512f avx512dq rdseed adx smap avx512ifma clflushopt clwb avx512cd sha_ni avx512bw avx512vl xsaveopt xsavec xgetbv1 xsaves avx_vnni avx512_bf16 wbnoinvd ida arat vnmi avx512vbmi umip pku ospke waitpkg avx512_vbmi2 gfni vaes vpclmulqdq avx512_vnni avx512_bitalg tme avx512_vpopcntdq rdpid bus_lock_detect cldemote movdiri movdir64b md_clear serialize amx_bf16 avx512_fp16 amx_tile amx_int8 flush_l1d arch_capabilities
-[13:14:51 INFO]: Default game type: SURVIVAL
-[13:14:51 INFO]: Generating keypair
-[13:14:51 INFO]: Starting Minecraft server on *:25566
-[13:14:51 INFO]: Paper: Using libdeflate (Linux x86_64) compression from Velocity.
-[13:14:51 INFO]: Paper: Using OpenSSL 3.x.x (Linux x86_64) cipher from Velocity.
-[13:14:51 INFO]: [Heads] Loading server plugin Heads v1.0.0
-[13:14:51 WARN]: **** SERVER IS RUNNING IN OFFLINE/INSECURE MODE!
-[13:14:51 WARN]: The server will make no attempt to authenticate usernames. Beware.
-[13:14:51 WARN]: While this makes the game possible to play without internet access, it also opens up the ability for hackers to connect with any username they choose.
-[13:14:51 WARN]: To change this, set "online-mode" to "true" in the server.properties file.
-[13:14:51 INFO]: Preparing level "world"
-[13:14:51 INFO]: Selecting spawn point for level 'minecraft:overworld'...
-[13:14:53 INFO]: Selecting spawn point for level 'minecraft:the_nether'...
-[13:14:54 INFO]: Selecting spawn point for level 'minecraft:the_end'...
-[13:14:54 INFO]: Loading 0 persistent chunks for level 'minecraft:overworld'...
-[13:14:54 INFO]: Preparing spawn area: 100%
-[13:14:54 INFO]: Prepared spawn area in 2981 ms
-[13:14:54 INFO]: Loading 0 persistent chunks for level 'minecraft:the_nether'...
-[13:14:54 INFO]: Preparing spawn area: 100%
-[13:14:54 INFO]: Prepared spawn area in 655 ms
-[13:14:54 INFO]: Loading 0 persistent chunks for level 'minecraft:the_end'...
-[13:14:54 INFO]: Preparing spawn area: 100%
-[13:14:54 INFO]: Prepared spawn area in 142 ms
-[13:14:54 INFO]: Done preparing level "world" (3.232s)
-[13:14:54 INFO]: [Heads] Enabling Heads v1.0.0
-[13:14:54 INFO]: [Heads] Heads enabled with 92 mob head textures and 92 head powers.
-[13:14:54 INFO]: [spark] Starting background profiler...
-[13:14:54 INFO]: Saving chunks for level 'ServerLevel[world]'/minecraft:overworld
-[13:14:54 INFO]: Saving chunks for level 'ServerLevel[world]'/minecraft:the_nether
-[13:14:54 INFO]: Saving chunks for level 'ServerLevel[world]'/minecraft:the_end
-[13:14:54 INFO]: Running delayed init tasks
-[13:14:54 INFO]: Environment: Environment[discoveryUrl=https://discovery.minecraftservices.com/minecraft/client, name=PROD]
-[13:14:55 INFO]: [Heads] HEADS SELFTEST PASS types=92 fallbacks=0
-[13:14:55 INFO]: [Heads] HEADS GUI SELFTEST PASS pages=3 heads=92
-[13:14:55 INFO]: [Heads] HEADS POWERS SELFTEST PASS profiles=92
-[13:14:55 INFO]: [Heads] HEADS ABILITIES SELFTEST PASS abilities=135 unique=23 combos=43
-[13:14:55 INFO]: Done (10.229s)! For help, type "help"
-[13:14:55 INFO]: *************************************************************************************
-[13:14:55 INFO]: This is the first time you're starting this server.
-[13:14:55 INFO]: It's recommended you read our 'Getting Started' documentation for guidance.
-[13:14:55 INFO]: View this and more helpful information here: https://docs.papermc.io/paper/next-steps
-[13:14:55 INFO]: *************************************************************************************
-[13:14:57 INFO]: Available mob heads (92):
-[13:14:57 INFO]: allay, armadillo, armor_stand, axolotl, bat, bee, blaze, bogged, breeze, camel, camel_husk
-[13:14:57 INFO]: cat, cave_spider, chicken, cod, copper_golem, cow, creaking, creeper, dolphin, donkey
-[13:14:57 INFO]: drowned, elder_guardian, ender_dragon, enderman, endermite, evoker, fox, frog, ghast
-[13:14:57 INFO]: giant, glow_squid, goat, guardian, happy_ghast, hoglin, horse, husk, illusioner
-[13:14:57 INFO]: iron_golem, llama, magma_cube, mannequin, mooshroom, mule, nautilus, ocelot, panda
-[13:14:57 INFO]: parched, parrot, phantom, pig, piglin, piglin_brute, pillager, polar_bear, pufferfish
-[13:14:57 INFO]: rabbit, ravager, salmon, sheep, shulker, silverfish, skeleton, skeleton_horse, slime
-[13:14:57 INFO]: sniffer, snow_golem, spider, squid, stray, strider, sulfur_cube, tadpole, trader_llama
-[13:14:57 INFO]: tropical_fish, turtle, vex, villager, vindicator, wandering_trader, warden, witch, wither
-[13:14:57 INFO]: wither_skeleton, wolf, zoglin, zombie, zombie_horse, zombie_nautilus, zombie_villager
-[13:14:57 INFO]: zombified_piglin
-[13:14:58 INFO]: Available mob heads (92):
-[13:14:58 INFO]: allay, armadillo, armor_stand, axolotl, bat, bee, blaze, bogged, breeze, camel, camel_husk
-[13:14:58 INFO]: cat, cave_spider, chicken, cod, copper_golem, cow, creaking, creeper, dolphin, donkey
-[13:14:58 INFO]: drowned, elder_guardian, ender_dragon, enderman, endermite, evoker, fox, frog, ghast
-[13:14:58 INFO]: giant, glow_squid, goat, guardian, happy_ghast, hoglin, horse, husk, illusioner
-[13:14:58 INFO]: iron_golem, llama, magma_cube, mannequin, mooshroom, mule, nautilus, ocelot, panda
-[13:14:58 INFO]: parched, parrot, phantom, pig, piglin, piglin_brute, pillager, polar_bear, pufferfish
-[13:14:58 INFO]: rabbit, ravager, salmon, sheep, shulker, silverfish, skeleton, skeleton_horse, slime
-[13:14:58 INFO]: sniffer, snow_golem, spider, squid, stray, strider, sulfur_cube, tadpole, trader_llama
-[13:14:58 INFO]: tropical_fish, turtle, vex, villager, vindicator, wandering_trader, warden, witch, wither
-[13:14:58 INFO]: wither_skeleton, wolf, zoglin, zombie, zombie_horse, zombie_nautilus, zombie_villager
-[13:14:58 INFO]: zombified_piglin
-[13:15:01 INFO]: System chat: Stopping the server
-[13:15:01 INFO]: Stopping server
-[13:15:01 INFO]: [Heads] Disabling Heads v1.0.0
-[13:15:01 INFO]: Saving players
-[13:15:01 INFO]: Saving worlds
-[13:15:01 INFO]: Saving chunks for level 'ServerLevel[world]'/minecraft:overworld
-[13:15:01 INFO]: [ChunkHolderManager] Waiting 60s for chunk system to halt for world 'minecraft:overworld'
-[13:15:01 INFO]: [ChunkHolderManager] Halted chunk system for world 'minecraft:overworld'
-[13:15:01 INFO]: [ChunkHolderManager] Saving all chunkholders for world 'minecraft:overworld'
-[13:15:01 INFO]: [ChunkHolderManager] Saved 0 block chunks, 0 entity chunks, 0 poi chunks in world 'minecraft:overworld' in 0.00s
-[13:15:01 INFO]: [ChunkHolderManager] Waiting 60s for chunk I/O to halt for world 'minecraft:overworld'
-[13:15:01 INFO]: [ChunkHolderManager] Halted I/O scheduler for world 'minecraft:overworld'
-[13:15:01 INFO]: Saving chunks for level 'ServerLevel[world]'/minecraft:the_nether
-[13:15:01 INFO]: [ChunkHolderManager] Waiting 60s for chunk system to halt for world 'minecraft:the_nether'
-[13:15:01 INFO]: [ChunkHolderManager] Halted chunk system for world 'minecraft:the_nether'
-[13:15:01 INFO]: [ChunkHolderManager] Saving all chunkholders for world 'minecraft:the_nether'
-[13:15:01 INFO]: [ChunkHolderManager] Saved 0 block chunks, 0 entity chunks, 0 poi chunks in world 'minecraft:the_nether' in 0.00s
-[13:15:01 INFO]: [ChunkHolderManager] Waiting 60s for chunk I/O to halt for world 'minecraft:the_nether'
-[13:15:01 INFO]: [ChunkHolderManager] Halted I/O scheduler for world 'minecraft:the_nether'
-[13:15:01 INFO]: Saving chunks for level 'ServerLevel[world]'/minecraft:the_end
-[13:15:01 INFO]: [ChunkHolderManager] Waiting 60s for chunk system to halt for world 'minecraft:the_end'
-[13:15:01 INFO]: [ChunkHolderManager] Halted chunk system for world 'minecraft:the_end'
-[13:15:01 INFO]: [ChunkHolderManager] Saving all chunkholders for world 'minecraft:the_end'
-[13:15:01 INFO]: [ChunkHolderManager] Saved 0 block chunks, 0 entity chunks, 0 poi chunks in world 'minecraft:the_end' in 0.00s
-[13:15:01 INFO]: [ChunkHolderManager] Waiting 60s for chunk I/O to halt for world 'minecraft:the_end'
-[13:15:01 INFO]: [ChunkHolderManager] Halted I/O scheduler for world 'minecraft:the_end'
-[13:15:01 INFO]: Waiting for all RegionFile I/O tasks to complete...
-[13:15:01 INFO]: All RegionFile I/O tasks to complete
-[13:15:01 INFO]: [MoonriseCommon] Awaiting termination of worker pool for up to 60s...
-[13:15:01 INFO]: [MoonriseCommon] Awaiting termination of I/O pool for up to 60s...
+[14:38:15 INFO]: [ca.spottedleaf.dataconverter.minecraft.datatypes.MCTypeRegistry] Initialising converters for DataConverter...
+[14:38:15 INFO]: [com.destroystokyo.paper.profile.PaperServicesDiscoveryService] Environment: Environment[discoveryUrl=https://discovery.minecraftservices.com/minecraft/client, name=PROD]
+[14:38:15 INFO]: [ca.spottedleaf.dataconverter.minecraft.datatypes.MCTypeRegistry] Finished initialising converters for DataConverter in 403.4ms
+[14:38:15 INFO]: Found new data pack paper, loading it automatically
+[14:38:16 INFO]: No existing world data, creating new world
+[14:38:16 INFO]: Loaded 1866 advancements
+[14:38:16 INFO]: Starting minecraft server version 26.3
+[14:38:16 INFO]: Loading properties
+[14:38:17 INFO]: This server is running Paper version 26.3-256-main@1eda666 (2026-11-19T04:49:17Z) (Implementing API version 26.3.build.256-stable)
+[14:38:17 INFO]: [spark] This server bundles the spark profiler. For more information please visit https://docs.papermc.io/paper/profiling
+[14:38:17 INFO]: Server Ping Player Sample Count: 12
+[14:38:17 INFO]: Using 4 threads for Netty based IO
+[14:38:17 INFO]: [MoonriseCommon] Paper is using 1 worker threads, 1 I/O threads
+[14:38:17 INFO]: [ca.spottedleaf.moonrise.common.util.FMA] FMA supported: true for Linux platform with feature flag: flags		: fpu vme de pse tsc msr pae mce cx8 apic sep mtrr pge mca cmov pat pse36 clflush mmx fxsr sse sse2 ht syscall nx mmxext fxsr_opt pdpe1gb rdtscp lm constant_tsc rep_good nopl xtopology tsc_reliable nonstop_tsc cpuid extd_apicid aperfmperf tsc_known_freq pni pclmulqdq ssse3 fma cx16 pcid sse4_1 sse4_2 x2apic movbe popcnt aes xsave avx f16c rdrand hypervisor lahf_lm cmp_legacy svm cr8_legacy abm sse4a misalignsse 3dnowprefetch osvw topoext vmmcall fsgsbase bmi1 avx2 smep bmi2 erms invpcid avx512f avx512dq rdseed adx smap avx512ifma clflushopt clwb avx512cd sha_ni avx512bw avx512vl xsaveopt xsavec xgetbv1 xsaves user_shstk avx_vnni avx512_bf16 clzero xsaveerptr rdpru arat npt nrip_save tsc_scale vmcb_clean flushbyasid decodeassists pausefilter pfthreshold v_vmsave_vmload avx512vbmi umip avx512_vbmi2 gfni vaes vpclmulqdq avx512_vnni avx512_bitalg avx512_vpopcntdq rdpid fsrm avx512_vp2intersect
+[14:38:17 INFO]: Default game type: SURVIVAL
+[14:38:17 INFO]: Generating keypair
+[14:38:17 INFO]: Starting Minecraft server on *:25566
+[14:38:17 INFO]: Paper: Using libdeflate (Linux x86_64) compression from Velocity.
+[14:38:17 INFO]: Paper: Using OpenSSL 3.x.x (Linux x86_64) cipher from Velocity.
+[14:38:17 INFO]: [Heads] Loading server plugin Heads v1.0.0
+[14:38:17 WARN]: **** SERVER IS RUNNING IN OFFLINE/INSECURE MODE!
+[14:38:17 WARN]: The server will make no attempt to authenticate usernames. Beware.
+[14:38:17 WARN]: While this makes the game possible to play without internet access, it also opens up the ability for hackers to connect with any username they choose.
+[14:38:17 WARN]: To change this, set "online-mode" to "true" in the server.properties file.
+[14:38:17 INFO]: Preparing level "world"
+[14:38:17 INFO]: Selecting spawn point for level 'minecraft:overworld'...
+[14:38:19 INFO]: Selecting spawn point for level 'minecraft:the_nether'...
+[14:38:20 INFO]: Selecting spawn point for level 'minecraft:the_end'...
+[14:38:20 INFO]: Loading 0 persistent chunks for level 'minecraft:overworld'...
+[14:38:20 INFO]: Preparing spawn area: 100%
+[14:38:20 INFO]: Prepared spawn area in 2453 ms
+[14:38:20 INFO]: Loading 0 persistent chunks for level 'minecraft:the_nether'...
+[14:38:20 INFO]: Preparing spawn area: 100%
+[14:38:20 INFO]: Prepared spawn area in 490 ms
+[14:38:20 INFO]: Loading 0 persistent chunks for level 'minecraft:the_end'...
+[14:38:20 INFO]: Preparing spawn area: 100%
+[14:38:20 INFO]: Prepared spawn area in 155 ms
+[14:38:20 INFO]: Done preparing level "world" (2.678s)
+[14:38:20 INFO]: [Heads] Enabling Heads v1.0.0
+[14:38:20 INFO]: [Heads] Heads enabled with 92 mob head textures and 92 head powers.
+[14:38:20 INFO]: [spark] Starting background profiler...
+[14:38:20 INFO]: Saving chunks for level 'ServerLevel[world]'/minecraft:overworld
+[14:38:20 INFO]: Saving chunks for level 'ServerLevel[world]'/minecraft:the_nether
+[14:38:20 INFO]: Saving chunks for level 'ServerLevel[world]'/minecraft:the_end
+[14:38:20 INFO]: Running delayed init tasks
+[14:38:20 INFO]: Environment: Environment[discoveryUrl=https://discovery.minecraftservices.com/minecraft/client, name=PROD]
+[14:38:20 INFO]: [Heads] HEADS SELFTEST PASS types=92 fallbacks=0
+[14:38:20 INFO]: [Heads] HEADS GUI SELFTEST PASS pages=3 heads=92
+[14:38:20 INFO]: [Heads] HEADS POWERS SELFTEST PASS profiles=92
+[14:38:20 INFO]: [Heads] HEADS ABILITIES SELFTEST PASS abilities=143 unique=28 combos=45
+[14:38:20 INFO]: Done (8.696s)! For help, type "help"
+[14:38:20 INFO]: *************************************************************************************
+[14:38:20 INFO]: This is the first time you're starting this server.
+[14:38:20 INFO]: It's recommended you read our 'Getting Started' documentation for guidance.
+[14:38:20 INFO]: View this and more helpful information here: https://docs.papermc.io/paper/next-steps
+[14:38:20 INFO]: *************************************************************************************
+[14:38:23 INFO]: Available mob heads (92):
+[14:38:23 INFO]: allay, armadillo, armor_stand, axolotl, bat, bee, blaze, bogged, breeze, camel, camel_husk
+[14:38:23 INFO]: cat, cave_spider, chicken, cod, copper_golem, cow, creaking, creeper, dolphin, donkey
+[14:38:23 INFO]: drowned, elder_guardian, ender_dragon, enderman, endermite, evoker, fox, frog, ghast
+[14:38:23 INFO]: giant, glow_squid, goat, guardian, happy_ghast, hoglin, horse, husk, illusioner
+[14:38:23 INFO]: iron_golem, llama, magma_cube, mannequin, mooshroom, mule, nautilus, ocelot, panda
+[14:38:23 INFO]: parched, parrot, phantom, pig, piglin, piglin_brute, pillager, polar_bear, pufferfish
+[14:38:23 INFO]: rabbit, ravager, salmon, sheep, shulker, silverfish, skeleton, skeleton_horse, slime
+[14:38:23 INFO]: sniffer, snow_golem, spider, squid, stray, strider, sulfur_cube, tadpole, trader_llama
+[14:38:23 INFO]: tropical_fish, turtle, vex, villager, vindicator, wandering_trader, warden, witch, wither
+[14:38:23 INFO]: wither_skeleton, wolf, zoglin, zombie, zombie_horse, zombie_nautilus, zombie_villager
+[14:38:23 INFO]: zombified_piglin
+[14:38:24 INFO]: Available mob heads (92):
+[14:38:24 INFO]: allay, armadillo, armor_stand, axolotl, bat, bee, blaze, bogged, breeze, camel, camel_husk
+[14:38:24 INFO]: cat, cave_spider, chicken, cod, copper_golem, cow, creaking, creeper, dolphin, donkey
+[14:38:24 INFO]: drowned, elder_guardian, ender_dragon, enderman, endermite, evoker, fox, frog, ghast
+[14:38:24 INFO]: giant, glow_squid, goat, guardian, happy_ghast, hoglin, horse, husk, illusioner
+[14:38:24 INFO]: iron_golem, llama, magma_cube, mannequin, mooshroom, mule, nautilus, ocelot, panda
+[14:38:24 INFO]: parched, parrot, phantom, pig, piglin, piglin_brute, pillager, polar_bear, pufferfish
+[14:38:24 INFO]: rabbit, ravager, salmon, sheep, shulker, silverfish, skeleton, skeleton_horse, slime
+[14:38:24 INFO]: sniffer, snow_golem, spider, squid, stray, strider, sulfur_cube, tadpole, trader_llama
+[14:38:24 INFO]: tropical_fish, turtle, vex, villager, vindicator, wandering_trader, warden, witch, wither
+[14:38:24 INFO]: wither_skeleton, wolf, zoglin, zombie, zombie_horse, zombie_nautilus, zombie_villager
+[14:38:24 INFO]: zombified_piglin
+[14:38:27 INFO]: System chat: Stopping the server
+[14:38:27 INFO]: Stopping server
+[14:38:27 INFO]: [Heads] Disabling Heads v1.0.0
+[14:38:27 INFO]: Saving players
+[14:38:27 INFO]: Saving worlds
+[14:38:27 INFO]: Saving chunks for level 'ServerLevel[world]'/minecraft:overworld
+[14:38:27 INFO]: [ChunkHolderManager] Waiting 60s for chunk system to halt for world 'minecraft:overworld'
+[14:38:27 INFO]: [ChunkHolderManager] Halted chunk system for world 'minecraft:overworld'
+[14:38:27 INFO]: [ChunkHolderManager] Saving all chunkholders for world 'minecraft:overworld'
+[14:38:27 INFO]: [ChunkHolderManager] Saved 0 block chunks, 0 entity chunks, 0 poi chunks in world 'minecraft:overworld' in 0.00s
+[14:38:27 INFO]: [ChunkHolderManager] Waiting 60s for chunk I/O to halt for world 'minecraft:overworld'
+[14:38:27 INFO]: [ChunkHolderManager] Halted I/O scheduler for world 'minecraft:overworld'
+[14:38:27 INFO]: Saving chunks for level 'ServerLevel[world]'/minecraft:the_nether
+[14:38:27 INFO]: [ChunkHolderManager] Waiting 60s for chunk system to halt for world 'minecraft:the_nether'
+[14:38:27 INFO]: [ChunkHolderManager] Halted chunk system for world 'minecraft:the_nether'
+[14:38:27 INFO]: [ChunkHolderManager] Saving all chunkholders for world 'minecraft:the_nether'
+[14:38:27 INFO]: [ChunkHolderManager] Saved 0 block chunks, 0 entity chunks, 0 poi chunks in world 'minecraft:the_nether' in 0.00s
+[14:38:27 INFO]: [ChunkHolderManager] Waiting 60s for chunk I/O to halt for world 'minecraft:the_nether'
+[14:38:27 INFO]: [ChunkHolderManager] Halted I/O scheduler for world 'minecraft:the_nether'
+[14:38:27 INFO]: Saving chunks for level 'ServerLevel[world]'/minecraft:the_end
+[14:38:27 INFO]: [ChunkHolderManager] Waiting 60s for chunk system to halt for world 'minecraft:the_end'
+[14:38:27 INFO]: [ChunkHolderManager] Halted chunk system for world 'minecraft:the_end'
+[14:38:27 INFO]: [ChunkHolderManager] Saving all chunkholders for world 'minecraft:the_end'
+[14:38:27 INFO]: [ChunkHolderManager] Saved 0 block chunks, 0 entity chunks, 0 poi chunks in world 'minecraft:the_end' in 0.00s
+[14:38:27 INFO]: [ChunkHolderManager] Waiting 60s for chunk I/O to halt for world 'minecraft:the_end'
+[14:38:27 INFO]: [ChunkHolderManager] Halted I/O scheduler for world 'minecraft:the_end'
+[14:38:27 INFO]: Waiting for all RegionFile I/O tasks to complete...
+[14:38:27 INFO]: All RegionFile I/O tasks to complete
+[14:38:27 INFO]: [MoonriseCommon] Awaiting termination of worker pool for up to 60s...
+[14:38:27 INFO]: [MoonriseCommon] Awaiting termination of I/O pool for up to 60s...

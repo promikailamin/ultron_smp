@@ -174,6 +174,36 @@ public final class HeadsPlugin extends JavaPlugin {
                     + HeadAbility.values().length + " abilities are assigned");
         }
 
+        for (HeadAbility ability : HeadAbility.values()) {
+            if (ability.active() && ability.defaultCooldown() != 0.0) {
+                failures++;
+                getLogger().warning("SELFTEST active ability " + ability.id()
+                        + " does not default to zero cooldown");
+            }
+        }
+        if (HeadAbilities.abilities(EntityType.PIG).stream().anyMatch(HeadAbility::active)) {
+            failures++;
+            getLogger().warning("SELFTEST PIG still has an active right-click ability");
+        }
+        if (!HeadAbilities.abilities(EntityType.PIG).contains(HeadAbility.PIG_GUARDS)) {
+            failures++;
+            getLogger().warning("SELFTEST PIG is missing passive pig guards");
+        }
+        if (!HeadAbilities.abilities(EntityType.BLAZE).contains(HeadAbility.FLIGHT)) {
+            failures++;
+            getLogger().warning("SELFTEST BLAZE is missing flight");
+        }
+        if (!HeadAbilities.abilities(EntityType.ENDER_DRAGON).contains(HeadAbility.DRAGON_BREATH)
+                || HeadAbilities.abilities(EntityType.ENDER_DRAGON).contains(HeadAbility.FIRE_CHARGE)) {
+            failures++;
+            getLogger().warning("SELFTEST ENDER_DRAGON must use dragon breath, not fire charge");
+        }
+        if (!HeadAbilities.abilities(EntityType.BREEZE).contains(HeadAbility.WIND_BURST)
+                || HeadAbilities.abilities(EntityType.BREEZE).contains(HeadAbility.FIRE_CHARGE)) {
+            failures++;
+            getLogger().warning("SELFTEST BREEZE must use wind burst, not fire charge");
+        }
+
         if (failures == 0) {
             getLogger().info("HEADS SELFTEST PASS types=" + checked
                     + " fallbacks=" + textures.missing().size());

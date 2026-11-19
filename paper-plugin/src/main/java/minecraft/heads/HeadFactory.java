@@ -54,7 +54,9 @@ public final class HeadFactory {
     private static void decorate(ItemStack item, EntityType type) {
         String name = HeadTextures.displayName(type) + " Head";
         String abilities = String.join(", ", HeadAbilities.abilities(type).stream()
-                .map(HeadAbility::displayName).toList());
+                .map(ability -> ability.displayName()
+                        + (ability.active() ? " (active)" : " (passive)"))
+                .toList());
         item.editMeta(meta -> {
             meta.getPersistentDataContainer().set(MOB_KEY, PersistentDataType.STRING, type.name());
             meta.displayName(Component.text(name)

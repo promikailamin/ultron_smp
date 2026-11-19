@@ -29,6 +29,8 @@ plugins/connect/*.tmp
 # Agent workspace
 .agent-work/tools/*
 !.agent-work/tools/.gitkeep
+!.agent-work/tools/*.py
+!.agent-work/tools/*.sh
 .agent-work/tmp/*
 !.agent-work/tmp/.gitkeep
 .agent-work/logs/opencode-output.log

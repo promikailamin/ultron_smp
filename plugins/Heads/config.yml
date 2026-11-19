@@ -7,27 +7,31 @@ require-player-kill: true
 # A charged creeper kill always drops a head (unless disabled).
 charged-creeper-always-drops: true
 
-# Mob head powers. Every living mob head has refreshing effects plus one or
-# more unique non-effect abilities. Active abilities are triggered by
-# right-clicking with an empty hand.
+# Mob head powers. Every living mob head has refreshing effects plus unique
+# non-effect abilities. Active abilities are triggered by right-clicking air
+# or a solid block that has no interaction of its own (for example dirt).
+# Chests, doors, villagers and other interactive blocks/entities keep their
+# normal right-click behaviour. Passive abilities run while the head is worn.
 powers:
+  # Cooldowns are disabled for now. Set this to true to use the values below.
+  cooldowns-enabled: false
+
   # Creeper head: right-click for an entity-only blast. Blocks are never broken.
-  creeper-cooldown: 10.0
+  creeper-cooldown: 0.0
   creeper-power: 3.0
 
-  # Pig head: right-click to recruit nearby pigs as guards.
-  pig-cooldown: 5.0
+  # Pig head: passive. Nearby pigs are called automatically to follow and protect.
   pig-radius: 16.0
   pig-max-servants: 12
   pig-follow-radius: 4.0
   pig-hostile-radius: 12.0
 
   # Enderman/creaking teleport.
-  teleport-cooldown: 5.0
+  teleport-cooldown: 0.0
   teleport-radius: 12.0
 
-  # Breeze/blaze/ghast fire charge.
-  fire-charge-cooldown: 4.0
+  # Blaze/ghast fire charges.
+  fire-charge-cooldown: 0.0
   fire-charge-speed: 1.8
   # 0 keeps head-powered fire charges from breaking blocks.
   fire-charge-yield: 0.0
@@ -35,72 +39,88 @@ powers:
   fire-charge-damage: 5.0
   fire-charge-fire-ticks: 60
 
-  # Skeleton/pillager arrows.
-  arrow-cooldown: 2.0
+  # Ender dragon breath.
+  dragon-breath-cooldown: 0.0
+  dragon-breath-speed: 1.1
+  # 0 keeps head-powered dragon fire from breaking blocks.
+  dragon-breath-yield: 0.0
+  dragon-breath-incendiary: false
+
+  # Breeze wind burst.
+  wind-burst-cooldown: 0.0
+  wind-burst-speed: 1.5
+
+  # Skeleton/piglin/pillager arrows.
+  arrow-cooldown: 0.0
   arrow-speed: 2.5
   arrow-damage: 4.0
 
   # Snow golem/frostbite snowballs.
-  snowball-cooldown: 2.0
+  snowball-cooldown: 0.0
   snowball-speed: 1.6
   snowball-damage: 2.0
 
   # Warden sonic boom.
-  sonic-boom-cooldown: 15.0
+  sonic-boom-cooldown: 0.0
   sonic-boom-range: 10.0
   sonic-boom-damage: 10.0
 
   # Wither skull projectile.
-  wither-skull-cooldown: 6.0
+  wither-skull-cooldown: 0.0
   wither-skull-speed: 1.2
   wither-skull-damage: 8.0
 
   # Poison, web, invisibility and shield powers.
-  poison-cooldown: 8.0
+  poison-cooldown: 0.0
   poison-radius: 5.0
-  web-cooldown: 8.0
+  web-cooldown: 0.0
   web-duration: 5.0
-  invisibility-cooldown: 15.0
-  shield-cooldown: 12.0
+  invisibility-cooldown: 0.0
+  shield-cooldown: 0.0
 
   # Evoker lightning.
-  lightning-cooldown: 15.0
+  lightning-cooldown: 0.0
   lightning-range: 12.0
   lightning-damage: 8.0
 
   # Blaze/magma/strider fire aura.
-  fire-aura-cooldown: 10.0
+  fire-aura-cooldown: 0.0
   fire-aura-radius: 5.0
   fire-aura-damage: 2.0
 
   # Aquatic powers.
-  water-burst-cooldown: 8.0
+  water-burst-cooldown: 0.0
   water-burst-radius: 6.0
   water-burst-power: 0.9
-  pull-cooldown: 8.0
+  pull-cooldown: 0.0
   pull-radius: 10.0
   pull-power: 1.1
 
   # Healing heads.
-  heal-cooldown: 12.0
+  heal-cooldown: 0.0
   heal-amount: 6.0
 
   # Mount and predator dashes plus jumping heads.
-  dash-cooldown: 5.0
+  dash-cooldown: 0.0
   dash-power: 1.2
-  leap-cooldown: 5.0
+  leap-cooldown: 0.0
   leap-horizontal: 0.5
   leap-power: 1.0
 
   # Undead/illager minions.
-  minions-cooldown: 20.0
+  minions-cooldown: 0.0
   minions-count: 2
   minions-lifetime: 20.0
 
   # Passive combat powers.
   knockback-strength: 1.8
   iron-golem-knockback: 3.5
-  thorns-cooldown: 1.0
+  fire-hit-fire-ticks: 80
+  poison-hit-duration: 100
+  poison-hit-amplifier: 0
+  wither-hit-duration: 100
+  wither-hit-amplifier: 0
+  thorns-cooldown: 0.0
   thorns-knockback: 0.9
   thorns-damage: 2.0
 

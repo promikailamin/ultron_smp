@@ -26,7 +26,7 @@ public final class HeadAbilities {
     private static final Map<String, Profile> PROFILES = new HashMap<>();
 
     private static final Set<String> FLIGHT_MOBS = Set.of(
-            "ALLAY", "BAT", "BEE", "PARROT", "PHANTOM", "VEX", "BREEZE",
+            "ALLAY", "BAT", "BEE", "BLAZE", "PARROT", "PHANTOM", "VEX", "BREEZE",
             "GHAST", "HAPPY_GHAST", "ENDER_DRAGON", "WITHER");
     private static final Set<String> KNOCKBACK_MOBS = Set.of(
             "IRON_GOLEM", "GIANT", "RAVAGER", "POLAR_BEAR", "HOGLIN", "ZOGLIN",
@@ -67,13 +67,15 @@ public final class HeadAbilities {
         }
 
         grant(abilities, key, HeadAbility.EXPLOSION, "CREEPER");
-        grant(abilities, key, HeadAbility.SUMMON_PIGS, "PIG");
+        grant(abilities, key, HeadAbility.PIG_GUARDS, "PIG");
         grant(abilities, key, HeadAbility.TELEPORT, "ENDERMAN", "CREAKING");
         grant(abilities, key, HeadAbility.FIRE_CHARGE,
-                "BREEZE", "BLAZE", "GHAST", "HAPPY_GHAST", "ENDER_DRAGON");
+                "BLAZE", "GHAST", "HAPPY_GHAST");
+        grant(abilities, key, HeadAbility.DRAGON_BREATH, "ENDER_DRAGON");
+        grant(abilities, key, HeadAbility.WIND_BURST, "BREEZE");
         grant(abilities, key, HeadAbility.SHOOT_ARROW,
                 "SKELETON", "STRAY", "BOGGED", "PARCHED", "PILLAGER",
-                "ILLUSIONER", "WITHER_SKELETON");
+                "ILLUSIONER", "PIGLIN");
         grant(abilities, key, HeadAbility.THROW_SNOWBALL,
                 "SNOW_GOLEM", "FROSTBITE", "STRAY");
         grant(abilities, key, HeadAbility.SONIC_BOOM, "WARDEN");
@@ -88,6 +90,12 @@ public final class HeadAbilities {
         grant(abilities, key, HeadAbility.LIGHTNING, "EVOKER");
         grant(abilities, key, HeadAbility.FIRE_AURA,
                 "BLAZE", "MAGMA_CUBE", "SULFUR_CUBE", "STRIDER");
+        grant(abilities, key, HeadAbility.FIRE_HIT,
+                "BLAZE", "MAGMA_CUBE", "SULFUR_CUBE");
+        grant(abilities, key, HeadAbility.POISON_HIT,
+                "CAVE_SPIDER", "BEE", "PUFFERFISH");
+        grant(abilities, key, HeadAbility.WITHER_HIT,
+                "WITHER", "WITHER_SKELETON");
         grant(abilities, key, HeadAbility.WATER_BURST,
                 "DOLPHIN", "SQUID", "GLOW_SQUID", "COD", "SALMON",
                 "TROPICAL_FISH", "TADPOLE", "AXOLOTL", "DROWNED",
@@ -106,8 +114,8 @@ public final class HeadAbilities {
                 "CHICKEN", "PARROT", "BAT");
         grant(abilities, key, HeadAbility.SUMMON_MINIONS,
                 "ZOMBIE", "HUSK", "DROWNED", "ZOMBIE_VILLAGER", "PIGLIN",
-                "ZOMBIFIED_PIGLIN", "WITHER_SKELETON", "SILVERFISH",
-                "ENDERMITE", "VEX", "EVOKER", "PIGLIN_BRUTE");
+                "ZOMBIFIED_PIGLIN", "SILVERFISH", "ENDERMITE", "VEX",
+                "EVOKER", "PIGLIN_BRUTE");
         grant(abilities, key, HeadAbility.SHIELD, "ZOMBIE", "HUSK");
 
         if (abilities.isEmpty()) {
@@ -136,13 +144,13 @@ public final class HeadAbilities {
         add("BEE", "Creative-style flight plus a poisonous sting cloud.",
                 effect(PotionEffectType.JUMP_BOOST, 1),
                 effect(PotionEffectType.SLOW_FALLING, 0));
-        add("BLAZE", "Burns brightly with fire resistance and strength.",
+        add("BLAZE", "Flies like a blaze; right-click to throw fire charges.",
                 effect(PotionEffectType.FIRE_RESISTANCE, 0),
                 effect(PotionEffectType.STRENGTH, 0));
         add("BOGGED", "Marsh resilience repairs damage and toughens skin.",
                 effect(PotionEffectType.RESISTANCE, 0),
                 effect(PotionEffectType.REGENERATION, 0));
-        add("BREEZE", "Creative-style flight; right-click to throw a fire charge.",
+        add("BREEZE", "Creative-style flight; right-click to release a wind burst.",
                 effect(PotionEffectType.SPEED, 1),
                 effect(PotionEffectType.JUMP_BOOST, 2),
                 effect(PotionEffectType.SLOW_FALLING, 0));
@@ -187,7 +195,7 @@ public final class HeadAbilities {
                 effect(PotionEffectType.WATER_BREATHING, 0),
                 effect(PotionEffectType.CONDUIT_POWER, 1),
                 effect(PotionEffectType.RESISTANCE, 1));
-        add("ENDER_DRAGON", "Dragon might grants huge strength, resistance and health.",
+        add("ENDER_DRAGON", "Dragon flight and might; right-click to breathe dragon fire.",
                 effect(PotionEffectType.STRENGTH, 2),
                 effect(PotionEffectType.RESISTANCE, 2),
                 effect(PotionEffectType.REGENERATION, 1),
@@ -277,7 +285,7 @@ public final class HeadAbilities {
                 effect(PotionEffectType.NIGHT_VISION, 0),
                 effect(PotionEffectType.SPEED, 1),
                 effect(PotionEffectType.SLOW_FALLING, 0));
-        add("PIG", "Right-click to summon nearby pigs as loyal guards.",
+        add("PIG", "Passively calls nearby pigs to follow and protect you.",
                 effect(PotionEffectType.SPEED, 0));
         add("PIGLIN", "Nether speed and fire resistance.",
                 effect(PotionEffectType.SPEED, 0),
@@ -385,7 +393,7 @@ public final class HeadAbilities {
                 effect(PotionEffectType.STRENGTH, 2),
                 effect(PotionEffectType.RESISTANCE, 1),
                 effect(PotionEffectType.REGENERATION, 1));
-        add("WITHER_SKELETON", "Nether bones grant strength and fire resistance.",
+        add("WITHER_SKELETON", "Nether bones grant strength, fire resistance and withering hits.",
                 effect(PotionEffectType.STRENGTH, 1),
                 effect(PotionEffectType.FIRE_RESISTANCE, 0));
         add("WOLF", "Pack hunter speed and strength.",
