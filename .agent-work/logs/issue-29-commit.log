@@ -1,0 +1,11 @@
+[main 73688c6] Fix head ability interactions and mob-specific powers
+ 20 files changed, 882 insertions(+), 228 deletions(-)
+ create mode 100644 .agent-work/logs/issue-29-ability-audit.log
+ create mode 100644 .agent-work/logs/issue-29-build-baseline.log
+ create mode 100644 .agent-work/logs/issue-29-build.log
+ create mode 100644 .agent-work/logs/issue-29-issue28-audit.log
+ create mode 100644 .agent-work/logs/issue-29-mc-client-audit.log
+ create mode 100644 .agent-work/logs/issue-29-test.log
+ create mode 100644 .agent-work/outputs/mc-client-26.3-entities.txt
+ create mode 100644 .agent-work/tests/issue-29-ability-audit.py
+ create mode 100644 .agent-work/tools/mc-client-audit.py
