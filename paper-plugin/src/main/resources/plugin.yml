@@ -1,0 +1,21 @@
+name: Heads
+version: 1.0.0
+main: minecraft.heads.HeadsPlugin
+description: Obtain a head for every mob in Minecraft, with a GUI, commands and configurable drops.
+author: OpenCode
+api-version: '26.3'
+commands:
+  heads:
+    description: Browse and obtain mob heads.
+    usage: /heads [mob|give|list|reload]
+    aliases: [head, mobheads]
+permissions:
+  heads.use:
+    description: Open the mob heads GUI.
+    default: true
+  heads.give:
+    description: Take mob heads from the GUI or use /heads <mob>.
+    default: true
+  heads.admin:
+    description: Give heads to other players and reload the plugin.
+    default: op

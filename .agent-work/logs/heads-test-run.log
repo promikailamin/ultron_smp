@@ -1,0 +1,6 @@
+Built /home/runner/work/ultron_smp/ultron_smp/plugins/Heads-1.0.0.jar
+742e54a209a872a5298bd0dd4c0130b111793957e5e32dc4e86d9ec8fd0ad977  /home/runner/work/ultron_smp/ultron_smp/plugins/Heads-1.0.0.jar
+[11:57:30 INFO]: [Heads] Heads enabled with 92 mob head textures.
+[11:57:30 INFO]: [Heads] HEADS SELFTEST PASS types=92 fallbacks=0
+[11:57:33 INFO]: Available mob heads (92):
+Heads Paper integration test passed.

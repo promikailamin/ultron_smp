@@ -1,0 +1,8 @@
+# Chance (0.0 - 1.0) that a mob drops its head when killed.
+drop-chance: 1.0
+
+# Only drop heads when the mob was killed by a player.
+require-player-kill: true
+
+# A charged creeper kill always drops a head (unless disabled).
+charged-creeper-always-drops: true

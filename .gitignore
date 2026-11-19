@@ -17,6 +17,8 @@
 
 # Downloaded plugins (recreated by start.sh)
 plugins/*.jar
+# Heads is built from source in this repository and shipped with the server.
+!plugins/Heads-*.jar
 plugins/spark/
 plugins/bStats/
 
@@ -44,6 +46,9 @@ permissions.yml
 help.yml
 config/paper-global.yml
 config/paper-world-defaults.yml
+
+# Plugin build output
+paper-plugin/build/
 
 # Python bytecode
 __pycache__/
