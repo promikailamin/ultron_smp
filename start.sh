@@ -137,9 +137,13 @@ install_plugin() {
                 -w '%{url_effective}' \
                 https://github.com/minekube/connect-java/releases/latest \
                 | sed -n 's#.*/tag/##p' || true)"
-            [ -n "$version" ] || version="latest"
         fi
-        url="https://github.com/minekube/connect-java/releases/download/${version}/connect-spigot.jar"
+        if [ -z "$version" ] || [ "$version" = "latest" ]; then
+            version="latest"
+            url="https://github.com/minekube/connect-java/releases/latest/download/connect-spigot.jar"
+        else
+            url="https://github.com/minekube/connect-java/releases/download/${version}/connect-spigot.jar"
+        fi
     else
         url="$MINEKUBE_PLUGIN_URL"
     fi
