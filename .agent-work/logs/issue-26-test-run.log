@@ -1,0 +1,10 @@
+Downloading Paper 26.3 build 256...
+Initialising Paper 26.3 build 256 to extract the server API...
+Built /home/runner/work/ultron_smp/ultron_smp/plugins/Heads-1.0.0.jar
+11eacd165323723df273ad378e57c743a42361d3f21ab06313eb2f7a6fed74ff  /home/runner/work/ultron_smp/ultron_smp/plugins/Heads-1.0.0.jar
+[12:07:02 INFO]: [Heads] Heads enabled with 92 mob head textures.
+[12:07:03 INFO]: [Heads] HEADS SELFTEST PASS types=92 fallbacks=0
+[12:07:03 INFO]: [Heads] HEADS GUI SELFTEST PASS pages=3 heads=92
+[12:07:05 INFO]: Available mob heads (92):
+[12:07:06 INFO]: Available mob heads (92):
+Heads Paper integration test passed.

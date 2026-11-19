@@ -43,7 +43,19 @@ public final class HeadsGui implements InventoryHolder, Listener {
         return Math.max(1, (plugin.textures().size() + PAGE_SIZE - 1) / PAGE_SIZE);
     }
 
-    public void open(Player player) {
+    public List<EntityType> entries() {
+        return List.copyOf(entries);
+    }
+
+    public int page() {
+        return page;
+    }
+
+    /**
+     * Builds the chest inventory for this page. Kept separate from {@link #open(Player)}
+     * so the plugin self-test can verify that every head appears in the GUI.
+     */
+    public Inventory createInventory() {
         int pages = pageCount(plugin);
         Component title = Component.text("Mob Heads (" + (page + 1) + "/" + pages + ")");
         inventory = Bukkit.createInventory(this, 54, title);
@@ -61,7 +73,11 @@ public final class HeadsGui implements InventoryHolder, Listener {
             inventory.setItem(NEXT_SLOT, named(new ItemStack(Material.ARROW), "Next page"));
         }
         inventory.setItem(CLOSE_SLOT, named(new ItemStack(Material.BARRIER), "Close"));
-        player.openInventory(inventory);
+        return inventory;
+    }
+
+    public void open(Player player) {
+        player.openInventory(createInventory());
     }
 
     private static ItemStack named(ItemStack item, String name) {

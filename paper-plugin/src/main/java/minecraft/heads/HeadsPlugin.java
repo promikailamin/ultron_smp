@@ -3,9 +3,11 @@ package minecraft.heads;
 import com.destroystokyo.paper.profile.PlayerProfile;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.List;
 import org.bukkit.Material;
 import org.bukkit.command.PluginCommand;
 import org.bukkit.entity.EntityType;
+import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.SkullMeta;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -26,11 +28,8 @@ public final class HeadsPlugin extends JavaPlugin {
         getServer().getPluginManager().registerEvents(new HeadDropListener(this), this);
 
         HeadsCommand executor = new HeadsCommand(this);
-        PluginCommand command = getCommand("heads");
-        if (command != null) {
-            command.setExecutor(executor);
-            command.setTabCompleter(executor);
-        }
+        registerCommand("heads", executor);
+        registerCommand("head", executor);
 
         getLogger().info("Heads enabled with " + textures.size() + " mob head textures.");
         if (!textures.missing().isEmpty()) {
@@ -40,6 +39,16 @@ public final class HeadsPlugin extends JavaPlugin {
         if (Boolean.getBoolean("heads.selftest")) {
             getServer().getScheduler().runTask(this, this::runSelfTest);
         }
+    }
+
+    private void registerCommand(String name, HeadsCommand executor) {
+        PluginCommand command = getCommand(name);
+        if (command == null) {
+            getLogger().warning("Command /" + name + " is missing from plugin.yml.");
+            return;
+        }
+        command.setExecutor(executor);
+        command.setTabCompleter(executor);
     }
 
     public HeadTextures textures() {
@@ -82,9 +91,44 @@ public final class HeadsPlugin extends JavaPlugin {
                 }
             }
         }
+
+        for (String name : List.of("heads", "head")) {
+            if (getCommand(name) == null) {
+                failures++;
+                getLogger().warning("SELFTEST command /" + name + " is not registered");
+            }
+        }
+
+        int guiPages = HeadsGui.pageCount(this);
+        int guiHeads = 0;
+        for (int page = 0; page < guiPages; page++) {
+            HeadsGui gui = new HeadsGui(this, page);
+            Inventory inventory = gui.createInventory();
+            for (int slot = 0; slot < gui.entries().size(); slot++) {
+                ItemStack item = inventory.getItem(slot);
+                if (item == null || item.getType() == Material.AIR) {
+                    failures++;
+                    getLogger().warning("SELFTEST GUI page " + (page + 1) + " slot " + slot
+                            + " is empty for " + gui.entries().get(slot).getKey());
+                    continue;
+                }
+                guiHeads++;
+            }
+            if (gui.entries().isEmpty()) {
+                failures++;
+                getLogger().warning("SELFTEST GUI page " + (page + 1) + " has no heads");
+            }
+        }
+        if (guiHeads != textures.size()) {
+            failures++;
+            getLogger().warning("SELFTEST GUI contains " + guiHeads + " heads but "
+                    + textures.size() + " are available");
+        }
+
         if (failures == 0) {
             getLogger().info("HEADS SELFTEST PASS types=" + checked
                     + " fallbacks=" + textures.missing().size());
+            getLogger().info("HEADS GUI SELFTEST PASS pages=" + guiPages + " heads=" + guiHeads);
         } else {
             getLogger().warning("HEADS SELFTEST FAIL types=" + checked + " failures=" + failures);
         }

@@ -45,6 +45,8 @@ cp "$REPO_ROOT/plugins/Heads-1.0.0.jar" "$TEST_DIR/plugins/"
             sleep 1
         done
         sleep 2
+        echo 'head list'
+        sleep 1
         echo 'heads list'
         sleep 3
         echo 'stop'
@@ -54,8 +56,8 @@ cp "$REPO_ROOT/plugins/Heads-1.0.0.jar" "$TEST_DIR/plugins/"
 
 cp "$LOG" "$REPO_ROOT/.agent-work/logs/heads-selftest.log"
 
-if grep -q 'HEADS SELFTEST PASS' "$LOG"; then
-    grep -E 'Heads enabled|HEADS SELFTEST|Available mob heads' "$LOG" || true
+if grep -q 'HEADS SELFTEST PASS' "$LOG" && grep -q 'HEADS GUI SELFTEST PASS' "$LOG"; then
+    grep -E 'Heads enabled|HEADS SELFTEST|HEADS GUI SELFTEST|Available mob heads' "$LOG" || true
     echo "Heads Paper integration test passed."
 else
     echo "Heads Paper integration test failed." >&2

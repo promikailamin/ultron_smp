@@ -8,7 +8,11 @@ commands:
   heads:
     description: Browse and obtain mob heads.
     usage: /heads [mob|give|list|reload]
-    aliases: [head, mobheads]
+    aliases: [mobheads]
+  head:
+    description: Open the mob heads chest GUI or obtain a mob head.
+    usage: /head [mob|give|list|reload]
+    aliases: [mobhead]
 permissions:
   heads.use:
     description: Open the mob heads GUI.
