@@ -1,0 +1,7 @@
+[main ec27856] Add unique powers for every mob head
+ 14 files changed, 1197 insertions(+), 121 deletions(-)
+ create mode 100644 .agent-work/logs/heads-build-baseline.log
+ create mode 100644 .agent-work/logs/issue-27-cancel-run.log
+ create mode 100644 .agent-work/logs/issue-27-test-run.log
+ create mode 100644 paper-plugin/src/main/java/minecraft/heads/HeadAbilities.java
+ create mode 100644 paper-plugin/src/main/java/minecraft/heads/HeadPowers.java
