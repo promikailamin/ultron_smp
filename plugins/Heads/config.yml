@@ -6,3 +6,21 @@ require-player-kill: true
 
 # A charged creeper kill always drops a head (unless disabled).
 charged-creeper-always-drops: true
+
+# Mob head powers. Every living mob head has a unique passive ability.
+powers:
+  # Creeper head: right-click with an empty hand to detonate safely.
+  creeper-cooldown: 10.0
+  creeper-power: 3.0
+  # Keep this false to protect the world from head-powered griefing.
+  creeper-break-blocks: false
+
+  # Pig head: right-click to recruit nearby pigs as guards.
+  pig-cooldown: 5.0
+  pig-radius: 16.0
+  pig-max-servants: 12
+  pig-follow-radius: 4.0
+  pig-hostile-radius: 12.0
+
+  # Enderman head: right-click to teleport to a nearby safe spot.
+  enderman-cooldown: 5.0

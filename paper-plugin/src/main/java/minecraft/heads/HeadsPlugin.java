@@ -16,6 +16,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 public final class HeadsPlugin extends JavaPlugin {
 
     private HeadTextures textures;
+    private HeadPowers powers;
 
     @Override
     public void onEnable() {
@@ -26,18 +27,30 @@ public final class HeadsPlugin extends JavaPlugin {
 
         getServer().getPluginManager().registerEvents(new HeadsGui(this, 0), this);
         getServer().getPluginManager().registerEvents(new HeadDropListener(this), this);
+        powers = new HeadPowers(this);
+        getServer().getPluginManager().registerEvents(powers, this);
+        powers.start();
 
         HeadsCommand executor = new HeadsCommand(this);
         registerCommand("heads", executor);
         registerCommand("head", executor);
 
-        getLogger().info("Heads enabled with " + textures.size() + " mob head textures.");
+        getLogger().info("Heads enabled with " + textures.size() + " mob head textures and "
+                + HeadAbilities.profileCount() + " head powers.");
         if (!textures.missing().isEmpty()) {
             getLogger().warning("No specific texture for: " + String.join(", ", textures.missing()));
         }
 
         if (Boolean.getBoolean("heads.selftest")) {
             getServer().getScheduler().runTask(this, this::runSelfTest);
+        }
+    }
+
+    @Override
+    public void onDisable() {
+        if (powers != null) {
+            powers.stop();
+            powers = null;
         }
     }
 
@@ -125,10 +138,28 @@ public final class HeadsPlugin extends JavaPlugin {
                     + textures.size() + " are available");
         }
 
+        int powerProfiles = 0;
+        for (EntityType type : textures.types()) {
+            HeadAbilities.Profile profile = HeadAbilities.profileFor(type);
+            if (profile == null || profile.description() == null || profile.description().isBlank()) {
+                failures++;
+                getLogger().warning("SELFTEST missing head power for " + type.getKey());
+                continue;
+            }
+            ItemStack head = HeadFactory.create(textures, type);
+            if (HeadFactory.mobType(head) != type) {
+                failures++;
+                getLogger().warning("SELFTEST head power tag round-trip failed for " + type.getKey());
+                continue;
+            }
+            powerProfiles++;
+        }
+
         if (failures == 0) {
             getLogger().info("HEADS SELFTEST PASS types=" + checked
                     + " fallbacks=" + textures.missing().size());
             getLogger().info("HEADS GUI SELFTEST PASS pages=" + guiPages + " heads=" + guiHeads);
+            getLogger().info("HEADS POWERS SELFTEST PASS profiles=" + powerProfiles);
         } else {
             getLogger().warning("HEADS SELFTEST FAIL types=" + checked + " failures=" + failures);
         }

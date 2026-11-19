@@ -1,7 +1,7 @@
 name: Heads
 version: 1.0.0
 main: minecraft.heads.HeadsPlugin
-description: Obtain a head for every mob in Minecraft, with a GUI, commands and configurable drops.
+description: Obtain a head for every mob in Minecraft, with a GUI, commands, configurable drops and unique mob powers.
 author: OpenCode
 api-version: '26.3'
 commands:
