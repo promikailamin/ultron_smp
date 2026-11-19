@@ -17,7 +17,7 @@ jobs:
         runs-on: ubuntu-latest
         timeout-minutes: 30
         env:
-            PAPER_TEST_DIR: ${{ runner.temp }}/paper-selftest
+            PAPER_TEST_DIR: ${{ github.workspace }}/.agent-work/tmp/paper-selftest-ci
         steps:
             - name: checkout_repo
               uses: actions/checkout@v4
