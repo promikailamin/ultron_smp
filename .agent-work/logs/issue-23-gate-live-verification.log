@@ -1,0 +1,15 @@
+watch (watch-connect.minekube.net:443): tcp avg=9.7ms p95=16.1ms jitter=3.5ms loss=0.0%
+  dns: 57.9ms addresses=66.241.124.220,2a09:8280:1::37:e391
+  tls: avg=23.2ms p95=29.9ms jitter=4.1ms
+edge (connect.minekube.net:443): tcp avg=39.8ms p95=63.2ms jitter=18.1ms loss=0.0%
+  dns: 52.7ms addresses=77.83.142.54
+public (mikailamin.play.minekube.net:25565): tcp avg=32.1ms p95=65.0ms jitter=18.0ms loss=0.0%
+  dns: 45.3ms addresses=77.83.142.54
+  minecraft status: avg=58.0ms version=Gate 1.7.2-1.7.5-26.3 players=0/100
+
+Interpretation:
+- Runner -> watch service latency is acceptable. If gameplay is still slow, the bottleneck is downstream (edge <-> connector <-> Paper), not connector registration.
+- Public status round-trip is 58 ms, which is usable for the runner -> edge -> Paper path measured from the runner itself.
+- Apply scripts/network-tune.sh (BBR + fq + shallow send queue) before starting Paper to remove kernel-side stalls on long or lossy routes.
+
+JSON report: .agent-work/outputs/issue-23-gate-live-verification.json
