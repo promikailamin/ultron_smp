@@ -1,0 +1,80 @@
+# The endpoint name of this server/proxy instance registered on startup with the Connect network.
+# Default is a random string. You can change it to a custom endpoint name.
+endpoint: mikailamin
+
+# This setting is only relevant if you want to allow cracked players to join.
+# This should not be irritated by offline-mode servers behind an online-mode proxy, keep this setting disabled.
+# If left blank, the correct mode will be securely detected automatically.
+allow-offline-mode-players: true
+
+# Optional parent endpoint names sent to WatchService as Connect-Endpoint-Parents.
+# This plugin does not expose a public endpoint-control API.
+#
+# You can add as many super endpoint names as you want.
+#super-endpoints:
+#  - pvp-endpoint
+#  - someones-hub
+
+# Connect Edge signs Bedrock/Xbox identity envelopes. This plugin trusts them by default
+# because it fetches Minekube's verifier key over HTTPS from the authoritative metadata URL.
+# The verifier rejects metadata URLs with userinfo/fragments and never follows redirects.
+# Warn mode verifies and logs but never rejects; Java-only servers have no Bedrock sessions
+# to verify, so this default does not weaken or change their admission behavior.
+bedrock-identity:
+  # disabled: do not verify or reject
+  # warn: verify when any key source is configured and log failures, but allow the session
+  # require: reject Bedrock sessions with missing or invalid identity envelopes
+  # Values are exact; malformed identity settings never advertise trusted identity.
+  enforcement: warn
+  # To pin your own Ed25519 key, clear metadata-url and set public-key/public-keys.
+  # Static keys are used only when metadata-url is empty.
+  # Supports raw 32-byte and X.509 encoded keys after decoding.
+  public-key: ""
+  # Additional Base64-encoded Ed25519 keys used only when metadata-url is empty.
+  public-keys: []
+  # Authoritative exact HTTPS metadata URL for Moxy verifier keys.
+  # Userinfo, fragments, and redirects are rejected; static keys are not a fallback.
+  metadata-url: "https://watch-connect.minekube.net/.well-known/minekube-connect/bedrock-identity-keys.json"
+  # Maximum seconds to cache successful metadata; a smaller published max-age takes precedence.
+  metadata-cache-seconds: 300
+  # Hard stale-if-error bound for expired remote keys. Require mode fails closed after this.
+  metadata-max-stale-seconds: 600
+  # Required non-blank issuer expected in Moxy metadata and signed envelopes.
+  expected-issuer: minekube-connect
+  # Required exact policy: linked_java_only or trusted_bedrock_xuid.
+  expected-policy: trusted_bedrock_xuid
+
+# Signed Bedrock principal v2 is additive to the legacy identity path above. New generated
+# configurations require it; files created before this section existed remain generation 0,
+# preserve their legacy behavior, and never advertise v2 until explicitly upgraded.
+#
+# INTERIM DEFAULT (Track B, see minekube/moxy kanban t_87f2966f): generation 0 + mode warn
+# keeps fresh installs on the working v1 identity path. The previous shipped default
+# (generation 2 + mode require) rejects EVERY Bedrock join with READINESS until the v2
+# producer (metadata endpoint + signed per-session envelopes) ships. Once the producer is
+# live, this default can return to generation 2 + require.
+bedrock-principal:
+  config-generation: 0
+  mode: warn
+  issuer: minekube-connect
+  trust-domain: urn:minekube:connect:production
+  audience: urn:minekube:connect:bedrock-principal:v2
+  metadata-origin: https://connect.minekube.com
+  metadata-path: /.well-known/minekube-connect/bedrock-principal-v2.json
+  public-keys: {}
+
+# The default locale for Connect. By default, Connect uses the system locale
+#default-locale: en_US
+
+# bStats is a stat tracker that is entirely anonymous and tracks only basic information
+# about Connect, such as how many people are online, how many servers are using Connect,
+# what OS is being used, etc. You can learn more about bStats here: https://bstats.org/.
+metrics:
+  # If metrics should be disabled.
+  disabled: false
+  # The unique id that should be consistent for a server/proxy.
+  uuid: a91ac696-356e-44cf-94e5-5cff6d97c8d6
+
+# The legacy config file format remains version 1; v2 generation is controlled by
+# bedrock-principal.config-generation above.
+config-version: 1

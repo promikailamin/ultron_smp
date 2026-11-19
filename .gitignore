@@ -1,65 +1,46 @@
-.agent-work/tools/bore-*
-.agent-work/tools/loclx-*
-.agent-work/tools/gate-*
-.agent-work/tools/cloudflared-*
-.agent-work/tools/.gate-download-*
-.agent-work/tools/.cloudflared-download-*
+# Paper runtime files
+paper.jar
+paper.jar.tmp
+cache/
+libraries/
+versions/
+logs/
+world/
+world_nether/
+world_the_end/
+server.log
+usercache.json
+ops.json
+whitelist.json
+banned-players.json
+banned-ips.json
+
+# Downloaded plugins (recreated by start.sh)
+plugins/*.jar
+plugins/spark/
+plugins/bStats/
+
+# Minekube Connect token - injected from repository secrets at runtime
+plugins/connect/token.json
+plugins/connect/*.tmp
+
+# Agent workspace
+.agent-work/tools/*
+!.agent-work/tools/.gitkeep
 .agent-work/tmp/*
 !.agent-work/tmp/.gitkeep
-.agent-work/logs/tunnel.log
-.agent-work/logs/tunnel-start.log
-.agent-work/logs/tunnel-restarts.log
-.agent-work/logs/localxpose-tunnel.log
-.agent-work/logs/localxpose-attempt.log
-.agent-work/logs/localxpose-tunnel-restarts.log
-.agent-work/logs/test-http.log
-.agent-work/logs/pinggy-tunnel.log
-.agent-work/logs/pinggy-attempt.log
-.agent-work/logs/serveo-tunnel.log
-.agent-work/logs/serveo-attempt.log
-.agent-work/logs/low-latency-tunnel-start.log
-.agent-work/logs/low-latency-tunnel-restarts.log
-.agent-work/logs/test-latency-http.log
-.agent-work/tmp/pinggy_known_hosts
-.agent-work/tmp/serveo_known_hosts
-.agent-work/logs/tunnl-tunnel.log
-.agent-work/logs/tunnl-attempt.log
-.agent-work/logs/minekube-tunnel.log
-.agent-work/logs/test-minekube-http.log
-.agent-work/logs/tunnl-status.log
-.agent-work/logs/tunnl-tunnel-test.log
-.agent-work/logs/test-tunnl-http.log
-.agent-work/logs/tunnl-provider-test.log
-.agent-work/logs/test-tunnl-provider-http.log
-.agent-work/logs/cloudflare-tunnel.log
-.agent-work/logs/cloudflare-access.log
-.agent-work/logs/cloudflare-named-attempt.log
-.agent-work/logs/cloudflare-quick-attempt.log
-.agent-work/logs/test-cloudflare-http.log
-.agent-work/logs/test-cloudflare-tunnel.log
+.agent-work/logs/opencode-output.log
+.agent-work/logs/server-run.log
 
-__pycache__/
-*.pyc
+# OS / editor noise
+.DS_Store
+*.swp
 
-# Paper runtime files (the world and economy data are symlinked to the repo root)
-paper/paper.jar
-paper/libraries/
-paper/versions/
-paper/cache/
-paper/logs/
-paper/world
-paper/world_nether
-paper/world_the_end
-paper/config/economy
-paper/ops.json
-paper/whitelist.json
-paper/banned-players.json
-paper/banned-ips.json
-paper/usercache.json
-
-# Paper build/download artifacts
-.agent-work/tools/paper-*
-.agent-work/tools/cfr.jar
-.agent-work/tools/vineflower.jar
-.agent-work/logs/issue-21-*.log
-paper-plugin/build/
+# Generated Paper configuration (bukkit.yml is committed for Connect)
+.paper/
+spigot.yml
+commands.yml
+permissions.yml
+help.yml
+config/paper-global.yml
+config/paper-world-defaults.yml

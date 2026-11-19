@@ -1,6 +1,0 @@
-name: Economy
-version: 1.0.0
-main: minecraft.economy.EconomyMod
-description: Server economy with balances, shop, buying, selling, auction house and seller axe.
-author: OpenCode
-api-version: '26.3'

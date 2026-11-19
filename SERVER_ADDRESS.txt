@@ -1,9 +1,0 @@
-# Ultron SMP public server address
-# Updated: 2026-11-18
-# No server is currently running.
-# Start the Run UltronSMP workflow to publish a fresh address here.
-#
-# Cloudflare note: Quick Tunnels (trycloudflare.com) are HTTP-only and cannot
-# carry Minecraft TCP. Configure a named Cloudflare tunnel with
-# CLOUDFLARE_TUNNEL_TOKEN and CLOUDFLARE_TUNNEL_HOSTNAME, otherwise the
-# workflow uses the Bangladesh-prioritised Pinggy Asia-Pacific TCP relay.

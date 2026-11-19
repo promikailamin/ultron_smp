@@ -1,41 +1,22 @@
-name: Run UltronSMP
+name: Run Paper Server
 
 on:
     workflow_dispatch:
         inputs:
-            tunnel:
-                description: 'Public tunnel provider'
-                required: true
-                default: auto
-                type: choice
-                options:
-                    - auto
-                    - localxpose
-                    - bore
-                    - serveo
-                    - cloudflare
-                    - cloudflared
-                    - pinggy
-                    - tunnl
-                    - minekube
-            tunnel_region:
-                description: 'Free relay region (Pinggy); auto measures all regions'
-                required: true
-                default: auto
-                type: choice
-                options:
-                    - auto
-                    - bangladesh
-                    - asia-pacific
-                    - united-states
-                    - europe
+            paper_version:
+                description: 'Paper version (blank = latest supported)'
+                required: false
+                default: ''
+            paper_build:
+                description: 'Paper build (blank = latest stable)'
+                required: false
+                default: ''
 
 permissions:
-    contents: write
-    issues: write
+    contents: read
 
 concurrency:
-    group: minecraft-server
+    group: paper-server
     cancel-in-progress: false
 
 jobs:
@@ -43,55 +24,15 @@ jobs:
         runs-on: ubuntu-latest
         timeout-minutes: 360
         env:
-            MINECRAFT_PORT: '25565'
-            MC_RUN_SCRIPT: paper/start.sh
-            SERVER_ISSUE_NUMBER: '1'
-            TUNNEL_PROVIDER: ${{ inputs.tunnel || 'auto' }}
-            TUNNEL_REGION: ${{ inputs.tunnel_region || 'auto' }}
-            LOCALXPOSE_ACCESS_TOKEN: ${{ secrets.LOCALXPOSE_ACCESS_TOKEN }}
-            LOCALXPOSE_REGION: ${{ vars.LOCALXPOSE_REGION || 'ap' }}
-            LOCALXPOSE_BORE_FALLBACK: ${{ vars.LOCALXPOSE_BORE_FALLBACK }}
-            PLAYER_REGION: ${{ vars.PLAYER_REGION || 'bangladesh' }}
-            MINEKUBE_ENDPOINT: ${{ vars.MINEKUBE_ENDPOINT }}
+            MINEKUBE_ENDPOINT: ${{ vars.MINEKUBE_ENDPOINT || 'mikailamin' }}
             MINEKUBE_CONNECT_TOKEN: ${{ secrets.MINEKUBE_CONNECT_TOKEN }}
-            MINEKUBE_GATE_VERSION: ${{ vars.MINEKUBE_GATE_VERSION || '0.81.1' }}
-            MINEKUBE_AUTO: ${{ vars.MINEKUBE_AUTO || 'true' }}
-            CLOUDFLARE_TUNNEL_TOKEN: ${{ secrets.CLOUDFLARE_TUNNEL_TOKEN || secrets.CLOUDFLARE_TOKEN }}
-            CLOUDFLARE_TUNNEL_HOSTNAME: ${{ vars.CLOUDFLARE_TUNNEL_HOSTNAME || vars.CLOUDFLARE_HOSTNAME }}
-            CLOUDFLARE_TUNNEL_CONFIG: ${{ vars.CLOUDFLARE_TUNNEL_CONFIG }}
-            CLOUDFLARE_MODE: ${{ vars.CLOUDFLARE_MODE || 'auto' }}
-            CLOUDFLARE_VERSION: ${{ vars.CLOUDFLARE_VERSION || '2026.11.1' }}
-            CLOUDFLARE_REGION: ${{ vars.CLOUDFLARE_REGION || inputs.tunnel_region || 'auto' }}
-            CLOUDFLARE_BORE_FALLBACK: ${{ vars.CLOUDFLARE_BORE_FALLBACK || 'true' }}
-            CLOUDFLARE_TCP_FALLBACK: ${{ vars.CLOUDFLARE_TCP_FALLBACK || 'pinggy' }}
-            CLOUDFLARE_ALLOW_QUICK_TCP: ${{ vars.CLOUDFLARE_ALLOW_QUICK_TCP || 'false' }}
-            CLOUDFLARE_ACCESS_PORT: ${{ vars.CLOUDFLARE_ACCESS_PORT || '25571' }}
-            CLOUDFLARE_DNS_WAIT_SECONDS: ${{ vars.CLOUDFLARE_DNS_WAIT_SECONDS || '60' }}
-            CLOUDFLARE_ACCESS_CLIENT_ID: ${{ secrets.CLOUDFLARE_ACCESS_CLIENT_ID }}
-            CLOUDFLARE_ACCESS_CLIENT_SECRET: ${{ secrets.CLOUDFLARE_ACCESS_CLIENT_SECRET }}
-            TWINGATE_ENABLED: ${{ vars.TWINGATE_ENABLED || 'auto' }}
-            TWINGATE_NETWORK: ${{ vars.TWINGATE_NETWORK || secrets.TWINGATE_NETWORK || 'mikailamin' }}
-            TWINGATE_CONNECTOR_NAME: ${{ vars.TWINGATE_CONNECTOR_NAME || 'twingate-mccon' }}
-            TWINGATE_DOCKER_PULL: ${{ vars.TWINGATE_DOCKER_PULL || 'always' }}
-            TWINGATE_LABEL_HOSTNAME: ${{ vars.TWINGATE_LABEL_HOSTNAME || 'ultronsmp.net' }}
-            TWINGATE_LABEL_DEPLOYED_BY: ${{ vars.TWINGATE_LABEL_DEPLOYED_BY || 'docker' }}
-            TWINGATE_ACCESS_TOKEN: ${{ secrets.TWINGATE_ACCESS_TOKEN }}
-            TWINGATE_REFRESH_TOKEN: ${{ secrets.TWINGATE_REFRESH_TOKEN }}
-            TWINGATE_API_TOKEN: ${{ secrets.TWINGATE_API_TOKEN }}
-            TWINGATE_REMOTE_NETWORK: ${{ vars.TWINGATE_REMOTE_NETWORK }}
-            TWINGATE_REMOTE_NETWORK_ID: ${{ vars.TWINGATE_REMOTE_NETWORK_ID }}
-            TWINGATE_RESOURCE_NAME: ${{ vars.TWINGATE_RESOURCE_NAME || 'minecraft' }}
-            TWINGATE_RESOURCE_ADDRESS: ${{ vars.TWINGATE_RESOURCE_ADDRESS || '127.0.0.1' }}
-            TWINGATE_RESOURCE_ALIAS: ${{ vars.TWINGATE_RESOURCE_ALIAS || 'minecraft.ultronsmp.internal' }}
-            TWINGATE_RESOURCE_PORT: ${{ vars.TWINGATE_RESOURCE_PORT || '25565' }}
-            TWINGATE_RESOURCE_GROUP_NAMES: ${{ vars.TWINGATE_RESOURCE_GROUP_NAMES || 'Everyone' }}
-
+            MINEKUBE_ALLOW_OFFLINE: 'true'
+            PAPER_VERSION: ${{ inputs.paper_version }}
+            PAPER_BUILD: ${{ inputs.paper_build }}
+            PAPER_JAVA_OPTS: '-Xms1G -Xmx2G'
         steps:
             - name: checkout_repo
               uses: actions/checkout@v4
-              with:
-                  fetch-depth: 0
-                  ref: ${{ github.ref_name }}
 
             - name: setup_java_25
               uses: actions/setup-java@v4
@@ -99,460 +40,111 @@ jobs:
                   distribution: temurin
                   java-version: '25'
 
-            - name: configure_git
-              env:
-                  GH_TOKEN: ${{ secrets.PAT_TOKEN }}
-              run: |
-                  git config user.name "ultron"
-                  git config user.email "ultron@users.noreply.github.com"
-                  gh auth setup-git
-
-            - name: tune_network
-              continue-on-error: true
+            - name: verify_connect_secret
               run: |
                   set -euo pipefail
-                  sudo bash scripts/network-tune.sh
-
-            - name: refresh_world_from_backup
-              run: |
-                  set -euo pipefail
-                  # A cancelled run may finish its final backup just after this
-                  # run checks out the repository. Re-sync a few times so the
-                  # server never starts from a stale world and later overwrites
-                  # the previous run's saved changes.
-                  stable=0
-                  for _ in $(seq 1 15); do
-                      git fetch origin "$GITHUB_REF_NAME"
-                      git reset --hard "origin/$GITHUB_REF_NAME"
-                      before="$(git rev-parse HEAD)"
-                      sleep 3
-                      git fetch origin "$GITHUB_REF_NAME"
-                      after="$(git rev-parse "origin/$GITHUB_REF_NAME")"
-                      if [ "$before" = "$after" ]; then
-                          stable=$((stable + 1))
-                          if [ "$stable" -ge 2 ]; then
-                              echo "World is up to date at ${after}."
-                              break
-                          fi
-                      else
-                          stable=0
-                          echo "Previous run pushed newer data; syncing again..."
-                      fi
-                  done
+                  if [ -z "${MINEKUBE_CONNECT_TOKEN:-}" ]; then
+                      echo "ERROR: repository secret MINEKUBE_CONNECT_TOKEN is not set." >&2
+                      exit 1
+                  fi
+                  echo "Minekube token secret is present (value not printed)."
 
             - name: run_server
+              timeout-minutes: 350
               run: |
                   set -euo pipefail
-                  bash scripts/server-control.sh start
+                  mkdir -p .agent-work/logs .agent-work/tmp
+                  log=".agent-work/logs/server-run.log"
+                  fifo=".agent-work/tmp/server-input.fifo"
+                  rm -f "$fifo"
+                  mkfifo "$fifo"
 
-                  echo "Waiting for Minecraft server on port ${MINECRAFT_PORT}..."
+                  bash start.sh <"$fifo" >"$log" 2>&1 &
+                  server_pid=$!
+                  exec 3>"$fifo"
+
+                  stop_server() {
+                      if kill -0 "$server_pid" 2>/dev/null; then
+                          echo "Stopping the Minecraft server..." >&2
+                          echo "stop" >&3 2>/dev/null || true
+                          for _ in $(seq 1 30); do
+                              kill -0 "$server_pid" 2>/dev/null || break
+                              sleep 1
+                          done
+                          kill "$server_pid" 2>/dev/null || true
+                      fi
+                      wait "$server_pid" 2>/dev/null || true
+                      exec 3>&- 2>/dev/null || true
+                      rm -f "$fifo"
+                  }
+                  trap stop_server EXIT
+                  trap 'exit 143' TERM
+                  trap 'exit 130' INT
 
                   ready=0
-                  for _ in $(seq 1 120); do
-                      if (echo > "/dev/tcp/127.0.0.1/${MINECRAFT_PORT}") 2>/dev/null; then
+                  for _ in $(seq 1 300); do
+                      if grep -q 'Done (' "$log" 2>/dev/null; then
                           ready=1
                           break
                       fi
-                      if ! bash scripts/server-control.sh status >/dev/null 2>&1; then
-                          echo "Minecraft server exited while starting."
+                      if ! kill -0 "$server_pid" 2>/dev/null; then
                           break
                       fi
-                      sleep 1
+                      sleep 2
                   done
 
                   if [ "$ready" -ne 1 ]; then
-                      echo "Server did not start within 120 seconds."
-                      tail -n 200 server.log || true
+                      echo "ERROR: the server did not become ready." >&2
+                      tail -n 200 "$log" || true
                       exit 1
                   fi
 
-                  echo "Minecraft server is ready!"
+                  endpoint="$(sed -n 's/^endpoint:[[:space:]]*//p' plugins/connect/config.yml | head -n 1)"
+                  address="${endpoint}.play.minekube.net:25565"
+                  printf '# Ultron SMP public address\n%s\n' "$address" > SERVER_ADDRESS.txt
 
-            - name: verify_minecraft_port
-              run: |
-                  set -euo pipefail
-                  echo "Checking Minecraft port..."
-
-                  ss -lntp | grep ":${MINECRAFT_PORT}" || {
-                      echo "ERROR: Nothing is listening on port ${MINECRAFT_PORT}"
-                      tail -100 server.log
-                      exit 1
-                  }
-
-                  python3 - <<'PY'
-                  import os
-                  import socket
-
-                  port = int(os.environ.get("MINECRAFT_PORT", "25565"))
-                  with socket.create_connection(("127.0.0.1", port), timeout=5):
-                      pass
-                  print(f"Minecraft TCP port {port} is reachable locally!")
-                  PY
-
-            - name: start_twingate_connector
-              # Secrets cannot be tested directly in an `if:` expression. The
-              # script starts the connector automatically when both tokens are
-              # present, skips when they are absent, and honours
-              # TWINGATE_ENABLED=false/true as an override.
-              continue-on-error: true
-              run: |
-                  set -euo pipefail
-                  bash scripts/twingate-connector.sh start | tee .agent-work/logs/twingate-connector.log
-
-            - name: ensure_twingate_resource
-              # Connector tokens cannot create Resources, so this needs an Admin
-              # API token. The script skips cleanly when none is configured and
-              # never prints secret values. An existing resource is left in place.
-              continue-on-error: true
-              run: |
-                  set -euo pipefail
-                  python3 scripts/twingate-resource.py ensure | tee .agent-work/logs/twingate-resource.log
-
-            - name: expose_server
-              id: expose-tunnel
-              run: |
-                  set -euo pipefail
-                  verify_address_file="${RUNNER_TEMP:-$PWD/.agent-work/tmp}/ultron-tunnel-verify-address"
-                  rm -f "$verify_address_file"
-                  bash scripts/tunnel.sh | tee .agent-work/logs/tunnel-start.log
-
-                  address="$(grep -v '^#' SERVER_ADDRESS.txt | grep -E ':[0-9]+$' | tail -n 1)"
-                  if [ -z "$address" ]; then
-                      echo "ERROR: no public server address was generated."
-                      exit 1
-                  fi
-
-                  echo "Tunnel has been started at ${address}"
-                  echo "SERVER_ADDRESS=${address}" >> "$GITHUB_ENV"
-
-                  # Cloudflare TCP tunnels are reached through a local
-                  # cloudflared access proxy; use that endpoint for the
-                  # connectivity check instead of the public hostname.
-                  if [ -s "$verify_address_file" ]; then
-                      verify_address="$(grep -v '^#' "$verify_address_file" | grep -E ':[0-9]+$' | tail -n 1 || true)"
-                      if [ -n "$verify_address" ]; then
-                          echo "Verification proxy is listening at ${verify_address}"
-                          echo "SERVER_VERIFY_ADDRESS=${verify_address}" >> "$GITHUB_ENV"
-                      fi
-                  fi
-
-                  status_url="$(grep -v '^#' SERVER_STATUS_URL.txt 2>/dev/null | tail -n 1 || true)"
-                  if [ -n "$status_url" ]; then
-                      echo "Status page is available at ${status_url}"
-                      echo "SERVER_STATUS_URL=${status_url}" >> "$GITHUB_ENV"
+                  echo "Minecraft server is ready."
+                  echo "Minekube address: ${address}"
+                  if grep -q "Your public address: ${endpoint}.play.minekube.net" "$log"; then
+                      echo "Minekube Connect registered the endpoint successfully."
+                  else
+                      echo "WARNING: could not find the Minekube registration line in the log." >&2
+                      grep -i 'connect' "$log" | tail -n 20 || true
                   fi
 
                   {
                       echo "## Ultron SMP is online"
                       echo ""
                       echo "**Minecraft address:** \`${address}\`"
-                      if [ -n "$status_url" ]; then
-                          echo ""
-                          echo "**Status page:** ${status_url}"
-                      fi
                       echo ""
-                      echo "The address is also kept in \`SERVER_ADDRESS.txt\`."
+                      echo "**Paper:** latest downloaded build (see server log)"
+                      echo "**Minekube endpoint:** \`${endpoint}\`"
                   } >> "$GITHUB_STEP_SUMMARY"
 
-            - name: verify_public_tunnel
-              run: |
-                  set -euo pipefail
-                  address="${SERVER_VERIFY_ADDRESS:-${SERVER_ADDRESS:-$(grep -v '^#' SERVER_ADDRESS.txt | grep -E ':[0-9]+$' | tail -n 1)}}"
-                  host="${address%:*}"
-                  port="${address##*:}"
+                  # Wait for the server to exit (job timeout or manual stop).
+                  wait "$server_pid"
+                  rm -f "$fifo"
+                  exec 3>&-
+                  trap - EXIT
 
-                  if [ -n "${SERVER_VERIFY_ADDRESS:-}" ]; then
-                      echo "Checking the Cloudflare route through the local access proxy ${host}:${port}..."
-                  else
-                      echo "Checking public endpoint ${host}:${port}..."
-                  fi
-
-                  for attempt in $(seq 1 20); do
-                      if python3 - "$host" "$port" <<'PY'
-                  import socket
-                  import sys
-
-                  host = sys.argv[1]
-                  port = int(sys.argv[2])
-                  with socket.create_connection((host, port), timeout=10):
-                      pass
-                  print(f"{host}:{port} is reachable")
-                  PY
-                      then
-                          echo "Public tunnel is reachable."
-                          exit 0
-                      fi
-                      echo "Attempt ${attempt}/20 failed; retrying..."
-                      sleep 3
-                  done
-
-                  echo "ERROR: the public tunnel is not reachable."
-                  tail -100 .agent-work/logs/localxpose-tunnel.log \
-                      .agent-work/logs/serveo-tunnel.log \
-                      .agent-work/logs/cloudflare-tunnel.log \
-                      .agent-work/logs/cloudflare-access.log \
-                      .agent-work/logs/tunnl-tunnel.log \
-                      .agent-work/logs/tunnl-status.log \
-                      .agent-work/logs/pinggy-tunnel.log \
-                      .agent-work/logs/tunnel.log 2>/dev/null || true
-                  exit 1
-
-            - name: publish_server_address
-              env:
-                  GH_TOKEN: ${{ secrets.PAT_TOKEN }}
-              run: |
-                  set -euo pipefail
-                  address="${SERVER_ADDRESS:-$(grep -v '^#' SERVER_ADDRESS.txt | grep -E ':[0-9]+$' | tail -n 1)}"
-                  host="${address%:*}"
-                  port="${address##*:}"
-
-                  echo "Publishing ${address}..."
-
-                  address_files=(SERVER_ADDRESS.txt)
-                  if [ -f SERVER_STATUS_URL.txt ]; then
-                      address_files+=(SERVER_STATUS_URL.txt)
-                  fi
-                  git add "${address_files[@]}"
-                  if ! git diff --cached --quiet; then
-                      git commit -m "Update public server address: ${address}"
-                      git fetch origin "$GITHUB_REF_NAME" || true
-                      git rebase "origin/$GITHUB_REF_NAME" || git rebase --abort || true
-                      git push origin "HEAD:$GITHUB_REF_NAME" \
-                          || echo "Address push failed; the keep-alive loop will retry."
-                  fi
-
-                  if [ -n "${SERVER_ISSUE_NUMBER:-}" ] && [ -n "${address}" ]; then
-                      body="Ultron SMP is online. Address: \`${address}\` (host \`${host}\`, port \`${port}\`). The current address is kept in \`SERVER_ADDRESS.txt\`."
-                      if [ -n "${SERVER_STATUS_URL:-}" ]; then
-                          body="${body} Status page: ${SERVER_STATUS_URL}"
-                      fi
-                      gh issue comment "$SERVER_ISSUE_NUMBER" \
-                          --repo "${{ github.repository }}" \
-                          --body "$body" \
-                          || echo "Could not comment on the issue (continuing)."
-                  fi
-
-            - name: keep_server_alive
-              timeout-minutes: 350
-              env:
-                  GH_TOKEN: ${{ secrets.PAT_TOKEN }}
-                  AUTOSAVE_SECONDS: '90'
-              run: |
-                  set -euo pipefail
-
-                  CONTROL="scripts/server-control.sh"
-                  tunnel_pid_file="$RUNNER_TEMP/ultron-tunnel.pid"
-                  access_pid_file="${tunnel_pid_file}.access"
-                  tunnel_pid="$(cat "$tunnel_pid_file" 2>/dev/null || true)"
-                  access_pid="$(cat "$access_pid_file" 2>/dev/null || true)"
-
-                  tunnel_is_alive() {
-                      if [ -z "${tunnel_pid:-}" ] || ! kill -0 "$tunnel_pid" 2>/dev/null; then
-                          return 1
-                      fi
-
-                      # Cloudflare TCP tunnels also need their access proxy.
-                      # Restart the pair if the local proxy exited.
-                      if [ -f "$access_pid_file" ]; then
-                          access_pid="$(cat "$access_pid_file" 2>/dev/null || true)"
-                          if [ -z "$access_pid" ] || ! kill -0 "$access_pid" 2>/dev/null; then
-                              return 1
-                          fi
-                      fi
-
-                      return 0
-                  }
-
-                  publish_address() {
-                      local address="$1"
-                      local -a address_files=(SERVER_ADDRESS.txt)
-
-                      if [ -f SERVER_STATUS_URL.txt ]; then
-                          address_files+=(SERVER_STATUS_URL.txt)
-                      fi
-
-                      git add "${address_files[@]}" 2>/dev/null || true
-                      if git diff --cached --quiet; then
-                          return 0
-                      fi
-
-                      git commit -m "Update public server address: ${address}" || return 0
-                      git fetch origin "$GITHUB_REF_NAME" || true
-                      git rebase "origin/$GITHUB_REF_NAME" || git rebase --abort || true
-                      git push origin "HEAD:$GITHUB_REF_NAME" \
-                          || echo "Address push failed; the keep-alive loop will retry."
-                  }
-
-                  save_and_push() {
-                      local message="$1"
-                      local saved=0
-
-                      # Flush in-memory chunks to disk before Git snapshots them.
-                      if ! bash "$CONTROL" save >/dev/null 2>&1; then
-                          echo "WARNING: could not send save-all flush."
-                      fi
-                      sleep 1
-
-                      git add -A
-                      if git diff --cached --quiet; then
-                          echo "No changes to save."
-                          return 0
-                      fi
-
-                      git commit -m "$message"
-                      for _ in 1 2 3; do
-                          if ! git fetch origin "$GITHUB_REF_NAME"; then
-                              sleep 5
-                              continue
-                          fi
-
-                          if git rebase "origin/$GITHUB_REF_NAME"; then
-                              if git push origin "HEAD:$GITHUB_REF_NAME"; then
-                                  saved=1
-                                  echo "Saved and pushed: ${message}"
-                                  break
-                              fi
-                          else
-                              git rebase --abort || true
-                          fi
-                          sleep 5
-                      done
-
-                      if [ "$saved" -ne 1 ]; then
-                          echo "WARNING: could not push the save; will retry next cycle."
-                          return 1
-                      fi
-                  }
-
-                  stopping=0
-                  # shellcheck disable=SC2329
-                  shutdown_handler() {
-                      if [ "$stopping" -eq 1 ]; then
-                          exit 0
-                      fi
-                      stopping=1
-                      trap - TERM INT
-                      echo "Cancellation/termination requested; flushing the world before exit..."
-
-                      # The runner only gives a cancelled step about ten
-                      # seconds before killing it, so keep this fast: flush,
-                      # make a local commit, and ask the server to stop. The
-                      # always() final backup step pushes the commit.
-                      bash "$CONTROL" save >/dev/null 2>&1 || true
-                      sleep 1
-                      git add -A || true
-                      if ! git diff --cached --quiet; then
-                          git commit -m "Auto-save Minecraft server data (run stopping)" || true
-                      fi
-                      bash "$CONTROL" stop 20 || true
-                      exit 0
-                  }
-                  trap shutdown_handler TERM INT
-
-                  # Check the tunnel every 30 seconds, but only snapshot the
-                  # world every AUTOSAVE_SECONDS so the repository does not grow
-                  # too quickly. A cancelled run therefore loses at most one
-                  # autosave interval even if the final backup cannot run.
-                  autosave_seconds="${AUTOSAVE_SECONDS:-90}"
-                  cycles_between_saves=$((autosave_seconds / 30))
-                  if [ "$cycles_between_saves" -lt 1 ]; then
-                      cycles_between_saves=1
-                  fi
-                  cycle=0
-
-                  while bash "$CONTROL" status >/dev/null 2>&1; do
-                      sleep 30
-
-                      if ! bash "$CONTROL" status >/dev/null 2>&1; then
-                          break
-                      fi
-
-                      if ! tunnel_is_alive; then
-                          echo "Tunnel process stopped; restarting it..."
-                          if bash scripts/tunnel.sh | tee -a .agent-work/logs/tunnel-restarts.log; then
-                              tunnel_pid="$(cat "$tunnel_pid_file" 2>/dev/null || true)"
-                              access_pid="$(cat "$access_pid_file" 2>/dev/null || true)"
-                              address="$(grep -v '^#' SERVER_ADDRESS.txt | grep -E ':[0-9]+$' | tail -n 1)"
-                              echo "Tunnel restarted at ${address}"
-
-                              # Named Cloudflare tunnels keep the same
-                              # hostname; a TCP fallback may get a new one.
-                              # Publish it immediately so players are not left
-                              # with the old address.
-                              publish_address "$address"
-
-                              if [ -n "${SERVER_ISSUE_NUMBER:-}" ] && [ -n "${address}" ]; then
-                                  gh issue comment "$SERVER_ISSUE_NUMBER" \
-                                      --repo "${{ github.repository }}" \
-                                      --body "Ultron SMP is online. Address: \`${address}\`. The tunnel was restarted and the address in \`SERVER_ADDRESS.txt\` is current." \
-                                      || true
-                              fi
-                          else
-                              echo "Tunnel restart failed; will retry shortly."
-                              sleep 15
-                          fi
-                      fi
-
-                      cycle=$((cycle + 1))
-                      if [ "$cycle" -ge "$cycles_between_saves" ]; then
-                          cycle=0
-                          echo "Saving Minecraft server data..."
-                          save_and_push "Auto-save Minecraft server data" || true
-                      fi
-                  done
-
-                  echo "Minecraft server stopped; performing final save..."
-                  save_and_push "Final Minecraft server backup" || true
-                  exit 0
-
-            - name: restore_final_server
+            - name: run_summary
               if: always()
-              env:
-                  GH_TOKEN: ${{ secrets.PAT_TOKEN }}
               run: |
                   set -euo pipefail
-                  echo "Stopping the server and flushing the world before the final backup..."
-                  bash scripts/twingate-connector.sh stop >/dev/null 2>&1 || true
-                  bash scripts/server-control.sh save >/dev/null 2>&1 || true
-                  bash scripts/server-control.sh stop 45 || true
-
-                  # A previous step may have been killed in the middle of a
-                  # git operation. Clear any leftover state before retrying.
-                  git rebase --abort 2>/dev/null || true
-                  git merge --abort 2>/dev/null || true
-                  rm -f .git/index.lock
-
-                  echo "Performing final save..."
-
-                  git add -A
-
-                  if ! git diff --cached --quiet; then
-                      git commit -m "Final Minecraft server backup"
-                  else
-                      echo "No new changes."
+                  if [ -f .agent-work/logs/server-run.log ]; then
+                      echo "### Last server log lines" >> "$GITHUB_STEP_SUMMARY"
+                      echo '```' >> "$GITHUB_STEP_SUMMARY"
+                      tail -n 40 .agent-work/logs/server-run.log >> "$GITHUB_STEP_SUMMARY" || true
+                      echo '```' >> "$GITHUB_STEP_SUMMARY"
                   fi
 
-                  pushed=0
-                  for _ in 1 2 3 4 5; do
-                      if ! git fetch origin "$GITHUB_REF_NAME"; then
-                          sleep 5
-                          continue
-                      fi
-
-                      if git rebase "origin/$GITHUB_REF_NAME"; then
-                          if git push origin "HEAD:$GITHUB_REF_NAME"; then
-                              pushed=1
-                              break
-                          fi
-                      else
-                          git rebase --abort || true
-                      fi
-                      sleep 5
-                  done
-
-                  if [ "$pushed" -ne 1 ]; then
-                      echo "ERROR: final backup could not be pushed."
-                      exit 1
-                  fi
-
-                  echo "Backup completed."
+            - name: upload_logs
+              if: always()
+              uses: actions/upload-artifact@v4
+              with:
+                  name: paper-server-logs
+                  path: |
+                      .agent-work/logs/server-run.log
+                      .agent-work/logs/setup-server.log
+                      SERVER_ADDRESS.txt
+                  if-no-files-found: ignore
